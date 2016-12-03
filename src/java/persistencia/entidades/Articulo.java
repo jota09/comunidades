@@ -12,7 +12,7 @@ public class Articulo {
     private int usuariocodigoadm;
     private String titulo;
     private String descripcion;
-    private Timestamp fechapublicacion;
+    private Date fechapublicacion;
     private double precio;
     private Date fechafinpublicacion;
     private double costo;
@@ -72,11 +72,11 @@ public class Articulo {
         this.descripcion = descripcion;
     }
 
-    public Timestamp getFechaPublicacion() {
+    public Date getFechaPublicacion() {
         return this.fechapublicacion;
     }
 
-    public void setFechaPublicacion(Timestamp fechapublicacion) {
+    public void setFechaPublicacion(Date fechapublicacion) {
         this.fechapublicacion = fechapublicacion;
     }
 
