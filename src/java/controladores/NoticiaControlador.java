@@ -24,7 +24,7 @@ import persistencia.entidades.Usuario;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Prioridad;
 import utilitarias.Utilitaria;
-//prueba
+//prueba haciendo commit en mi maquina
 /**
  *
  * @author ferney.medina
