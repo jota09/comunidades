@@ -1,0 +1,31 @@
+<!Doctype html>
+<html>
+<head>
+   <#bootstrap.css#> 
+   <#jquery.js#> 
+   <#bootstrap.js#> 
+   <#login.css#> 
+   <#icono#> 
+<title>
+   <$title$> 
+</title>
+</head>
+<body>
+<div     class='col-xs-8 col-xs-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-lg-3 col-lg-offset-4'   id='contenedor'  >
+<div     class='panel panel-info'  >
+<form     class='form-signin'   method='POST'   action='validacion'  >
+<h2>
+<strong>
+   <$tituloFormula$> 
+</strong>
+</h2>
+<img     alt='logo'   id='logoSesion'   class='img-circle'   src='<$imageLogo$>'  >
+<input     class='form-control'   id='username'   type='text'	autofocus="true"   placeholder='<$username$>'   name='username'  >
+<input     class='form-control'   id='password'   name='password'   type='password'   placeholder='<$password$>'  >
+   <@message@> 
+<input   class='btn btn-primary btn-block btn-lg'   type='submit'   value='<$botonIniciar$>'  >
+</form>
+</div>
+</div>
+</body>
+</html>

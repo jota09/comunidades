@@ -1,0 +1,158 @@
+
+	<head>
+		<#estiloClasificadosInicio.css#>		
+		<title><$title$></title>
+	</head>
+	<div class="col-lg-2">
+				<div class="col-lg-12 fondoPpalClasificados separarBloques panel-primary no-padding">
+					<div class="col-lg-12 tituloClasificadoIzquierda no-padding text-center">
+						<$filtroClasificado$>
+					</div>
+					<div class="col-lg-12 panel-body no-padding">
+						<div class="col-lg-12 no-padding">
+							<div class="form-group">
+								<div class="col-lg-12 margin-bottom5">
+									<select class="form-control" name="categoria">
+										<option value="0"selected><$categoria$></option>
+									</select>
+								</div>
+								<div class="col-lg-12 margin-bottom5">
+									<select class="form-control" name="precio">
+										<option value="0" selected><$precio$></option>
+									</select>
+								</div>
+								<div class="col-lg-12 margin-bottom5">
+									<select class="form-control" name="tipoBienServicio">
+										<option value="0" selected><$bienServicio$></option>
+									</select>
+								</div>
+								<div class="col-lg-12 margin-bottom5">
+									<select class="form-control" name="usuario">
+										<option value="0" selected><$usuario$></option>
+									</select>
+								</div>
+								<div class="col-lg-12 margin-bottom5">
+									<select class="form-control" name="ordenar">
+										<option value="0" selected><$orden$></option>
+									</select>
+								</div>
+								<div class="col-lg-12 margin-bottom5">
+									<select class="form-control" name="prioridad">
+										<option value="0" selected><$prioridad$></option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12 fondoPpalClasificados separarBloques panel-primary no-padding">
+					<div class="col-lg-12 tituloClasificadoIzquierda no-padding text-center">
+						<$ultimosClasificado$>
+					</div>
+					<div class="col-lg-12 panel-body no-padding contenedorUltimosClasificados">
+						<div class="col-lg-12 no-padding">
+							<div class="list-group listaEditada">
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Primer Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Segundo Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Tercero Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Cuarto Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Quinto Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Sexto Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Septimo Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Octavo Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Noveno Clasificado</a>
+								<a href="#" class="list-group-item listaSinEfectoColor text-center">Decimo Clasificado</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+		<div class="col-lg-10">
+				<div class="col-lg-12 fondoPpalClasificados separarBloques padding-left3 panel-primary no-padding">
+					<div class="col-lg-12 no-padding padding-top3">
+							<div class="col-lg-4 no-padding">
+								<div class="col-lg-12 no-padding">
+									<$rutaClasificadosInicio$>
+								</div>
+								<div class="col-lg-12 tituloClasificado text-center no-padding">
+									<$title$>
+								</div>
+							</div>
+							<div class="col-lg-8 no-padding padding-top3">
+								<div class="form-group">
+									<div class="col-lg-3 col-lg-offset-2 no-padding">
+										<input class="form-control" value="<$buscarClasificados$>" name="buscarClasificados"></input>
+									</div>
+									<div class="col-lg-3 col-lg-offset-3 no-padding">
+										<div class="col-lg-12 margin-bottom5">
+											<select class="form-control" name="mostrarClasificados">
+												<option value="0" selected><$mostrarClasificados$></option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+					</div>
+					<div class="col-lg-12 panel-body no-padding">
+						<div class="col-lg-12">
+							<div class="col-lg-4 col-lg-offset-1 text-center">
+								<div class="col-lg-12 text-center">
+								<h3><span class="label label-info">Titulo de clasificado</span></h3>
+								</div>
+								<div class="col-lg-12 text-center">
+									<img alt="Titulo de clasificado" class="imgArticulos" src="http://localhost:80/comunidades/upload/user_1/clasificado_1/clasificado_1_1.jpg"/>
+								</div>
+								<div class="col-lg-12 text-center">
+								<h3>PRECIO</h3>
+								</div>
+								<div class="col-lg-12 text-center">
+								<a href="#">ver mas</a>
+								</div>
+							</div>
+							<div class="col-lg-4 col-lg-offset-1 text-center">
+								<div class="col-lg-12 text-center">
+								<h3><span class="label label-info">Titulo de clasificado 2</span></h3>
+								</div>
+								<div class="col-lg-12 text-center">
+									<img alt="Titulo de clasificado 2" class="imgArticulos" src="http://localhost:80/comunidades/upload/user_1/clasificado_2/clasificado_2_2.png"/>
+								</div>
+								<div class="col-lg-12 text-center">
+								<h3>PRECIO</h3>
+								</div>
+								<div class="col-lg-12 text-center">
+								<a href="#">ver mas</a>
+								</div>
+							</div>
+							<div class="col-lg-4 col-lg-offset-1 text-center">
+								<div class="col-lg-12 text-center">
+								<h3><span class="label label-info">Titulo de clasificado 3</span></h3>
+								</div>
+								<div class="col-lg-12 text-center">
+									<img class="imgArticulos" alt="Titulo de clasificado 3" src="http://localhost:80/comunidades/upload/user_1/clasificado_3/clasificado_3_1.png"/>
+								</div>
+								<div class="col-lg-12 text-center">
+								<h3>PRECIO</h3>
+								</div>
+								<div class="col-lg-12 text-center">
+								<a href="#">ver mas</a>
+								</div>
+							</div>
+							<div class="col-lg-4 col-lg-offset-1 text-center">
+								<div class="col-lg-12 text-center">
+								<h3><span class="label label-info">Titulo de clasificado 4</span></h3>
+								</div>
+								<div class="col-lg-12 text-center">
+									<img alt="Titulo de clasificado 4" class="imgArticulos" src="http://localhost:80/comunidades/upload/user_1/clasificado_4/clasificado_4_1.jpg"/>
+								</div>
+								<div class="col-lg-12 text-center">
+								<h3>PRECIO</h3>
+								</div>
+								<div class="col-lg-12 text-center">
+								<a href="#">ver mas</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>

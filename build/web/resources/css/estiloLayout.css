@@ -1,0 +1,35 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15/12/2016, 04:05:10 PM
+    Author     : ferney.medina
+*/
+#top{
+    background-color:#000066;
+    min-height: 50px;
+    font-weight: bold;
+}
+
+#left{
+    background-color:#FFFFCC;
+    min-height: 100px;
+}
+
+#right{
+    background-color:#CCFFFF;
+    min-height: 100px;
+}
+
+#content{
+    background-color:#1B3280;
+    min-height: 400px;
+}
+
+#footer{
+    background-color:#CCCCCC;
+    min-height: 100px;
+    /*min-height: */
+}

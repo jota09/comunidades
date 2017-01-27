@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <#bootstrap.css#> 
+   <#jquery.js#> 
+   <#bootstrap.js#> 
+   <#estiloMenu.css#> 
+   <#bootstrap-theme.css#> 
+   <#estiloMenuPrincipal.css#> 
+   <#jquery-ui.css#> 
+   <#jquery-ui.js#> 
+   <#tinymce.js#> 
+   <#utilitaria.js#> 
+   <#icono#> 
+   <#fileinputCSS#>
+<#canvas-toJS#>
+<#soportableJS#>
+<#purifyJS#>
+	<#fileinputJS#>
+<#fileinputESLANG#>	
+</head>
+<body>
+<div                 id='top'  >
+<nav               class='navbar navbar-inverse'  >
+<div             class='container-fluid'  >
+<a           class='navbar-brand'  >
+   <#logo#> 
+</a>
+<div           class='navbar-header'  >
+<button         class='navbar-toggle collapsed'   data-toggle='collapse'   data-target='#colapsa'   aria-expanded='false'  >
+<span         class='sr-only'  >
+</span>
+<span         class='icon-bar'  >
+</span>
+<span         class='icon-bar'  >
+</span>
+<span         class='icon-bar'  >
+</span>
+</button>
+</div>
+<div         class='navbar-collapse collapse'   id='colapsa'  >
+<ul       class='nav navbar-nav multi-level'  >
+   <@menus@> 
+</ul>
+<ul       class='nav navbar-nav pull-right'   style='cursor: pointer'  >
+<li>
+<a     onclick='$('#cierre').submit()'  >
+<form     name='cierre'   id='cierre'   method='post'   action='CerrarSesion'  >
+<span     class='glyphicon glyphicon-log-out'  >
+</span>
+    Salir 
+</form>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+<div     id='cuerpo'   style='min-height:600px'  >
+</div>
+<div     class='row'   id='footer'  >
+<div     class='col-xs-12 panel'  >
+<div     class='panel-footer text-center'  >
+   © 2017 by HMT(Comunidades)*. All rights reserved. 
+</div>
+</div>
+</div>
+</body>
+</html>

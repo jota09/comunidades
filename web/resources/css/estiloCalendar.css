@@ -1,0 +1,53 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15/12/2016, 04:05:10 PM
+    Author     : ferney.medina
+*/
+body{
+    
+}
+
+#flechaIzq,#flechaDer{
+   float:left; 
+   width: 10%;
+}
+
+#mes{
+    width: 80%;
+    float:left;
+    color: #fff;
+    background-color: #065e95;
+    text-align: center;
+    text-transform:uppercase;
+    font-size: 18px;
+}
+
+table{
+    width: 100%;
+    border:1px solid #ddd;
+}
+
+th,tr,td{    
+    border:1px solid #ddd;    
+}
+
+td{
+    height: 10em;
+}
+
+@media (max-width: 768px)
+{
+    th{
+        font-size: 10px;
+    }
+    
+   td{
+    height: 5em;    
+    } 
+}
+
+

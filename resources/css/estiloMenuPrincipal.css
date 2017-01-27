@@ -1,0 +1,79 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15/12/2016, 04:05:10 PM
+    Author     : ferney.medina
+*/
+hr{
+    border: 1px solid #0f8dd8;
+    height: 1px;
+    background-color: #0774b7; 
+}
+
+#cuerpo{
+    padding: 2em 3em 3em 3em;
+}
+
+#fondo{
+	background-color:#f7f7f7 !important;
+}
+
+#btn0{
+    margin-top: 23px;
+}
+
+.checkPersonalizado{
+    width: 20px;   
+}
+
+#categorias{
+    background-color: #f5f5f5;
+}
+
+@media(min-width: 768px){
+    #categorias{
+        float: right;
+    }
+}
+
+.ulPersonalizada, .liPersonalizada{
+    list-style: none;
+    margin-left: -1em;
+}
+
+.no-padding{
+	padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.no-padding-left{
+	padding-left: 0px !important;
+}
+
+.no-padding-right{
+    padding-right: 0px !important;
+}
+.margin-bottom5{
+	margin-bottom: 5%;
+}
+.margin-top5{
+	margin-top: 5%;
+}
+.margin-top2{
+	margin-top: 2%;
+}
+.margin-left5{
+	margin-left:5%;
+}
+.padding-left3{
+    padding-left: 3% !important;
+}
+.padding-left1{
+    padding-left: 1% !important;
+}
+.padding-top3{
+	padding-top: 3% !important;
+}

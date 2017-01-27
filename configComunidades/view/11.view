@@ -1,0 +1,96 @@
+
+	<head>
+		
+		<#estiloClasificadosAnadir.css#>
+
+		<title><$title$></title>
+	</head>
+			<div class="col-lg-10">
+				<div class="col-lg-12 fondoPpalClasificados separarBloques padding-left3 panel-primary no-padding">
+					<div class="col-lg-12 no-padding">
+						<div class="col-lg-12 no-padding">
+						<div class="col-lg-5 no-padding">
+							<div class="col-lg-12 tituloAnadirClasificado">
+								<$title$>
+							</div>
+						</div>
+						</div>
+						<div class="col-lg-12 no-padding">
+						<div class="col-lg-8 no-padding baseAzulForm margin-top2 padding-left1">
+							<input class="form-control transparent-input" value="" name="tituloClasificado" placeholder="<$ nombreCampo1 $>"></input>
+						</div>
+						</div>
+						<div class="col-lg-11 no-padding margin-top2">
+							<textarea  id="cuerpoClasificado" class="form-control" name="cuerpoClasificado"></textarea> 
+						</div>
+						<div class="col-lg-12 no-padding">
+						<div class="col-lg-4 no-padding baseAzulForm margin-top2 padding-left1">
+							<input class="form-control transparent-input" value="" name="precioClasificado" placeholder="<$ nombreCampo2 $>"></input>
+						</div>
+						</div>
+						<div class="col-lg-12 no-padding">
+						<div class="col-lg-3 no-padding baseAzulForm margin-top2 padding-left1">
+							<input class="form-control transparent-input" value="" name="contactoClasificado" placeholder="<$ nombreCampo3 $>"></input>
+						</div>
+						</div>
+						<div class="col-lg-12 no-padding">
+						<div class="col-lg-11 no-padding margin-top2 ">
+						<div class="form-group">
+							<label class="control-label"><$ nombreCampo4 $></label>
+								<input id="portadaClasificado" name="portadaClasificadoArchivos[]" multiple type="file" class="file-loading" accept="image/*"></input>
+							<p class="help-block"><$ nombreCampo5 $></p>
+						</div>
+						</div>
+						</div>
+						<div class="col-lg-12 no-padding margin-bottom2">
+						<div class="col-lg-1 col-lg-offset-9 no-padding">
+							<div class="col-lg-6">
+								<input name="anadirClasificado" class="btn btn-primary" name="anadirClasificado" value="Guardar"></input>
+							</div>
+						</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-2 margin-top5">
+				<div class="col-lg-12 fondoPpalClasificados separarBloques panel-primary no-padding">
+					<div class="col-lg-12 tituloClasificadoIzquierda no-padding text-center">
+						<$categoria$>
+					</div>
+					<div class="col-lg-12 panel-body no-padding">
+						<div class="col-lg-12 no-padding-right">
+							<div class="form-group">
+								<div class="col-lg-12 margin-bottom5">
+									<div class="form-check">
+									    <label class="form-check-label">
+										    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+										    Option 1
+									    </label>
+									</div>
+								</div>
+								<div class="col-lg-12 margin-bottom5">
+									<div class="form-check">
+										<label class="form-check-label">
+											<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+											Option 2
+										</label>
+									</div>
+								</div>
+								<div class="col-lg-12 margin-bottom5">
+									<div class="form-check">
+										<label class="form-check-label">
+											<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+											Option 3
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+<div class="col-lg-12 margin-top5">
+		<#anadirClasificadosJS#>
+</div>
