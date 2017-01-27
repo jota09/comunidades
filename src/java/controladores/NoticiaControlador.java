@@ -6,6 +6,7 @@
 package controladores;
 
 import fachada.ArticuloFachada;
+import fachada.CategoriaFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -14,13 +15,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 import org.json.simple.JSONObject;
-
+import persistencia.entidades.Prioridad;
+import utilitarias.Utilitaria;
+//prueba haciendo commit en mi maquina
 /**
  *
  * @author ferney.medina
@@ -45,7 +49,7 @@ public class NoticiaControlador extends HttpServlet {
             int opcion = Integer.parseInt(request.getParameter("op"));       
             switch (opcion) {
                 case 1:
-                    pintarRegistros(request, response);
+                    tablaRegistros(request, response);
                     break;
                 case 2:
                     crearRegistros(request, response);
@@ -56,6 +60,12 @@ public class NoticiaControlador extends HttpServlet {
                 case 4:
                     borrarRegistros(request, response);
                     break;
+                case 5:
+                    aprobarRegistros(request, response);
+                    break;
+                case 6:
+                    cargarCategorias(request, response);
+                    break;
             }
         }
         else
@@ -64,29 +74,29 @@ public class NoticiaControlador extends HttpServlet {
         }
     }
 
-    private void pintarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
             TipoArticulo tipArt = new TipoArticulo();
-            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
-            tipArt.setRango(request.getParameter("rango"));
-            List<Articulo> listArticulo = artFachada.getListObject(tipArt);
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));            
+            Articulo articulo=new Articulo();
+            articulo.setTipoArticulo(tipArt);
+            articulo.setRango(request.getParameter("rango"));
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            List<Articulo> listArticulo = artFachada.getListObject(articulo);
+            JSONArray jsonArray=new JSONArray();
             for (Articulo art : listArticulo) {
-
-                out.print("<tr>");
-                out.print("<td><input type=\"checkbox\" name=\"seleccion\" value=\"" + art.getCodigo() + " \" /></td>");
-                out.print("<td id='tituloArt'>" + art.getTitulo() + "</td>");
-                out.print("<td>" + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + "</td>");
-                out.print("<td>" + art.getCategoria().getNombre() + "</td>");
-                out.print("<td><input type=\"checkbox\" class=\"form-control\" name=\"activo\" value=\"" + art.getCodigo() + "\" /></td>");
-                out.print("<td>" + (art.getFechaPublicacion() == null ? "" : art.getFechaPublicacion()) + "</td>");
-                out.print("<td>");
-                out.print("<button class=\"btn btn-info\" onclick=\"editarArt('Noticia','3','" + art.getCodigo() + "')\"><span class=\"glyphicon glyphicon-pencil\"></span></button>");
-                out.print("<button class=\"btn btn-danger\"><span class=\"glyphicon glyphicon-remove\" onclick=\"borrarNoticia()\" ></span></button>");
-                out.print("<button class=\"btn btn-primary\"><span class=\"glyphicon glyphicon-eye-open\"></span></button>");
-                out.print("</td>");
-                out.print("</tr>");
+                JSONObject jsonObj=new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo",art.getTitulo());
+                jsonObj.put("nombreUsuario",art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado",art.getCategoria().getNombre());
+                jsonObj.put("fechaPublicacion",art.getFechaPublicacion());
+                jsonArray.add(jsonObj);
             }
+            out.print(jsonArray);
         }
     }
 
@@ -99,14 +109,11 @@ public class NoticiaControlador extends HttpServlet {
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(usr);
             int cat;
-            cat = Integer.parseInt(request.getParameter("categoria"));
-            art.setFechaPublicacion(null);
-            art.setPrecio(0);
-            art.setFechaFinPublicacion(null);
-            art.setPrioridad(null);
+            cat = Integer.parseInt(request.getParameter("categoria"));                                               
             ArticuloEstado artEstado = new ArticuloEstado();
             artEstado.setCodigo(1);
             art.setEstado(artEstado);
+            art.setPrioridad(new Prioridad(1));//La noticia no tiene prioridad pero sin embargo se le envia el 1(baja)
             ArticuloFachada artFach = new ArticuloFachada();
             TipoArticulo tpArt = new TipoArticulo();
             tpArt.setCodigo(1);
@@ -114,7 +121,7 @@ public class NoticiaControlador extends HttpServlet {
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
             art.setCategoria(categ);
-            System.out.println("este es codArt: "+codArt);
+            //System.out.println("este es codArt: "+codArt);
             if(codArt.equals("")){
                 artFach.insertObject(art);
             }else{
@@ -155,7 +162,7 @@ public class NoticiaControlador extends HttpServlet {
 
     private void borrarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            int cod = Integer.parseInt(request.getParameter("cod"));
+            int cod = Integer.parseInt(request.getParameter("cod").trim());
             Articulo art = new Articulo();
             art.setCodigo(cod);
             TipoArticulo tpArt=new TipoArticulo();
@@ -163,6 +170,19 @@ public class NoticiaControlador extends HttpServlet {
             art.setTipoArticulo(tpArt);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);            
+        }
+    }
+    
+    private void aprobarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+                      
+        }
+    }
+    
+    private void cargarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            CategoriaFachada catFachada=new CategoriaFachada();
+            out.print(Utilitaria.construirCategorias(catFachada.getListObject()));          
         }
     }
     

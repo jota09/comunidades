@@ -32,7 +32,7 @@ public class ArticuloDAO implements GestionDAO {
         try {
             Connection con=null;
             con=ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM articulo where codigo=?";
+            String query = "SELECT * FROM articulo WHERE codigo=?";
             PreparedStatement pS=con.prepareStatement(query);
             pS.setInt(1, art.getCodigo());
             ResultSet rS=pS.executeQuery();
@@ -65,28 +65,34 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object obj) {
-        TipoArticulo tpArt = (TipoArticulo) obj;
+        Articulo articulo = (Articulo) obj;
         ArrayList<Articulo> listArt = new ArrayList<Articulo>();
         String rango = "";
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            if (!tpArt.getRango().isEmpty()) {
-                rango = "limit " + tpArt.getRango();
+            if (!articulo.getRango().isEmpty()) {
+                rango = "limit " + articulo.getRango();
             } else {
                 rango = "";
             }
-            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.* FROM articulo art JOIN "
-                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN categoria cat ON art.categoria_codigo=cat.codigo "
-                    + "where tipo_articulo_codigo=? "
+            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
+                    + "artEstado.codigo,artEstado.nombre nombreEstado"
+                    + " FROM articulo art JOIN "
+                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
+                    + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
+                    + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
+                    + "WHERE art.tipo_articulo_codigo=? and art.usuario_codigo=? "
                     + rango;
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, tpArt.getCodigo());
+            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
+            pS.setInt(2, articulo.getUsuario().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
                 Categoria cat = new Categoria();
                 ArticuloEstado estado=new ArticuloEstado(rS.getInt("estados_codigo"));
+                estado.setNombre(rS.getString("nombreEstado"));
                 Usuario usr = new Usuario();
                 art.setCodigo(rS.getInt("codigo"));
                 usr.setCodigo(rS.getInt("usuario_codigo"));
@@ -95,13 +101,13 @@ public class ArticuloDAO implements GestionDAO {
                 art.setUsuario(usr);
                 cat.setCodigo(rS.getInt("codigo"));
                 cat.setNombre(rS.getString("nombre"));
-                art.setCategoria(cat);
+                art.setCategoria(cat);                
                 art.setTitulo(rS.getString("titulo"));
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getTimestamp("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getTimestamp("fecha_fin_publicacion"));
                 art.setActivo(rS.getShort("activo"));
-                art.setEstado(estado);
+                art.setEstado(estado);                
                 listArt.add(art);
             }
             rS.close();
@@ -125,10 +131,10 @@ public class ArticuloDAO implements GestionDAO {
         int numfilas=0;
         try {
             con=ConexionBD.obtenerConexion();
-            String sql="UPDATE articulo SET USUARIO_CODIGO=?, TITULO=?, DESCRIPCION=?,"
-                    + "FECHA_PUBLICACION=?, PRECIO=?,FECHA_FIN_PUBLICACION=?, PRIORIDAD=?,"
-                    + "ESTADOS_CODIGO=?,TIPO_ARTICULO_CODIGO=?,CATEGORIA_CODIGO=? "
-                    + " WHERE CODIGO=?";
+            String sql="UPDATE articulo SET usuario_codigo=?, titulo=?, descripcion=?,"
+                    + "fecha_publicacion=?, precio=?,fecha_fin_publicacion=?, prioridad_codigo=?,"
+                    + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=? "
+                    + " WHERE codigo=?";
             PreparedStatement pS=con.prepareStatement(sql);
             pS.setInt(1, art.getUsuario().getCodigo());
             pS.setString(2, art.getTitulo());
@@ -136,7 +142,7 @@ public class ArticuloDAO implements GestionDAO {
             pS.setTimestamp(4, art.getFechaPublicacion());
             pS.setDouble(5, art.getPrecio());
             pS.setTimestamp(6, art.getFechaFinPublicacion());
-            pS.setString(7, art.getPrioridad());
+            pS.setInt(7, art.getPrioridad().getCodigo());
             pS.setInt(8, art.getEstado().getCodigo());
             pS.setInt(9, art.getTipoArticulo().getCodigo());
             pS.setInt(10, art.getCategoria().getCodigo());
@@ -157,9 +163,9 @@ public class ArticuloDAO implements GestionDAO {
         int result = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "INSERT INTO articulo( USUARIO_CODIGO, TITULO, DESCRIPCION,"
-                    + "FECHA_PUBLICACION, PRECIO,FECHA_FIN_PUBLICACION, PRIORIDAD,"
-                    + "ESTADOS_CODIGO,TIPO_ARTICULO_CODIGO,CATEGORIA_CODIGO) "
+            String sql = "INSERT INTO articulo( usuario_codigo, titulo, descripcion,"
+                    + "fecha_publicacion, precio, fecha_fin_publicacion, prioridad_codigo,"
+                    + "estados_codigo,tipo_articulo_codigo,categoria_codigo) "
                     + "VALUES (?,?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
                 pS.setInt(1, art.getUsuario().getCodigo());
@@ -168,7 +174,7 @@ public class ArticuloDAO implements GestionDAO {
                 pS.setTimestamp(4, art.getFechaPublicacion());
                 pS.setDouble(5, art.getPrecio());
                 pS.setTimestamp(6, art.getFechaFinPublicacion());
-                pS.setString(7, art.getPrioridad());
+                pS.setInt(7, art.getPrioridad().getCodigo());
                 pS.setInt(8, art.getEstado().getCodigo());
                 pS.setInt(9, art.getTipoArticulo().getCodigo());
                 pS.setInt(10, art.getCategoria().getCodigo());
@@ -197,7 +203,7 @@ public class ArticuloDAO implements GestionDAO {
         int cont=0;
         try{
             con=ConexionBD.obtenerConexion();
-            String sql="SELECT COUNT('CODIGO') FROM articulo ";
+            String sql="SELECT COUNT('codigo') FROM articulo ";
             PreparedStatement pS=con.prepareStatement(sql);
             ResultSet rS=pS.executeQuery();            
             if(rS.next()){
@@ -230,7 +236,7 @@ public class ArticuloDAO implements GestionDAO {
         Connection con = null;
         try {
             con=ConexionBD.obtenerConexion();
-            String sql="DELETE FROM articulo WHERE CODIGO=? AND TIPO_ARTICULO_CODIGO=?";
+            String sql="DELETE FROM articulo WHERE codigo=? AND tipo_articulo_codigo=?";
             System.out.println("sql:"+sql);
             PreparedStatement pS=con.prepareStatement(sql);
             pS.setInt(1, art.getCodigo());
