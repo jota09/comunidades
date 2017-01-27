@@ -22,7 +22,7 @@ import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
-
+//Esto es una prueba de commit en git
 /**
  *
  * @author Jesus.Ramos
