@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
@@ -23,8 +24,7 @@ import persistencia.entidades.Usuario;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Prioridad;
 import utilitarias.Utilitaria;
-//probando versionaminto
-//ponga ud algo ahi
+
 /**
  *
  * @author ferney.medina
@@ -49,7 +49,7 @@ public class NoticiaControlador extends HttpServlet {
             int opcion = Integer.parseInt(request.getParameter("op"));       
             switch (opcion) {
                 case 1:
-                    pintarRegistros(request, response);
+                    tablaRegistros(request, response);
                     break;
                 case 2:
                     crearRegistros(request, response);
@@ -74,7 +74,7 @@ public class NoticiaControlador extends HttpServlet {
         }
     }
 
-    private void pintarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
             TipoArticulo tipArt = new TipoArticulo();
@@ -84,23 +84,19 @@ public class NoticiaControlador extends HttpServlet {
             articulo.setRango(request.getParameter("rango"));
             articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
             List<Articulo> listArticulo = artFachada.getListObject(articulo);
+            JSONArray jsonArray=new JSONArray();
             for (Articulo art : listArticulo) {
-                out.print("<tr>");
-                out.print("<td><input type=\"checkbox\" name=\"seleccion\" value=\"" + art.getCodigo() + " \" /></td>");
-                out.print("<td id='tituloArt'>" + art.getTitulo() + "</td>");
-                out.print("<td>" + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + "</td>");
-                out.print("<td>" + art.getCategoria().getNombre() + "</td>");
-                out.print("<td>" + art.getEstado().getNombre()+ "</td>");                
-                out.print("<td>" + (art.getFechaPublicacion() == null ? "" : art.getFechaPublicacion()) + "</td>");
-                out.print("<td>");
-                out.print("<button class=\"btn btn-success\" onclick=\"aprobarArt('Noticia','5','" + art.getCodigo() + "') \"><span class=\"glyphicon glyphicon-ok\" title=\"aprobar noticia\"></span></button>");
-                out.print("<button class=\"btn btn-danger\" onclick=\"rechazarArt('Noticia','6','" + art.getCodigo() + "') \"><span class=\"glyphicon glyphicon-minus-sign\" title=\"rechazar noticia\"></span></button>");
-                out.print("<button class=\"btn btn-info\" onclick=\"editarArt('Noticia','3','" + art.getCodigo() + "') \"><span class=\"glyphicon glyphicon-pencil\" title=\"editar noticia\"></span></button>");
-                out.print("<button class=\"btn btn-danger\"  onclick=\"borrarNoticia("+art.getCodigo()+") \"><span class=\"glyphicon glyphicon-remove\" title=\"borrar noticia\"></span></button>");
-                out.print("<button class=\"btn btn-primary\" ><span class=\"glyphicon glyphicon-eye-open\" title=\"visualizar noticia\"></span></button>");
-                out.print("</td>");
-                out.print("</tr>");
+                JSONObject jsonObj=new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo",art.getTitulo());
+                jsonObj.put("nombreUsuario",art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado",art.getCategoria().getNombre());
+                jsonObj.put("fechaPublicacion",art.getFechaPublicacion());
+                jsonArray.add(jsonObj);
             }
+            out.print(jsonArray);
         }
     }
 

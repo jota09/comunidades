@@ -22,7 +22,7 @@ import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
-//prueba de push habiendo una version mas nueva
+
 /**
  *
  * @author Jesus.Ramos
