@@ -7,8 +7,11 @@ package controladores;
 
 import fachada.GestionFachada;
 import fachada.RecursoFachada;
+import fachada.RecursoVistaFachada;
+import fachada.VistaFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Recurso;
+import persistencia.entidades.RecursoVista;
+import persistencia.entidades.Vista;
 
 /**
  *
@@ -42,7 +47,7 @@ public class RecursoControlador extends HttpServlet {
 
         switch (op) {
             case 1: {
-                cargarTabla(request, response);
+                getRecursos(request, response);
                 break;
             }
             case 2: {
@@ -57,17 +62,70 @@ public class RecursoControlador extends HttpServlet {
                 eliminarRecurso(request, response);
                 break;
             }
+            case 5: {
+                getRecursosVista(request, response);
+                break;
+            }
+            case 6: {
+                getVistas(request, response);
+                break;
+            }
+            case 7: {
+                eliminarAso(request, response);
+                break;
+            }
+            case 8: {
+                asociarRecursoAVista(request, response);
+                break;
+            }
 
+        }
+    }
+
+    public void asociarRecursoAVista(HttpServletRequest request, HttpServletResponse response) {
+        int codRecurso=Integer.parseInt(request.getParameter("codRecurso"));
+        int codVista=Integer.parseInt(request.getParameter("codVista"));
+        Recurso recurso=new Recurso();
+        recurso.setCodigo(codRecurso);
+        Vista vista=new Vista();
+        vista.setCodigo(codVista);
+        RecursoVista recursoVista=new RecursoVista();
+        recursoVista.setRecursoCodigo(recurso);
+        recursoVista.setVistaCodigo(vista);
+        GestionFachada recursoVistaFachada=new RecursoVistaFachada();
+        recursoVistaFachada.insertObject(recursoVista);
+        
+    }
+
+    public void getVistas(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada vistaFachada = new VistaFachada();
+        JSONArray arrayVista = new JSONArray();
+        try (PrintWriter out = response.getWriter()) {
+            List<Vista> vistas = vistaFachada.getListObject();
+            for (Vista v : vistas) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", v.getCodigo());
+                obj.put("nombre", v.getNombre());
+                arrayVista.add(obj);
+            }
+            out.print(arrayVista);
         }
     }
 
     public void eliminarRecurso(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada recursoFacade = new RecursoFachada();
-        try (PrintWriter out = response.getWriter()) {
-            Recurso recurso = new Recurso();
-            recurso.setCodigo(Integer.parseInt(request.getParameter("cod")));
-            recursoFacade.deleteObject(recurso);
-        }
+        Recurso recurso = new Recurso();
+        recurso.setCodigo(Integer.parseInt(request.getParameter("cod")));
+        recursoFacade.deleteObject(recurso);
+
+    }
+
+    public void eliminarAso(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada recursoVistaFacade = new RecursoVistaFachada();
+        RecursoVista recursoVista = new RecursoVista();
+        recursoVista.setCodigo(Integer.parseInt(request.getParameter("cod")));
+        recursoVistaFacade.deleteObject(recursoVista);
+
     }
 
     public void consultarRecurso(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -84,7 +142,7 @@ public class RecursoControlador extends HttpServlet {
         }
     }
 
-    public void cargarTabla(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getRecursos(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada recursoFacade = new RecursoFachada();
         try (PrintWriter out = response.getWriter()) {
             JSONArray arrayRecursos = new JSONArray();
@@ -99,7 +157,24 @@ public class RecursoControlador extends HttpServlet {
             out.print(arrayRecursos);
 
         }
+    }
 
+    public void getRecursosVista(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada recursoVistaFachada = new RecursoVistaFachada();
+        try (PrintWriter out = response.getWriter()) {
+            JSONArray arrayRecursos = new JSONArray();
+            List<RecursoVista> recursoVistas = (List<RecursoVista>) recursoVistaFachada.getListObject();
+            for (RecursoVista rv : recursoVistas) {
+                JSONObject obj = new JSONObject();
+                obj.put("codRecurso", rv.getRecursoCodigo().getCodigo());
+                obj.put("nombreRecurso", rv.getRecursoCodigo().getNombre());
+                obj.put("codVista", rv.getVistaCodigo().getCodigo());
+                obj.put("nombreVista", rv.getVistaCodigo().getNombre());
+                obj.put("codRV", rv.getCodigo());
+                arrayRecursos.add(obj);
+            }
+            out.print(arrayRecursos);
+        }
     }
 
     public void actualizaOInserta(HttpServletRequest request, HttpServletResponse response) throws IOException {

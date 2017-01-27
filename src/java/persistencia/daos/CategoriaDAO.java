@@ -31,7 +31,7 @@ public class CategoriaDAO implements GestionDAO{
     public List getListObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List getListObject() {
         ArrayList<Categoria> listCategoria=new ArrayList<Categoria>();                
@@ -39,7 +39,7 @@ public class CategoriaDAO implements GestionDAO{
         try
         {
             con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM categoria WHERE activo=1 and codigo_padre is null";
+            String query="SELECT * FROM comunidades.categoria where ACTIVO=1";
             PreparedStatement pS=con.prepareStatement(query);
             ResultSet rS=pS.executeQuery();            
             while(rS.next()){
@@ -47,7 +47,7 @@ public class CategoriaDAO implements GestionDAO{
                 cat.setCodigo(rS.getInt("codigo"));
                 cat.setCodigoPadre(rS.getInt("codigo_padre"));
                 cat.setNombre(rS.getString("nombre"));
-                cat.setListaCategorias(getHijos(cat.getCodigo()));
+                //cat.setCategorias(getHijos(cat.getCodigo()));
                 listCategoria.add(cat);
             }
             rS.close();
@@ -65,7 +65,7 @@ public class CategoriaDAO implements GestionDAO{
             }
         }
         return listCategoria;
-    }   
+    }
 
     private List<Categoria> getHijos(int codMenu){                
         ArrayList<Categoria> listaCategorias=new ArrayList<Categoria>();
@@ -80,9 +80,9 @@ public class CategoriaDAO implements GestionDAO{
             {                
                 Categoria cat=new Categoria();
                 cat.setCodigo(rS.getInt("codigo"));
-                cat.setCodigoPadre(rS.getInt("codigo_padre"));
+                //cat.setCodigopadre(rS.getInt("codigo_padre"));
                 cat.setNombre(rS.getString("nombre"));
-                cat.setListaCategorias(getHijos(cat.getCodigo()));
+                //cat.setCategorias(getHijos(cat.getCodigo()));
                 listaCategorias.add(cat);
             }
             rS.close();

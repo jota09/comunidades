@@ -40,7 +40,7 @@ public class Utilitaria {
         String imprime = "";
         for (Categoria cat : listCategoria) {
             imprime += "<li class='liPersonalizada'><input type=\"radio\" "
-                    + "name='categoria' class='categoria' "
+                    + "name='categoria' id='categoria' "
                     + "class=\"checkPersonalizado\" value='" + cat.getCodigo()
                     + "'/><label>" + cat.getNombre() + "</label>";
             if (cat.getListaCategorias().size() > 0) {

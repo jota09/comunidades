@@ -42,9 +42,10 @@ public class ClasificadoControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        System.out.println(request);
-        if (request.getParameter("opc") != null) {
-            int opcion = Integer.parseInt(request.getParameter("opc"));
+System.out.println(request);
+        if(request.getParameter("opc")!=null)
+        {
+            int opcion = Integer.parseInt(request.getParameter("opc"));       
             switch (opcion) {
                 case 1:
                     recuperarCategorias(request, response);
@@ -54,14 +55,14 @@ public class ClasificadoControlador extends HttpServlet {
                     break;
                 case 3:
                     //pintarRegistros(request, response);
-                    break;
-                case 4:
+                    break;                   
+                case 4:                    
                     //editarRegistros(request, response);
                     break;
             }
         }
     }
-
+    
     private void recuperarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             System.out.println("Entro aqui");
@@ -69,25 +70,25 @@ public class ClasificadoControlador extends HttpServlet {
             List<Categoria> listCategoria = catFachada.getListObject();
             System.out.println(listCategoria);
             JSONArray array = new JSONArray();
-            for (Categoria cat : listCategoria) {
-                JSONObject obj = new JSONObject();
-                obj.put("codigo", cat.getCodigo());
-                obj.put("nombre", cat.getNombre());
-                obj.put("codigopadre", cat.getCodigoPadre());
-                obj.put("activo", cat.getActivo());
-                array.add(obj);
+            for ( Categoria cat : listCategoria ){
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", cat.getCodigo());
+            obj.put("nombre", cat.getNombre());
+            obj.put("codigopadre", cat.getCodigoPadre());
+            obj.put("activo", cat.getActivo());
+            array.add(obj);
             }
             out.print(array);
         }
     }
-
+    
     private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             Articulo art = new Articulo();
             art.setTitulo(request.getParameter("tituloClasificado"));
             art.setDescripcion(request.getParameter("cuerpoClasificado"));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
-
+            
             art.setDescripcion(request.getParameter("precioClasificado"));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(usr);
@@ -108,9 +109,9 @@ public class ClasificadoControlador extends HttpServlet {
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
             art.setCategoria(categ);
-            /*if (codArt == null) {
+            /*if(codArt==null){
                 artFach.insertObject(art);
-            } else {
+            }else{
                 art.setCodigo(Integer.parseInt(codArt));
                 artFach.updateObject(art);
             }*/

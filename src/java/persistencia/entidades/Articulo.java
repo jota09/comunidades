@@ -15,7 +15,7 @@ public class Articulo {
     private double precio;
     private Timestamp fechafinpublicacion;
     private double costo;
-    private Prioridad prioridad;
+    private String prioridad;
     private short activo;
     private Timestamp creacion;
     private Timestamp actualizacion;
@@ -25,7 +25,6 @@ public class Articulo {
     private TipoArticulo tipoarticulo;
     private Categoria categoria;
     private List<ClasificadoInteres> listaInteres;
-    private String rango;
 
 
     public Articulo() {
@@ -103,11 +102,11 @@ public class Articulo {
         this.costo = costo;
     }
 
-    public Prioridad getPrioridad() {
+    public String getPrioridad() {
         return this.prioridad;
     }
 
-    public void setPrioridad(Prioridad prioridad) {
+    public void setPrioridad(String prioridad) {
         this.prioridad = prioridad;
     }
 
@@ -181,13 +180,5 @@ public class Articulo {
     
     public void setListaInteres(List<ClasificadoInteres> listaInteres){
         this.listaInteres = listaInteres;
-    }
-    
-    public String getRango() {
-        return rango;
-    }
-
-    public void setRango(String rango) {
-        this.rango = rango;
     }
 }

@@ -16,7 +16,7 @@
 <label                         class='control-label'   for='sAddAtributo'  >
    Nombre Atributo(*): 
 </label>
-<input       class='form-control'   id='nombreRecurso'   type='text'   placeholder='Ingrese Atributo'  >
+<input       class='form-control'   id='nombreRecurso'   type='text'   placeholder='Ingrese Nombre Recurso'  >
 <br>
 <label             class='control-label'   for='rutaRecurso'  >
    Ruta del Recurso(*): 
@@ -53,33 +53,9 @@
 <div             class='col-sm-5'  >
 <div                                 class='panel panel-warning'  >
 <div                                 class='panel-heading text-center'  >
-   Atributos Asociados a Vista 
+   Recursos Asociados a Vista 
 </div>
 <div                                 class='panel-body'  >
-<table                           class='table table-striped'  >
-<thead>
-<tr>
-<th>
-   Cod_Etiqueta 
-</th>
-<th>
-   Etiqueta 
-</th>
-<th>
-   Cod_Atributo 
-</th>
-<th>
-   Atributo 
-</th>
-<th>
-   Edición 
-</th>
-</tr>
-</thead>
-<tbody                         id='tbodyData2'  >
-</tbody>
-</table>
-<hr>
 <div                       class='form-group col-sm-4'  >
 <label                       class='control-label'  >
    Seleccione Recurso(*): 
@@ -92,8 +68,32 @@
 <select           class='form-control'   id='selectVista'  >
 </select>
 <br>
-<input                       class='form-control btn btn-primary'   type='button'   value='Agregar'   onclick='asociarAtributo()'  >
+<input                       class='form-control btn btn-primary'   type='button'   value='Asociar'   onclick='asoRecAVista()'  >
 </div>
+<table                           class='table table-striped'  >
+<thead>
+<tr>
+<th>
+   CodRecurso 
+</th>
+<th>
+   Recurso 
+</th>
+<th>
+   CodVista 
+</th>
+<th>
+   Vista 
+</th>
+<th>
+   Edición 
+</th>
+</tr>
+</thead>
+<tbody                         id='tbodyData2'  >
+</tbody>
+</table>
+<hr>
 </div>
 </div>
 </div>

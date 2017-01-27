@@ -8,7 +8,7 @@ public class TipoArticulo {
     private String nombre;
     private short activo;
     private List<Articulo> listaArticulos;
-    
+    private String rango;
 
     public TipoArticulo() {
     }
@@ -36,7 +36,15 @@ public class TipoArticulo {
     public void setActivo(short activo) {
         this.activo = activo;
     }
-         
+    
+    public String getRango() {
+        return rango;
+    }
+
+    public void setRango(String rango) {
+        this.rango = rango;
+    }
+    
     public List<Articulo> getListaArticulos() {
         return listaArticulos;
     }

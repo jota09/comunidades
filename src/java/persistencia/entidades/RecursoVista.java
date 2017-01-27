@@ -3,8 +3,8 @@ package persistencia.entidades;
 public class RecursoVista {
 
     private int codigo;
-    private int recursocodigo;
-    private int vistacodigo;
+    private Recurso recursocodigo;
+    private Vista vistacodigo;
 
     public RecursoVista() {
     }
@@ -17,19 +17,19 @@ public class RecursoVista {
         this.codigo = codigo;
     }
 
-    public int getRecursoCodigo() {
+    public Recurso getRecursoCodigo() {
         return this.recursocodigo;
     }
 
-    public void setRecursoCodigo(int recursocodigo) {
+    public void setRecursoCodigo(Recurso recursocodigo) {
         this.recursocodigo = recursocodigo;
     }
 
-    public int getVistaCodigo() {
+    public Vista getVistaCodigo() {
         return this.vistacodigo;
     }
 
-    public void setVistaCodigo(int vistacodigo) {
+    public void setVistaCodigo(Vista vistacodigo) {
         this.vistacodigo = vistacodigo;
     }
 }
