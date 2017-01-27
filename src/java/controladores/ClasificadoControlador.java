@@ -23,6 +23,7 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 //Esto es una prueba de commit en git
+//no se ven los cambios
 /**
  *
  * @author Jesus.Ramos
