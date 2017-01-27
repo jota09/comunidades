@@ -23,7 +23,7 @@ import persistencia.entidades.Usuario;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Prioridad;
 import utilitarias.Utilitaria;
-
+//ponga ud algo ahi
 /**
  *
  * @author ferney.medina
