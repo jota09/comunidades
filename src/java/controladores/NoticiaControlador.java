@@ -118,7 +118,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setPrioridad(new Prioridad(1));//La noticia no tiene prioridad pero sin embargo se le envia el 1(baja)
             ArticuloFachada artFach = new ArticuloFachada();
             TipoArticulo tpArt = new TipoArticulo();
-            tpArt.setCodigo(1);
+            tpArt.setCodigo(2);
             art.setTipoArticulo(tpArt);
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
@@ -140,12 +140,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setCodigo(cod);
             ArticuloFachada artFachada = new ArticuloFachada();
             art = (Articulo) artFachada.getObject(art);
-            //System.out.println("codigo:"+cod);
-            /*Categoria cat=new Categoria();
-            cat.setCodigo(25);
-            cat.setNombre("Prueba JSON");*/
             JSONObject obj = new JSONObject();
-            //obj.put("nombres", cat.getNombre());
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
             obj.put("titulo", art.getTitulo());
@@ -157,7 +152,6 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
             obj.put("activo", art.getActivo());
-            System.out.println("JSON: " + obj);
             out.print(obj);
         }
     }
