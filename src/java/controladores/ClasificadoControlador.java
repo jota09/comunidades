@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package controladores;
 
 import fachada.CategoriaFachada;
@@ -49,10 +48,9 @@ public class ClasificadoControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-System.out.println(request);
-        if(request.getParameter("opc")!=null)
-        {
-            int opcion = Integer.parseInt(request.getParameter("opc"));       
+        System.out.println(request);
+        if (request.getParameter("opc") != null) {
+            int opcion = Integer.parseInt(request.getParameter("opc"));
             switch (opcion) {
                 case 1:
                     recuperarCategorias(request, response);
@@ -65,47 +63,48 @@ System.out.println(request);
                     break;
                 case 4:
                     //pintarRegistros(request, response);
-                    break;                   
-                case 5:                    
+                    break;
+                case 5:
                     //editarRegistros(request, response);
                     break;
             }
         }
     }
-    
+
     private void recuperarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             CategoriaFachada catFachada = new CategoriaFachada();
             List<Categoria> listCategoria = catFachada.getListObject();
             JSONArray array = new JSONArray();
-            for ( Categoria cat : listCategoria ){
-            JSONObject obj = new JSONObject();
-            obj.put("codigo", cat.getCodigo());
-            obj.put("nombre", cat.getNombre());
-            obj.put("codigopadre", cat.getCodigoPadre());
-            obj.put("activo", cat.getActivo());
-            array.add(obj);
+            for (Categoria cat : listCategoria) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", cat.getCodigo());
+                obj.put("nombre", cat.getNombre());
+                obj.put("codigopadre", cat.getCodigoPadre());
+                obj.put("activo", cat.getActivo());
+                array.add(obj);
             }
             out.print(array);
         }
     }
+
     private void recuperarPrioridad(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             PrioridadFachada prioFachada = new PrioridadFachada();
             List<Prioridad> listPrioridad = prioFachada.getListObject();
             JSONArray array = new JSONArray();
-            for ( Prioridad prio : listPrioridad ){
-            JSONObject obj = new JSONObject();
-            obj.put("codigo", prio.getCodigo());
-            obj.put("nombre", prio.getNombre());
-            obj.put("valor", prio.getValor());
-            obj.put("activo", prio.getActivo());
-            array.add(obj);
+            for (Prioridad prio : listPrioridad) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", prio.getCodigo());
+                obj.put("nombre", prio.getNombre());
+                obj.put("valor", prio.getValor());
+                obj.put("activo", prio.getActivo());
+                array.add(obj);
             }
             out.print(array);
         }
     }
-    
+
     private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             Articulo art = new Articulo();
@@ -114,7 +113,7 @@ System.out.println(request);
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
             art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
-            art.setUsuario(usr);            
+            art.setUsuario(usr);
             art.setFechaPublicacion(null);
             art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
             art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
@@ -128,7 +127,8 @@ System.out.println(request);
             System.out.println(art);
         } catch (ParseException ex) {
             Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }    }
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
