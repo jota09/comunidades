@@ -180,20 +180,19 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "INSERT INTO articulo( usuario_codigo, titulo, descripcion,"
-                    + "fecha_publicacion, precio, fecha_fin_publicacion, prioridad_codigo,"
+                    + " precio, fecha_fin_publicacion, prioridad_codigo,"
                     + "estados_codigo,tipo_articulo_codigo,categoria_codigo) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
                 pS.setInt(1, art.getUsuario().getCodigo());
                 pS.setString(2, art.getTitulo());
                 pS.setString(3, art.getDescripcion());
-                pS.setDate(4, art.getFechaPublicacion());
-                pS.setDouble(5, art.getPrecio());
-                pS.setDate(6, art.getFechaFinPublicacion());
-                pS.setInt(7, art.getPrioridad().getCodigo());
-                pS.setInt(8, art.getEstado().getCodigo());
-                pS.setInt(9, art.getTipoArticulo().getCodigo());
-                pS.setInt(10, art.getCategoria().getCodigo());
+                pS.setDouble(4, art.getPrecio());
+                pS.setDate(5, art.getFechaFinPublicacion());
+                pS.setInt(6, art.getPrioridad().getCodigo());
+                pS.setInt(7, art.getEstado().getCodigo());
+                pS.setInt(8, art.getTipoArticulo().getCodigo());
+                pS.setInt(9, art.getCategoria().getCodigo());
                 result = pS.executeUpdate();
             }
         } catch (Exception e) {

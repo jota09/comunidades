@@ -5,6 +5,7 @@
  */
 package controladores;
 
+import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
 import fachada.PrioridadFachada;
 import java.io.IOException;
@@ -114,7 +115,6 @@ public class ClasificadoControlador extends HttpServlet {
             art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(usr);
-            art.setFechaPublicacion(null);
             art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
             art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -124,7 +124,10 @@ public class ClasificadoControlador extends HttpServlet {
             art.setEstado(new ArticuloEstado(1));
             art.setTipoArticulo(new TipoArticulo(1));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
+            ArticuloFachada artFach = new ArticuloFachada();
             System.out.println(art);
+            out.print(artFach.insertObject(art));
+            
         } catch (ParseException ex) {
             Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
