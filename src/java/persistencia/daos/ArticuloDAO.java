@@ -51,7 +51,7 @@ public class ArticuloDAO implements GestionDAO {
                 art.setTitulo(rS.getString("titulo"));
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getTimestamp("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getTimestamp("fecha_fin_publicacion"));
+                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
                 art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
             }
@@ -121,7 +121,7 @@ public class ArticuloDAO implements GestionDAO {
                 art.setTitulo(rS.getString("titulo"));
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getTimestamp("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getTimestamp("fecha_fin_publicacion"));
+                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
                 art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);                
                 listArt.add(art);
@@ -157,7 +157,7 @@ public class ArticuloDAO implements GestionDAO {
             pS.setString(3, art.getDescripcion());
             pS.setTimestamp(4, art.getFechaPublicacion());
             pS.setDouble(5, art.getPrecio());
-            pS.setTimestamp(6, art.getFechaFinPublicacion());
+            pS.setDate(6, art.getFechaFinPublicacion());
             pS.setInt(7, art.getPrioridad().getCodigo());
             pS.setInt(8, art.getEstado().getCodigo());
             pS.setInt(9, art.getTipoArticulo().getCodigo());
@@ -189,7 +189,7 @@ public class ArticuloDAO implements GestionDAO {
                 pS.setString(3, art.getDescripcion());
                 pS.setTimestamp(4, art.getFechaPublicacion());
                 pS.setDouble(5, art.getPrecio());
-                pS.setTimestamp(6, art.getFechaFinPublicacion());
+                pS.setDate(6, art.getFechaFinPublicacion());
                 pS.setInt(7, art.getPrioridad().getCodigo());
                 pS.setInt(8, art.getEstado().getCodigo());
                 pS.setInt(9, art.getTipoArticulo().getCodigo());
