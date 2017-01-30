@@ -39,7 +39,7 @@ public class CategoriaDAO implements GestionDAO{
         try
         {
             con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM categoria WHERE activo=1 and codigo_padre is null";
+            String query="SELECT * FROM categoria WHERE activo=1";
             PreparedStatement pS=con.prepareStatement(query);
             ResultSet rS=pS.executeQuery();            
             while(rS.next()){
