@@ -8,6 +8,18 @@ public class Multimedia {
     private int tipomultimediacodigo;
     private short activo;
 
+    public Multimedia(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public Multimedia(int codigo, int articulocodigo, String nombre, int tipomultimediacodigo, short activo) {
+        this.codigo = codigo;
+        this.articulocodigo = articulocodigo;
+        this.nombre = nombre;
+        this.tipomultimediacodigo = tipomultimediacodigo;
+        this.activo = activo;
+    }
+
     public Multimedia() {
     }
 

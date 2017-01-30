@@ -7,6 +7,17 @@ public class TipoMultimedia {
     private String extension;
     private short activo;
 
+    public TipoMultimedia(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public TipoMultimedia(int codigo, String nombre, String extension, short activo) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.extension = extension;
+        this.activo = activo;
+    }
+
     public TipoMultimedia() {
     }
 
