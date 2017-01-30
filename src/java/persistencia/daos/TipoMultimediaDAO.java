@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +29,13 @@ public class TipoMultimediaDAO implements GestionDAO{
 
     @Override
     public Object getObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListObject(Object object) {
         TipoMultimedia tpMult = (TipoMultimedia) object;
+        ArrayList<TipoMultimedia> listTpMult = new ArrayList<TipoMultimedia>();
         try {
             Connection con=null;
             con=ConexionBD.obtenerConexion();
@@ -36,7 +43,7 @@ public class TipoMultimediaDAO implements GestionDAO{
             PreparedStatement pS=con.prepareStatement(query);
             pS.setString(1, tpMult.getNombre());
             ResultSet rS=pS.executeQuery();
-            if(rS.next())
+            while(rS.next())
             {
                 tpMult.setCodigo(rS.getInt("codigo"));
                 tpMult.setExtension(rS.getString("extension"));
@@ -46,12 +53,7 @@ public class TipoMultimediaDAO implements GestionDAO{
         } catch (SQLException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return tpMult;
-    }
-
-    @Override
-    public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return listTpMult;        
     }
 
     @Override

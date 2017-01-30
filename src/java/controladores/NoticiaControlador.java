@@ -7,6 +7,7 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
+import fachada.TipoMultimediaFachada;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -236,7 +237,8 @@ public class NoticiaControlador extends HttpServlet {
                 Multimedia multimedia=new Multimedia();
                 multimedia.setArticuloCodigo(cod);
                 multimedia.setNombre(fil.getName());
-                TipoMultimedia tpMultimedia=new TipoMultimedia();
+                TipoMultimediaFachada tpMultFach=new TipoMultimediaFachada();
+                tpMultFach.getListObject("imagen");
                 /*ArchivoFachada  achFachada=new ArchivoFachada();
                 achFachada.insertObject(arch);
                 File files=new File(nuevaRuta);
