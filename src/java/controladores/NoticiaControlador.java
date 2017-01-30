@@ -80,11 +80,20 @@ public class NoticiaControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
             TipoArticulo tipArt = new TipoArticulo();
-            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));            
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
             Articulo articulo=new Articulo();
             articulo.setTipoArticulo(tipArt);
             articulo.setRango(request.getParameter("rango"));
             articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            if(request.getParameter("cat")!=null)
+            {
+                if(!request.getParameter("cat").equals(""))
+                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
+            }
+            if(request.getParameter("buscar")!=null)
+            {
+                articulo.setBusqueda(request.getParameter("buscar"));
+            }
             List<Articulo> listArticulo = artFachada.getListObject(articulo);
             JSONArray jsonArray=new JSONArray();
             for (Articulo art : listArticulo) {
@@ -118,7 +127,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setPrioridad(new Prioridad(1));//La noticia no tiene prioridad pero sin embargo se le envia el 1(baja)
             ArticuloFachada artFach = new ArticuloFachada();
             TipoArticulo tpArt = new TipoArticulo();
-            tpArt.setCodigo(2);
+            tpArt.setCodigo(2);//Tipo articulo noticia es 2
             art.setTipoArticulo(tpArt);
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
@@ -162,7 +171,7 @@ public class NoticiaControlador extends HttpServlet {
             Articulo art = new Articulo();
             art.setCodigo(cod);
             TipoArticulo tpArt=new TipoArticulo();
-            tpArt.setCodigo(1);
+            tpArt.setCodigo(2);//Tipo articulo noticia es 2
             art.setTipoArticulo(tpArt);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);            
@@ -181,6 +190,7 @@ public class NoticiaControlador extends HttpServlet {
             out.print(Utilitaria.construirCategorias(catFachada.getListObject()));          
         }
     }
+        
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

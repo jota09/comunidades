@@ -26,7 +26,7 @@ public class Articulo {
     private Categoria categoria;
     private List<ClasificadoInteres> listaInteres;
     private String rango;
-
+    private String busqueda;
 
     public Articulo() {
     }
@@ -189,5 +189,13 @@ public class Articulo {
 
     public void setRango(String rango) {
         this.rango = rango;
+    }
+    
+    public String getBusqueda() {
+        return busqueda;
+    }
+
+    public void setBusqueda(String busqueda) {
+        this.busqueda = busqueda;
     }
 }
