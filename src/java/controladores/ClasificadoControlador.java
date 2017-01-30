@@ -51,12 +51,15 @@ System.out.println(request);
                     recuperarCategorias(request, response);
                     break;
                 case 2:
-                    crearRegistros(request, response);
+                    recuperarPrioridad(request, response);
                     break;
                 case 3:
+                    crearRegistros(request, response);
+                    break;
+                case 4:
                     //pintarRegistros(request, response);
                     break;                   
-                case 4:                    
+                case 5:                    
                     //editarRegistros(request, response);
                     break;
             }
@@ -64,6 +67,24 @@ System.out.println(request);
     }
     
     private void recuperarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            System.out.println("Entro aqui");
+            CategoriaFachada catFachada = new CategoriaFachada();
+            List<Categoria> listCategoria = catFachada.getListObject();
+            System.out.println(listCategoria);
+            JSONArray array = new JSONArray();
+            for ( Categoria cat : listCategoria ){
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", cat.getCodigo());
+            obj.put("nombre", cat.getNombre());
+            obj.put("codigopadre", cat.getCodigoPadre());
+            obj.put("activo", cat.getActivo());
+            array.add(obj);
+            }
+            out.print(array);
+        }
+    }
+    private void recuperarPrioridad(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             System.out.println("Entro aqui");
             CategoriaFachada catFachada = new CategoriaFachada();
