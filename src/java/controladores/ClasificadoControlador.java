@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package controladores;
 
 import fachada.CategoriaFachada;
@@ -111,8 +112,7 @@ System.out.println(request);
             art.setTitulo(request.getParameter("tituloClasificado"));
             art.setDescripcion(request.getParameter("cuerpoClasificado"));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
-            
-            art.setDescripcion(request.getParameter("precioClasificado"));
+            art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(usr);            
             art.setFechaPublicacion(null);
@@ -120,10 +120,8 @@ System.out.println(request);
             art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("finPublicacion"));
-            java.sql.Date sql = new java.sql.Date(parsed.getTime());
-            System.out.println(sql);
-            art.setFechaFinPublicacion(sql);
-            //art.setFechaFinPublicacion();
+            java.sql.Date fechaFin = new java.sql.Date(parsed.getTime());
+            art.setFechaFinPublicacion(fechaFin);
             art.setEstado(new ArticuloEstado(1));
             art.setTipoArticulo(new TipoArticulo(1));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));

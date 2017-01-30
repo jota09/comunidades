@@ -3,7 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/controladores/NoticiaControlador.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/persistencia/daos/PrioridadDAO.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/persistencia/entidades/Articulo.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/persistencia/daos/CategoriaDAO.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/persistencia/daos/GestionDAO.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/fachada/PrioridadFachada.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/controladores/ClasificadoControlador.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/persistencia/daos/ArticuloDAO.java</file>
+            <file>file:/C:/Users/jesus.ramos/Workspaces/NetBeans/Comunidades/src/java/fachada/CategoriaFachada.java</file>
         </group>
     </open-files>
 </project-private>
