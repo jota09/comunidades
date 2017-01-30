@@ -65,4 +65,10 @@ public class Categoria {
     public void setListaCategorias(List<Categoria> listaCategorias) {
         this.listaCategorias = listaCategorias;
     }
+
+    @Override
+    public String toString() {
+        return "Categoria{" + "codigo=" + codigo + ", nombre=" + nombre + ", codigopadre=" + codigopadre + ", activo=" + activo + ", listaCategorias=" + listaCategorias + '}';
+    }
+    
 }

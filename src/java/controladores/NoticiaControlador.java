@@ -80,11 +80,20 @@ public class NoticiaControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
             TipoArticulo tipArt = new TipoArticulo();
-            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));            
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
             Articulo articulo=new Articulo();
             articulo.setTipoArticulo(tipArt);
             articulo.setRango(request.getParameter("rango"));
             articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            if(request.getParameter("cat")!=null)
+            {
+                if(!request.getParameter("cat").equals(""))
+                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
+            }
+            if(request.getParameter("buscar")!=null)
+            {
+                articulo.setBusqueda(request.getParameter("buscar"));
+            }
             List<Articulo> listArticulo = artFachada.getListObject(articulo);
             JSONArray jsonArray=new JSONArray();
             for (Articulo art : listArticulo) {
@@ -118,7 +127,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setPrioridad(new Prioridad(1));//La noticia no tiene prioridad pero sin embargo se le envia el 1(baja)
             ArticuloFachada artFach = new ArticuloFachada();
             TipoArticulo tpArt = new TipoArticulo();
-            tpArt.setCodigo(1);
+            tpArt.setCodigo(2);//Tipo articulo noticia es 2
             art.setTipoArticulo(tpArt);
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
@@ -140,12 +149,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setCodigo(cod);
             ArticuloFachada artFachada = new ArticuloFachada();
             art = (Articulo) artFachada.getObject(art);
-            //System.out.println("codigo:"+cod);
-            /*Categoria cat=new Categoria();
-            cat.setCodigo(25);
-            cat.setNombre("Prueba JSON");*/
             JSONObject obj = new JSONObject();
-            //obj.put("nombres", cat.getNombre());
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
             obj.put("titulo", art.getTitulo());
@@ -157,7 +161,6 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
             obj.put("activo", art.getActivo());
-            System.out.println("JSON: " + obj);
             out.print(obj);
         }
     }
@@ -168,7 +171,7 @@ public class NoticiaControlador extends HttpServlet {
             Articulo art = new Articulo();
             art.setCodigo(cod);
             TipoArticulo tpArt=new TipoArticulo();
-            tpArt.setCodigo(1);
+            tpArt.setCodigo(2);//Tipo articulo noticia es 2
             art.setTipoArticulo(tpArt);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);            
@@ -187,6 +190,7 @@ public class NoticiaControlador extends HttpServlet {
             out.print(Utilitaria.construirCategorias(catFachada.getListObject()));          
         }
     }
+        
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

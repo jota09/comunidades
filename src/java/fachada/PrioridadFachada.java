@@ -17,8 +17,8 @@ public class PrioridadFachada implements GestionFachada {
 
     @Override
     public List getListObject(Object rango) {
-        GestionDAO catDAO = new PrioridadDAO();
-        return catDAO.getListObject(rango);
+        GestionDAO prioDAO = new PrioridadDAO();
+        return prioDAO.getListObject(rango);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class PrioridadFachada implements GestionFachada {
 
     @Override
     public List getListObject() {
-        GestionDAO catDAO = new PrioridadDAO();
-        return catDAO.getListObject();
+        GestionDAO prioDAO = new PrioridadDAO();
+        return prioDAO.getListObject();
     }
 }

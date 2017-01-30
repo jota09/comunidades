@@ -47,6 +47,7 @@ public class CategoriaDAO implements GestionDAO{
                 cat.setCodigo(rS.getInt("codigo"));
                 cat.setCodigoPadre(rS.getInt("codigo_padre"));
                 cat.setNombre(rS.getString("nombre"));
+                cat.setActivo(rS.getShort("activo"));
                 cat.setListaCategorias(getHijos(cat.getCodigo()));
                 listCategoria.add(cat);
             }

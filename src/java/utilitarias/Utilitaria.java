@@ -36,7 +36,7 @@ public class Utilitaria {
         return imprime;
     }
 
-    public static String construirCategorias(List<Categoria> listCategoria) {
+    /*public static String construirCategorias(List<Categoria> listCategoria) {
         String imprime = "";
         for (Categoria cat : listCategoria) {
             imprime += "<li class='liPersonalizada'><input type=\"radio\" "
@@ -49,6 +49,18 @@ public class Utilitaria {
                 imprime += "</ul>";
             }
             imprime += "</li>";
+        }
+        return imprime;
+    }*/
+    
+    public static String construirCategorias(List<Categoria> listCategoria) {
+        String imprime = "";        
+        for (Categoria cat : listCategoria) {
+            imprime += "<option value='"+ cat.getCodigo()+"'>"
+                    + cat.getNombre() + "</option>";
+            if (cat.getListaCategorias().size() > 0) {
+                imprime += construirCategorias(cat.getListaCategorias());                
+            }            
         }
         return imprime;
     }

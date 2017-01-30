@@ -13,6 +13,10 @@ public class TipoArticulo {
     public TipoArticulo() {
     }
 
+    public TipoArticulo(int codigo) {
+        this.codigo = codigo;
+    }
+    
     public int getCodigo() {
         return this.codigo;
     }
@@ -52,4 +56,10 @@ public class TipoArticulo {
     public void setListaArticulos(List<Articulo> listaArticulos) {
         this.listaArticulos = listaArticulos;
     }
+
+    @Override
+    public String toString() {
+        return "TipoArticulo{" + "codigo=" + codigo + ", nombre=" + nombre + ", activo=" + activo + ", listaArticulos=" + listaArticulos + ", rango=" + rango + '}';
+    }
+    
 }

@@ -68,13 +68,23 @@ public class ArticuloDAO implements GestionDAO {
         Articulo articulo = (Articulo) obj;
         ArrayList<Articulo> listArt = new ArrayList<Articulo>();
         String rango = "";
+        String categoria="";
+        String like="";
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
             if (!articulo.getRango().isEmpty()) {
-                rango = "limit " + articulo.getRango();
+                rango = "LIMIT " + articulo.getRango();
             } else {
                 rango = "";
+            }
+            if(articulo.getCategoria()!=null)
+            {
+                categoria=" AND art.categoria_codigo=? ";
+            }
+            if(articulo.getBusqueda()!=null)
+            {
+                like=" AND titulo LIKE '%"+articulo.getBusqueda()+"%' ";
             }
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
                     + "artEstado.codigo,artEstado.nombre nombreEstado"
@@ -82,11 +92,17 @@ public class ArticuloDAO implements GestionDAO {
                     + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE art.tipo_articulo_codigo=? and art.usuario_codigo=? "
+                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? "
+                    + categoria
+                    + like
                     + rango;
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
+            if(articulo.getCategoria()!=null)
+            {
+                pS.setInt(3, articulo.getCategoria().getCodigo());
+            }
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
@@ -141,7 +157,7 @@ public class ArticuloDAO implements GestionDAO {
             pS.setString(3, art.getDescripcion());
             pS.setTimestamp(4, art.getFechaPublicacion());
             pS.setDouble(5, art.getPrecio());
-            pS.setTimestamp(6, art.getFechaFinPublicacion());
+            pS.setDate(6, art.getFechaFinPublicacion());
             pS.setInt(7, art.getPrioridad().getCodigo());
             pS.setInt(8, art.getEstado().getCodigo());
             pS.setInt(9, art.getTipoArticulo().getCodigo());
