@@ -4,8 +4,8 @@ public class VistaAtributo {
 
     private int codigo;
     private String valor;
-    private int vistacodigo;
-    private int atributocodigo;
+    private Vista vistacodigo;
+    private Atributo atributocodigo;
     private short activo;
 
     public VistaAtributo() {
@@ -27,19 +27,19 @@ public class VistaAtributo {
         this.valor = valor;
     }
 
-    public int getVistaCodigo() {
+    public Vista getVistaCodigo() {
         return this.vistacodigo;
     }
 
-    public void setVistaCodigo(int vistacodigo) {
+    public void setVistaCodigo(Vista vistacodigo) {
         this.vistacodigo = vistacodigo;
     }
 
-    public int getAtributoCodigo() {
+    public Atributo getAtributoCodigo() {
         return this.atributocodigo;
     }
 
-    public void setAtributoCodigo(int atributocodigo) {
+    public void setAtributoCodigo(Atributo atributocodigo) {
         this.atributocodigo = atributocodigo;
     }
 

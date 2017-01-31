@@ -39,7 +39,7 @@ public class CategoriaDAO implements GestionDAO{
         try
         {
             con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM categoria WHERE activo=1";
+            String query="SELECT * FROM categoria WHERE activo=1 and codigo_padre is null";
             PreparedStatement pS=con.prepareStatement(query);
             ResultSet rS=pS.executeQuery();            
             while(rS.next()){
@@ -47,7 +47,6 @@ public class CategoriaDAO implements GestionDAO{
                 cat.setCodigo(rS.getInt("codigo"));
                 cat.setCodigoPadre(rS.getInt("codigo_padre"));
                 cat.setNombre(rS.getString("nombre"));
-                cat.setActivo(rS.getShort("activo"));
                 cat.setListaCategorias(getHijos(cat.getCodigo()));
                 listCategoria.add(cat);
             }
