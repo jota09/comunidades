@@ -73,6 +73,10 @@ public class AtributoControlador extends HttpServlet {
                 elimiarVistaAtributo(request, response);
                 break;
             }
+            case 8: {
+                getAtributosConCondicion(request, response);
+                break;
+            }
         }
 
     }
@@ -84,6 +88,23 @@ public class AtributoControlador extends HttpServlet {
         vistaAtributo.setCodigo(codVistaAtributo);
         vistaAtributoFachada.deleteObject(vistaAtributo);
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino Correctamente la Asociación", "success"));
+    }
+
+    public void getAtributosConCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String condicion = request.getParameter("condicion");
+            JSONArray arrayAtributos = new JSONArray();
+            GestionFachada atributoFachada = new AtributoFachada();
+            List<Atributo> atributos = atributoFachada.getListByCondition(condicion);
+            for (Atributo atributo : atributos) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", atributo.getCodigo());
+                obj.put("referencia", atributo.getReferencia());
+                arrayAtributos.add(obj);
+            }
+            out.print(arrayAtributos);
+
+        }
     }
 
     public void getAtributos(HttpServletRequest request, HttpServletResponse response) throws IOException {

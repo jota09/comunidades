@@ -1,4 +1,3 @@
-
 package persistencia.daos;
 
 import java.sql.Connection;
@@ -17,7 +16,7 @@ import persistencia.entidades.Perfil;
  *
  * @author ferney.medina
  */
-public class MenuDAO implements GestionDAO{
+public class MenuDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
@@ -26,19 +25,18 @@ public class MenuDAO implements GestionDAO{
 
     @Override
     public List getListObject(Object object) {
-        Perfil perfil=(Perfil)object;        
-        ArrayList<Menu> listaMenus=new ArrayList<Menu>();
-        Connection con=null;
-        try{
-            con=ConexionBD.obtenerConexion();
-            String sql="SELECT men.* FROM perfil_menu pfM "
+        Perfil perfil = (Perfil) object;
+        ArrayList<Menu> listaMenus = new ArrayList<Menu>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT men.* FROM perfil_menu pfM "
                     + "JOIN menu men ON men.codigo=pfM.menu_codigo where pfM.perfil_codigo=? and men.codigo_padre is null";
-            PreparedStatement pS=con.prepareStatement(sql);
+            PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, perfil.getCodigo());
-            ResultSet rS=pS.executeQuery();
-            while(rS.next())
-            {                
-                Menu menu=new Menu();
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Menu menu = new Menu();
                 menu.setCodigo(rS.getInt("codigo"));
                 menu.setCodigoPadre(rS.getInt("codigo_padre"));
                 menu.setNombre(rS.getString("nombre"));
@@ -48,11 +46,9 @@ public class MenuDAO implements GestionDAO{
             }
             rS.close();
             pS.close();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
@@ -61,21 +57,20 @@ public class MenuDAO implements GestionDAO{
         }
         return listaMenus;
     }
-    
-    private List<Menu> getHijos(int codMenu, int codPerfil){                
-        ArrayList<Menu> listaMenus=new ArrayList<Menu>();
-        Connection con=null;
-        try{
-            con=ConexionBD.obtenerConexion();
-            String sql="SELECT men.* FROM perfil_menu pfM "
+
+    private List<Menu> getHijos(int codMenu, int codPerfil) {
+        ArrayList<Menu> listaMenus = new ArrayList<Menu>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT men.* FROM perfil_menu pfM "
                     + "JOIN menu men ON men.codigo=pfM.menu_codigo where pfM.perfil_codigo=? and men.codigo_padre=?";
-            PreparedStatement pS=con.prepareStatement(sql);
+            PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, codPerfil);
             pS.setInt(2, codMenu);
-            ResultSet rS=pS.executeQuery();
-            while(rS.next())
-            {                
-                Menu menu=new Menu();
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Menu menu = new Menu();
                 menu.setCodigo(rS.getInt("codigo"));
                 menu.setCodigoPadre(rS.getInt("codigo_padre"));
                 menu.setNombre(rS.getString("nombre"));
@@ -85,11 +80,9 @@ public class MenuDAO implements GestionDAO{
             }
             rS.close();
             pS.close();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
@@ -113,13 +106,24 @@ public class MenuDAO implements GestionDAO{
     public List getListObject() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        @Override
+
+    @Override
     public int getCount(Object obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void deleteObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByCondition(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

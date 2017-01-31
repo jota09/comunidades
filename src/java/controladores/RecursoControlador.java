@@ -204,7 +204,6 @@ public class RecursoControlador extends HttpServlet {
                 recurso.setCodigo(Integer.parseInt(codRecurso));
                 if (recursoFacade.updateObject(recurso) > 0) {
                     request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Actualizo el Recurso", "success"));
-
                 } else {
                     request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "No Se Actualizo el Recurso", "success"));
                 }

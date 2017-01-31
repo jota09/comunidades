@@ -6,7 +6,7 @@ public class Atributo {
     private String referencia;
     private short activo;
     private String valor;
-
+    private String condicion;
 
     public Atributo() {
     }
@@ -33,7 +33,8 @@ public class Atributo {
 
     public void setActivo(short activo) {
         this.activo = activo;
-    }    
+    }
+
     public String getValor() {
         return valor;
     }
@@ -41,4 +42,13 @@ public class Atributo {
     public void setValor(String valor) {
         this.valor = valor;
     }
+
+    public String getCondicion() {
+        return condicion;
+    }
+
+    public void setCondicion(String condicion) {
+        this.condicion = condicion;
+    }
+
 }

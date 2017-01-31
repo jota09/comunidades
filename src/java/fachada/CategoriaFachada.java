@@ -51,4 +51,15 @@ public class CategoriaFachada implements GestionFachada {
         GestionDAO catDAO = new CategoriaDAO();
         return catDAO.getListObject();
     }
+
+    @Override
+    public List getListByCondition(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByPagination(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

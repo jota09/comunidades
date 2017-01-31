@@ -151,4 +151,34 @@ public class AtributoDAO implements GestionDAO {
 
     }
 
+    @Override
+    public List getListByCondition(Object object) {
+        Connection con = null;
+        String condicion = String.valueOf(object);
+        List<Atributo> atributos = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "select * from atributo where referencia like ?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, condicion+"%");
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Atributo atributo = new Atributo();
+                atributo.setCodigo(rS.getInt(1));
+                atributo.setReferencia(rS.getString(2));
+                atributos.add(atributo);
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return atributos;
+    }
+
+    @Override
+    public List getListByPagination(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

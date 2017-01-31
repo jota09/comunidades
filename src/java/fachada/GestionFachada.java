@@ -26,4 +26,8 @@ public interface GestionFachada {
     public int updateObject(Object object);
 
     public void deleteObject(Object object);
+
+    public List getListByCondition(Object object);
+
+    public List getListByPagination(Object object);
 }

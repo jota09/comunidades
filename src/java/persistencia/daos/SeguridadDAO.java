@@ -19,7 +19,7 @@ import persistencia.entidades.SeguridadUsuario;
  *
  * @author ferney.medina
  */
-public class SeguridadDAO implements GestionDAO{
+public class SeguridadDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
@@ -33,23 +33,22 @@ public class SeguridadDAO implements GestionDAO{
 
     @Override
     public int updateObject(Object object) {
-        SeguridadUsuario sgdadUsr=(SeguridadUsuario)object;
-        String sql="UPDATE seguridad_usuario SET ip_ultima_sesion=?, fecha_ultima_sesion=now() WHERE codigo=? ";
-        int resultado=0;
-        Connection  con=null;
-        try {            
-            con=ConexionBD.obtenerConexion();
-            PreparedStatement pS=con.prepareStatement(sql);
-            pS.setString(1,sgdadUsr.getIpUltimaSesion());
-            pS.setInt(2,sgdadUsr.getCodigo());
+        SeguridadUsuario sgdadUsr = (SeguridadUsuario) object;
+        String sql = "UPDATE seguridad_usuario SET ip_ultima_sesion=?, fecha_ultima_sesion=now() WHERE codigo=? ";
+        int resultado = 0;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, sgdadUsr.getIpUltimaSesion());
+            pS.setInt(2, sgdadUsr.getCodigo());
             pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally{
+        } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
@@ -68,13 +67,24 @@ public class SeguridadDAO implements GestionDAO{
     public List getListObject() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        @Override
+
+    @Override
     public int getCount(Object obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void deleteObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByCondition(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

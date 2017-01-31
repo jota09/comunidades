@@ -19,28 +19,27 @@ import persistencia.entidades.Perfil;
  *
  * @author ferney.medina
  */
-public class PerfilDAO implements GestionDAO{
+public class PerfilDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        Perfil perfil=(Perfil)object;
-        Connection con=null;
-        try{
-            con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM perfil WHERE codigo=?";
-            PreparedStatement pS=con.prepareStatement(query);
-            pS.setInt(1,perfil.getCodigo());
-            ResultSet rS=pS.executeQuery();
-            if(rS.next()){
+        Perfil perfil = (Perfil) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT * FROM perfil WHERE codigo=?";
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setInt(1, perfil.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
                 perfil.setCodigo(rS.getInt("codigo"));
                 perfil.setNombre(rS.getString("nombre"));
             }
             rS.close();
             pS.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
@@ -69,13 +68,24 @@ public class PerfilDAO implements GestionDAO{
     public List getListObject() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        @Override
+
+    @Override
     public int getCount(Object obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void deleteObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByCondition(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -54,4 +54,15 @@ public class AtributoFachada implements GestionFachada {
         return atributoDAO.getListObject();
     }
 
+    @Override
+    public List getListByCondition(Object object) {
+        GestionDAO atributoDAO = new AtributoDAO();
+        return atributoDAO.getListByCondition(object);
+    }
+
+    @Override
+    public List getListByPagination(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

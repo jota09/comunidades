@@ -20,7 +20,7 @@ import persistencia.entidades.Categoria;
  *
  * @author ferney.medina
  */
-public class CategoriaDAO implements GestionDAO{
+public class CategoriaDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
@@ -31,19 +31,18 @@ public class CategoriaDAO implements GestionDAO{
     public List getListObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List getListObject() {
-        ArrayList<Categoria> listCategoria=new ArrayList<Categoria>();                
-        Connection con=null;
-        try
-        {
-            con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM categoria WHERE activo=1 and codigo_padre is null";
-            PreparedStatement pS=con.prepareStatement(query);
-            ResultSet rS=pS.executeQuery();            
-            while(rS.next()){
-                Categoria cat=new Categoria();
+        ArrayList<Categoria> listCategoria = new ArrayList<Categoria>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT * FROM categoria WHERE activo=1 and codigo_padre is null";
+            PreparedStatement pS = con.prepareStatement(query);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Categoria cat = new Categoria();
                 cat.setCodigo(rS.getInt("codigo"));
                 cat.setCodigoPadre(rS.getInt("codigo_padre"));
                 cat.setNombre(rS.getString("nombre"));
@@ -52,12 +51,9 @@ public class CategoriaDAO implements GestionDAO{
             }
             rS.close();
             pS.close();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
@@ -65,20 +61,19 @@ public class CategoriaDAO implements GestionDAO{
             }
         }
         return listCategoria;
-    }   
+    }
 
-    private List<Categoria> getHijos(int codMenu){                
-        ArrayList<Categoria> listaCategorias=new ArrayList<Categoria>();
-        Connection con=null;
-        try{
-            con=ConexionBD.obtenerConexion();
-            String sql="SELECT * FROM categoria where codigo_padre=? and codigo_padre is not null";
-            PreparedStatement pS=con.prepareStatement(sql);
+    private List<Categoria> getHijos(int codMenu) {
+        ArrayList<Categoria> listaCategorias = new ArrayList<Categoria>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT * FROM categoria where codigo_padre=? and codigo_padre is not null";
+            PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, codMenu);
-            ResultSet rS=pS.executeQuery();
-            while(rS.next())
-            {                
-                Categoria cat=new Categoria();
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Categoria cat = new Categoria();
                 cat.setCodigo(rS.getInt("codigo"));
                 cat.setCodigoPadre(rS.getInt("codigo_padre"));
                 cat.setNombre(rS.getString("nombre"));
@@ -87,11 +82,9 @@ public class CategoriaDAO implements GestionDAO{
             }
             rS.close();
             pS.close();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
@@ -100,7 +93,7 @@ public class CategoriaDAO implements GestionDAO{
         }
         return listaCategorias;
     }
-    
+
     @Override
     public int updateObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -110,13 +103,24 @@ public class CategoriaDAO implements GestionDAO{
     public int insertObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        @Override
+
+    @Override
     public int getCount(Object obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void deleteObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByCondition(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
