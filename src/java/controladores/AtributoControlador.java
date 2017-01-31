@@ -22,6 +22,7 @@ import org.json.simple.JSONObject;
 import persistencia.entidades.Atributo;
 import persistencia.entidades.Vista;
 import persistencia.entidades.VistaAtributo;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -68,8 +69,21 @@ public class AtributoControlador extends HttpServlet {
                 asociarAtributoVista(request, response);
                 break;
             }
+            case 7: {
+                elimiarVistaAtributo(request, response);
+                break;
+            }
         }
 
+    }
+
+    public void elimiarVistaAtributo(HttpServletRequest request, HttpServletResponse response) {
+        GestionFachada vistaAtributoFachada = new VistaAtributoFachada();
+        int codVistaAtributo = Integer.parseInt(request.getParameter("codigo"));
+        VistaAtributo vistaAtributo = new VistaAtributo();
+        vistaAtributo.setCodigo(codVistaAtributo);
+        vistaAtributoFachada.deleteObject(vistaAtributo);
+        request.getSession(false).setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino Correctamente la Asociación", "success"));
     }
 
     public void getAtributos(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -102,7 +116,11 @@ public class AtributoControlador extends HttpServlet {
             vistaAtributo.setVistaCodigo(vista);
             vistaAtributo.setAtributoCodigo(atributo);
             vistaAtributo.setValor(valor);
-            vistaAtributoFachada.insertObject(vistaAtributo);
+            if (vistaAtributoFachada.insertObject(vistaAtributo) > 1) {
+                request.getSession(false).setAttribute("message", Utilitaria.createAlert("Exito", "Se Asocio Correctamente el Atributo", "success"));
+            } else {
+                request.getSession(false).setAttribute("message", Utilitaria.createAlert("Error", "No se Asocio Correctamente el Atributo", "danger"));
+            }
         }
     }
 
@@ -110,7 +128,13 @@ public class AtributoControlador extends HttpServlet {
         GestionFachada atributoFachada = new AtributoFachada();
         Atributo atributo = new Atributo();
         atributo.setReferencia(request.getParameter("referencia"));
-        atributoFachada.insertObject(atributo);
+        int valida=atributoFachada.insertObject(atributo);
+        System.out.println("valida:"+valida);
+        if (valida > 0) {
+            request.getSession(false).setAttribute("message", Utilitaria.createAlert("Exito", "Se Creo Correctamente el Atributo", "success"));
+        } else {
+            request.getSession(false).setAttribute("message", Utilitaria.createAlert("Error", "Fallo Creacion del Atributo", "danger"));
+        }
     }
 
     public void eliminarAtributo(HttpServletRequest request, HttpServletResponse response) {

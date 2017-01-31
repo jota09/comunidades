@@ -115,7 +115,26 @@ public class VistaAtributoDAO implements GestionDAO {
 
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        VistaAtributo vistaAtributo = (VistaAtributo) object;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "delete from vista_atributo where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, vistaAtributo.getCodigo());
+            pS.execute();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
 }

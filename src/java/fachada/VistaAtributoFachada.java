@@ -14,42 +14,43 @@ import persistencia.daos.VistaAtributoDAO;
  * @author manuel.alcala
  */
 public class VistaAtributoFachada implements GestionFachada {
-
+    
     @Override
     public int getCount(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public Object getObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public int insertObject(Object object) {
         GestionDAO vistaAtributoDAO = new VistaAtributoDAO();
         return vistaAtributoDAO.insertObject(object);
     }
-
+    
     @Override
     public List getListObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public List getListObject() {
         GestionDAO vistaAtributoDAO = new VistaAtributoDAO();
         return vistaAtributoDAO.getListObject();
     }
-
+    
     @Override
     public int updateObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO vistaAtributoDAO = new VistaAtributoDAO();
+        vistaAtributoDAO.deleteObject(object);
     }
-
+    
 }

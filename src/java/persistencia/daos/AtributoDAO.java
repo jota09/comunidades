@@ -102,7 +102,7 @@ public class AtributoDAO implements GestionDAO {
         int tamano = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Insert into atributo(referencia) values(?)";
+            String sql = "Inserts into atributo(referencia) values(?)";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setString(1, atributo.getReferencia());
             tamano = pS.executeUpdate();
