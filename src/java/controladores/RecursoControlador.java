@@ -145,7 +145,7 @@ public class RecursoControlador extends HttpServlet {
         GestionFachada recursoFacade = new RecursoFachada();
         try (PrintWriter out = response.getWriter()) {
             JSONArray arrayRecursos = new JSONArray();
-            List<Recurso> recursos = (List<Recurso>) recursoFacade.getListObject();
+            List<Recurso> recursos = recursoFacade.getListObject();
             for (Recurso r : recursos) {
                 JSONObject obj = new JSONObject();
                 obj.put("codigo", r.getCodigo());

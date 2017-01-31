@@ -28,7 +28,8 @@ public class AtributoFachada implements GestionFachada {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO atributoDAO = new AtributoDAO();
+        return atributoDAO.insertObject(object);
     }
 
     @Override
@@ -43,12 +44,14 @@ public class AtributoFachada implements GestionFachada {
 
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO atributoDAO = new AtributoDAO();
+        atributoDAO.deleteObject(object);
     }
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO atributoDAO = new AtributoDAO();
+        return atributoDAO.getListObject();
     }
 
 }

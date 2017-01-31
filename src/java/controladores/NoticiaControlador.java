@@ -7,26 +7,14 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
-import fachada.TipoMultimediaFachada;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.RequestContext;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 import org.json.simple.JSONArray;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
@@ -34,10 +22,7 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 import org.json.simple.JSONObject;
-import persistencia.entidades.Multimedia;
 import persistencia.entidades.Prioridad;
-import persistencia.entidades.TipoMultimedia;
-import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 //Prueba de que ya sincronizo el proyecto con alejandro
 //Prueba de que ya sincronizo el proyecto con manuel
@@ -59,7 +44,7 @@ public class NoticiaControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, FileUploadException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         if(request.getParameter("op")!=null)
         {
@@ -155,15 +140,11 @@ public class NoticiaControlador extends HttpServlet {
                 artFach.updateObject(art);
             }
         }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo la noticia", "success"));
     }
 
-    private void editarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
+    private void editarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-            if (isMultipart) {
-                System.out.println("entro a lectura de archivos");
-                subirArchivo(request,response);
-            }
             int cod = Integer.parseInt(request.getParameter("cod"));
             Articulo art = new Articulo();
             art.setCodigo(cod);
@@ -211,52 +192,6 @@ public class NoticiaControlador extends HttpServlet {
         }
     }
         
-    private void subirArchivo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException
-    {        
-        try (PrintWriter out = response.getWriter()) {                    
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            RequestContext requestContext = new ServletRequestContext(request);
-            ServletContext servletContext = this.getServletConfig().getServletContext();
-            File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
-            factory.setRepository(repository);
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            List<FileItem> items = upload.parseRequest(requestContext);
-            Iterator iterator = items.iterator();
-            int cod = Integer.parseInt(request.getParameter("cod"));
-            
-            while(iterator.hasNext()) {
-                FileItem fil = (FileItem) iterator.next();
-                String extension = fil.getName();
-                int startExtension = extension.indexOf(".") + 1;
-                extension = extension.substring(startExtension, extension.length());                               
-                String ruta=LecturaConfig.getValue("upload");
-                File dir=new File(ruta);
-                if(!dir.exists())
-                    dir.mkdirs();//la diferenecia con mkdir es que con esta instrucción crea toda la ruta
-                String nuevaRuta=dir+File.separator+fil.getName(); 
-                Multimedia multimedia=new Multimedia();
-                multimedia.setArticuloCodigo(cod);
-                multimedia.setNombre(fil.getName());
-                TipoMultimediaFachada tpMultFach=new TipoMultimediaFachada();
-                List<TipoMultimedia> listTipMult=tpMultFach.getListObject("imagen");
-                for(TipoMultimedia tpList:listTipMult)
-                {
-                    if(tpList.getExtension().equals(extension))
-                    {
-                        
-                    }
-                    else
-                    {
-                        System.out.print("FORMATO NO VÁLIDO");
-                    }
-                }
-                /*ArchivoFachada  achFachada=new ArchivoFachada();
-                achFachada.insertObject(arch);
-                File files=new File(nuevaRuta);
-                fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta */               
-                }            
-            }        
-    }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -270,11 +205,7 @@ public class NoticiaControlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (FileUploadException ex) {
-            Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -288,11 +219,7 @@ public class NoticiaControlador extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (FileUploadException ex) {
-            Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
