@@ -120,9 +120,9 @@ public class ClasificadoControlador extends HttpServlet {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("finPublicacion"));
             java.sql.Date fechaFin = new java.sql.Date(parsed.getTime());
-            art.setFechaFinPublicacion(fechaFin);
+            //art.setFechaFinPublicacion(fechaFin);
             art.setEstado(new ArticuloEstado(1));
-            art.setTipoArticulo(new TipoArticulo(1));
+            //art.setTipoArticulo(new TipoArticulo(1));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
             ArticuloFachada artFach = new ArticuloFachada();
             artFach.insertObject(art);
