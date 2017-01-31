@@ -22,6 +22,7 @@ import org.json.simple.JSONObject;
 import persistencia.entidades.Recurso;
 import persistencia.entidades.RecursoVista;
 import persistencia.entidades.Vista;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -82,18 +83,22 @@ public class RecursoControlador extends HttpServlet {
     }
 
     public void asociarRecursoAVista(HttpServletRequest request, HttpServletResponse response) {
-        int codRecurso=Integer.parseInt(request.getParameter("codRecurso"));
-        int codVista=Integer.parseInt(request.getParameter("codVista"));
-        Recurso recurso=new Recurso();
+        int codRecurso = Integer.parseInt(request.getParameter("codRecurso"));
+        int codVista = Integer.parseInt(request.getParameter("codVista"));
+        Recurso recurso = new Recurso();
         recurso.setCodigo(codRecurso);
-        Vista vista=new Vista();
+        Vista vista = new Vista();
         vista.setCodigo(codVista);
-        RecursoVista recursoVista=new RecursoVista();
+        RecursoVista recursoVista = new RecursoVista();
         recursoVista.setRecursoCodigo(recurso);
         recursoVista.setVistaCodigo(vista);
-        GestionFachada recursoVistaFachada=new RecursoVistaFachada();
-        recursoVistaFachada.insertObject(recursoVista);
-        
+        GestionFachada recursoVistaFachada = new RecursoVistaFachada();
+        if (recursoVistaFachada.insertObject(recursoVista) > 0) {
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Asocio el Recurso", "success"));
+        } else {
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "No se Asocio el Recurso", "danger"));
+        }
+
     }
 
     public void getVistas(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -116,6 +121,7 @@ public class RecursoControlador extends HttpServlet {
         Recurso recurso = new Recurso();
         recurso.setCodigo(Integer.parseInt(request.getParameter("cod")));
         recursoFacade.deleteObject(recurso);
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino el Recurso", "success"));
 
     }
 
@@ -124,6 +130,7 @@ public class RecursoControlador extends HttpServlet {
         RecursoVista recursoVista = new RecursoVista();
         recursoVista.setCodigo(Integer.parseInt(request.getParameter("cod")));
         recursoVistaFacade.deleteObject(recursoVista);
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino la Asociacion", "success"));
 
     }
 
@@ -187,10 +194,20 @@ public class RecursoControlador extends HttpServlet {
             recurso.setRuta(rutaRecurso);
             recurso.setActivo((short) 1);
             if (codRecurso.equals("")) {
-                recursoFacade.insertObject(recurso);
+                if (recursoFacade.insertObject(recurso) > 0) {
+                    request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Agrego el Nuevo Recurso", "success"));
+                } else {
+                    request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "No Se Pudo Agregar el Nuevo Recurso", "danger"));
+                }
+
             } else {
                 recurso.setCodigo(Integer.parseInt(codRecurso));
-                recursoFacade.updateObject(recurso);
+                if (recursoFacade.updateObject(recurso) > 0) {
+                    request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Actualizo el Recurso", "success"));
+
+                } else {
+                    request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "No Se Actualizo el Recurso", "success"));
+                }
             }
         }
     }

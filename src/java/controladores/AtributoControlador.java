@@ -83,7 +83,7 @@ public class AtributoControlador extends HttpServlet {
         VistaAtributo vistaAtributo = new VistaAtributo();
         vistaAtributo.setCodigo(codVistaAtributo);
         vistaAtributoFachada.deleteObject(vistaAtributo);
-        request.getSession(false).setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino Correctamente la Asociación", "success"));
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino Correctamente la Asociación", "success"));
     }
 
     public void getAtributos(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -116,10 +116,10 @@ public class AtributoControlador extends HttpServlet {
             vistaAtributo.setVistaCodigo(vista);
             vistaAtributo.setAtributoCodigo(atributo);
             vistaAtributo.setValor(valor);
-            if (vistaAtributoFachada.insertObject(vistaAtributo) > 1) {
-                request.getSession(false).setAttribute("message", Utilitaria.createAlert("Exito", "Se Asocio Correctamente el Atributo", "success"));
+            if (vistaAtributoFachada.insertObject(vistaAtributo) > 0) {
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Asocio el Atributo", "success"));
             } else {
-                request.getSession(false).setAttribute("message", Utilitaria.createAlert("Error", "No se Asocio Correctamente el Atributo", "danger"));
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "No se Asocio el Atributo", "danger"));
             }
         }
     }
@@ -128,12 +128,11 @@ public class AtributoControlador extends HttpServlet {
         GestionFachada atributoFachada = new AtributoFachada();
         Atributo atributo = new Atributo();
         atributo.setReferencia(request.getParameter("referencia"));
-        int valida=atributoFachada.insertObject(atributo);
-        System.out.println("valida:"+valida);
+        int valida = atributoFachada.insertObject(atributo);
         if (valida > 0) {
-            request.getSession(false).setAttribute("message", Utilitaria.createAlert("Exito", "Se Creo Correctamente el Atributo", "success"));
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Creo el Atributo", "success"));
         } else {
-            request.getSession(false).setAttribute("message", Utilitaria.createAlert("Error", "Fallo Creacion del Atributo", "danger"));
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "Fallo Creacion del Atributo", "danger"));
         }
     }
 
@@ -142,6 +141,7 @@ public class AtributoControlador extends HttpServlet {
         Atributo atributo = new Atributo();
         atributo.setCodigo(Integer.parseInt(request.getParameter("codigo")));
         atributoFachada.deleteObject(atributo);
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino el Atributo", "success"));
     }
 
     public void getVistas(HttpServletRequest request, HttpServletResponse response) throws IOException {

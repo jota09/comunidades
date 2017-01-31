@@ -102,20 +102,20 @@ public class AtributoDAO implements GestionDAO {
         int tamano = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Inserts into atributo(referencia) values(?)";
+            String sql = "Insert into atributo(referencia) values(?)";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setString(1, atributo.getReferencia());
             tamano = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error:" + ex.getMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error:" + ex.getMessage());
         } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
-                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error:" + ex.getMessage());
             }
         }
         return tamano;
@@ -138,14 +138,14 @@ public class AtributoDAO implements GestionDAO {
             pS.execute();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error:" + ex.getMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error:" + ex.getMessage());
         } finally {
             try {
                 con.close();
             } catch (SQLException ex) {
-                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error:" + ex.getMessage());
             }
         }
 

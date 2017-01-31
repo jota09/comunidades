@@ -25,7 +25,7 @@ import persistencia.entidades.Vista;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 
-@WebServlet( urlPatterns = {"/"})
+@WebServlet(urlPatterns = {"/"})
 public class GeneradorView extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -33,8 +33,8 @@ public class GeneradorView extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         String view = (String) session.getAttribute("view");//getAttribute("view");
-        if(view==null){
-            view=request.getParameter("view");
+        if (view == null) {
+            view = request.getParameter("view");
         }
         session.removeAttribute("view");
         try (PrintWriter out = response.getWriter()) {
@@ -46,7 +46,7 @@ public class GeneradorView extends HttpServlet {
             Vista vista = new Vista();
             vista.setUrl(view);
             vista = (Vista) vistaFachada.getObject(vista);
-            rutaView += vista.getCodigo()+".view";
+            rutaView += vista.getCodigo() + ".view";
             File file = new File(rutaView);
             FileReader fR = new FileReader(file);
             BufferedReader bR = new BufferedReader(fR);
@@ -75,12 +75,12 @@ public class GeneradorView extends HttpServlet {
                 pagina = pagina.replace("<@message@>", "");
             }
             if (view.equals("menuprincipal.html") && session.getAttribute("user") != null) {
-                Usuario user=(Usuario)session.getAttribute("user");
+                Usuario user = (Usuario) session.getAttribute("user");
                 Perfil pf = new Perfil();
                 pf.setCodigo(user.getPerfilCodigo());
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(pf);
-                pagina=pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
+                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
             }
             out.print(pagina);
         }
