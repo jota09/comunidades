@@ -140,6 +140,7 @@ public class NoticiaControlador extends HttpServlet {
                 artFach.updateObject(art);
             }
         }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo la noticia", "success"));
     }
 
     private void editarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
