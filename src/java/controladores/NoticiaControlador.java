@@ -238,7 +238,18 @@ public class NoticiaControlador extends HttpServlet {
                 multimedia.setArticuloCodigo(cod);
                 multimedia.setNombre(fil.getName());
                 TipoMultimediaFachada tpMultFach=new TipoMultimediaFachada();
-                tpMultFach.getListObject("imagen");
+                List<TipoMultimedia> listTipMult=tpMultFach.getListObject("imagen");
+                for(TipoMultimedia tpList:listTipMult)
+                {
+                    if(tpList.getExtension().equals(extension))
+                    {
+                        
+                    }
+                    else
+                    {
+                        System.out.print("FORMATO NO VÁLIDO");
+                    }
+                }
                 /*ArchivoFachada  achFachada=new ArchivoFachada();
                 achFachada.insertObject(arch);
                 File files=new File(nuevaRuta);
