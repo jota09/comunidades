@@ -15,9 +15,6 @@ public class Prioridad {
     private int valor;
     private short activo;
 
-    public Prioridad() {
-    }
-
     public Prioridad(int codigo) {
         this.codigo = codigo;
     }    
@@ -60,10 +57,7 @@ public class Prioridad {
     public void setActivo(short activo) {
         this.activo = activo;
     }
-
-    @Override
-    public String toString() {
-        return "Prioridad{" + "codigo=" + codigo + ", nombre=" + nombre + ", valor=" + valor + ", activo=" + activo + '}';
-    }
+    
+    
     
 }

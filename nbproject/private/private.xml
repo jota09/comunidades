@@ -6,13 +6,13 @@
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/fachada/ArticuloFachada.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/entidades/Articulo.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/entidades/Multimedia.java</file>
+            <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/daos/MultimediaDAO.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/daos/ArticuloDAO.java</file>
+            <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/fachada/TipoMultimediaFachada.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/entidades/Categoria.java</file>
-            <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/entidades/TipoMultimedia.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/daos/TipoMultimediaDAO.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/persistencia/daos/CategoriaDAO.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/utilitarias/Utilitaria.java</file>
-            <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/controladores/GeneradorView.java</file>
             <file>file:/C:/Users/ferney.medina/Documents/NetBeansProjects/Comunidades/src/java/controladores/NoticiaControlador.java</file>
         </group>
     </open-files>

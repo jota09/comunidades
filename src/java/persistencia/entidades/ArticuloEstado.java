@@ -45,10 +45,4 @@ public class ArticuloEstado {
     public void setActivo(short activo) {
         this.activo = activo;
     }
-
-    @Override
-    public String toString() {
-        return "ArticuloEstado{" + "codigo=" + codigo + ", nombre=" + nombre + ", observacion=" + observacion + ", activo=" + activo + '}';
-    }
-    
 }

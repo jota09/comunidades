@@ -50,8 +50,8 @@ public class ArticuloDAO implements GestionDAO {
                 art.setTipoArticulo(tpArt);
                 art.setTitulo(rS.getString("titulo"));
                 art.setDescripcion(rS.getString("descripcion"));
-                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
+                art.setFechaPublicacion(rS.getTimestamp("fecha_publicacion"));
+                art.setFechaFinPublicacion(rS.getTimestamp("fecha_fin_publicacion"));
                 art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
             }
@@ -87,8 +87,8 @@ public class ArticuloDAO implements GestionDAO {
                 like=" AND titulo LIKE '%"+articulo.getBusqueda()+"%' ";
             }
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
-                    + "artEstado.codigo,artEstado.nombre nombreEstado "
-                    + "FROM articulo art JOIN "
+                    + "artEstado.codigo,artEstado.nombre nombreEstado"
+                    + " FROM articulo art JOIN "
                     + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
@@ -120,8 +120,8 @@ public class ArticuloDAO implements GestionDAO {
                 art.setCategoria(cat);                
                 art.setTitulo(rS.getString("titulo"));
                 art.setDescripcion(rS.getString("descripcion"));
-                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
+                art.setFechaPublicacion(rS.getTimestamp("fecha_publicacion"));
+                art.setFechaFinPublicacion(rS.getTimestamp("fecha_fin_publicacion"));
                 art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);                
                 listArt.add(art);
@@ -155,9 +155,9 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(1, art.getUsuario().getCodigo());
             pS.setString(2, art.getTitulo());
             pS.setString(3, art.getDescripcion());
-            pS.setDate(4, art.getFechaPublicacion());
+            pS.setTimestamp(4, art.getFechaPublicacion());
             pS.setDouble(5, art.getPrecio());
-            pS.setDate(6, art.getFechaFinPublicacion());
+            pS.setTimestamp(6, art.getFechaFinPublicacion());
             pS.setInt(7, art.getPrioridad().getCodigo());
             pS.setInt(8, art.getEstado().getCodigo());
             pS.setInt(9, art.getTipoArticulo().getCodigo());
@@ -180,19 +180,20 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "INSERT INTO articulo( usuario_codigo, titulo, descripcion,"
-                    + " precio, fecha_fin_publicacion, prioridad_codigo,"
+                    + "fecha_publicacion, precio, fecha_fin_publicacion, prioridad_codigo,"
                     + "estados_codigo,tipo_articulo_codigo,categoria_codigo) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
                 pS.setInt(1, art.getUsuario().getCodigo());
                 pS.setString(2, art.getTitulo());
                 pS.setString(3, art.getDescripcion());
-                pS.setDouble(4, art.getPrecio());
-                pS.setDate(5, art.getFechaFinPublicacion());
-                pS.setInt(6, art.getPrioridad().getCodigo());
-                pS.setInt(7, art.getEstado().getCodigo());
-                pS.setInt(8, art.getTipoArticulo().getCodigo());
-                pS.setInt(9, art.getCategoria().getCodigo());
+                pS.setTimestamp(4, art.getFechaPublicacion());
+                pS.setDouble(5, art.getPrecio());
+                pS.setTimestamp(6, art.getFechaFinPublicacion());
+                pS.setInt(7, art.getPrioridad().getCodigo());
+                pS.setInt(8, art.getEstado().getCodigo());
+                pS.setInt(9, art.getTipoArticulo().getCodigo());
+                pS.setInt(10, art.getCategoria().getCodigo());
                 result = pS.executeUpdate();
             }
         } catch (Exception e) {

@@ -30,30 +30,30 @@ public class AtributoDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object object) {
-        Connection con=null;
-        Vista vista=(Vista)object;
-        List<Atributo> atributos=new ArrayList();
-        try{
-            con=ConexionBD.obtenerConexion();
-            String sql="Select  atr.referencia,vat.valor from atributo atr "
+        Connection con = null;
+        Vista vista = (Vista) object;
+        List<Atributo> atributos = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select  atr.referencia,vat.valor from atributo atr "
                     + "join vista_atributo vat on vat.atributo_codigo=atr.codigo "
                     + "join vista vi on vat.vista_codigo=vi.codigo where vi.codigo=?";
-            PreparedStatement pS=con.prepareStatement(sql);
+            PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, vista.getCodigo());
-            ResultSet rS=pS.executeQuery();
-            while(rS.next()){
-                Atributo atributo=new Atributo();
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Atributo atributo = new Atributo();
                 atributo.setReferencia(rS.getString(1));
                 atributo.setValor(rS.getString(2));
                 atributos.add(atributo);
             }
             rS.close();
             pS.close();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
-        }finally{
+        } finally {
             ConexionBD.cerrarConexion(con);
         }
         return atributos;
@@ -61,7 +61,33 @@ public class AtributoDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        List<Atributo> atributos = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select * from atributo where activo=1";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Atributo atributo = new Atributo();
+                atributo.setCodigo(rS.getInt(1));
+                atributo.setReferencia(rS.getString(2));
+                atributos.add(atributo);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return atributos;
     }
 
     @Override
@@ -71,7 +97,28 @@ public class AtributoDAO implements GestionDAO {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Atributo atributo = (Atributo) object;
+        Connection con = null;
+        int tamano = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Inserts into atributo(referencia) values(?)";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, atributo.getReferencia());
+            tamano = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return tamano;
     }
 
     @Override
@@ -81,7 +128,27 @@ public class AtributoDAO implements GestionDAO {
 
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Atributo atributo = (Atributo) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "delete from atributo where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, atributo.getCodigo());
+            pS.execute();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
-    
+
 }
