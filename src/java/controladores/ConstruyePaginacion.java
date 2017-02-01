@@ -45,7 +45,7 @@ public class ConstruyePaginacion extends HttpServlet {
             List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(codigoTipo), 10);
             out.println("<nav aria-label='Page navigation'>");
             out.println("<ul class='pagination'>");
-            String li = "<li id='pag-" + cont + "' style=\"cursor:pointer;\" >";
+            String li = "<li  id='pag-" + cont + "' style=\"cursor:pointer;\" >";
             out.println(li);
             String a = "<a onclick=\"mostrar"+obj+"('" + paginas.get(0) + "', 'pag-" + cont +"'"+((tipo!=null)?",'"+tipo+"'":"")+")\">";
             out.println(a);
@@ -53,7 +53,7 @@ public class ConstruyePaginacion extends HttpServlet {
             out.println("</a>");
             out.println("</li>");
             for (String p : paginas) {
-                li = "<li id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrar"+obj+"('" + p + "', '" + cont + "'"+((tipo!=null)?","+tipo:"")+")\" >" + cont + "</a></li>";
+                li = "<li "+((cont==1)?"class='active'":"")+" id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrar"+obj+"('" + p + "', '" + cont + "'"+((tipo!=null)?","+tipo:"")+")\" >" + cont + "</a></li>";
                 out.println(li);
                 cont++;
             }
