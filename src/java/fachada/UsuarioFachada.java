@@ -47,7 +47,8 @@ public class UsuarioFachada implements GestionFachada {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO userDAO = new UsuarioDAO();
+        return userDAO.getListObject();
     }
 
     @Override

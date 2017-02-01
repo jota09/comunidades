@@ -9,10 +9,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
+import persistencia.entidades.Categoria;
 import persistencia.entidades.Usuario;
 
 /**
@@ -80,7 +82,31 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<Usuario> listUsuario = new ArrayList<Usuario>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT * FROM usuario WHERE activo=1";
+            PreparedStatement pS = con.prepareStatement(query);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Usuario user = new Usuario();
+                user.setCodigo(rS.getInt("codigo"));
+                user.setUserName(rS.getString("user_name"));
+                listUsuario.add(user);
+            }
+            rS.close();
+            pS.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listUsuario;
     }
 
     @Override
