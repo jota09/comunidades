@@ -7,7 +7,7 @@ package persistencia.entidades;
 
 /**
  *
- * @author ferney.medina
+ * @author Jesus.Ramos
  */
 public class Prioridad {
     private int codigo;

@@ -154,6 +154,6 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return nombres+" "+apellidos;
+        return codigo+" "+nombres+" "+apellidos;
     }
 }

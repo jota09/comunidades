@@ -11,7 +11,7 @@ import persistencia.daos.GestionDAO;
 
 /**
  *
- * @author ferney.medina
+ * @author Jesus.Ramos
  */
 public class PrioridadFachada implements GestionFachada {
 

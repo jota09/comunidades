@@ -6,48 +6,48 @@
 package fachada;
 
 import java.util.List;
-import persistencia.daos.ArticuloDAO;
+import persistencia.daos.EstructuraDAO;
 import persistencia.daos.GestionDAO;
 
 /**
  *
- * @author ferney.medina
+ * @author Jesus.Ramos
  */
-public class ArticuloFachada implements GestionFachada {
+public class EstructuraFachada implements GestionFachada {
 
     @Override
     public int insertObject(Object object) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         return artDAO.insertObject(object);
     }
 
     @Override
     public List getListObject(Object obj) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         return artDAO.getListObject(obj);
     }
 
     @Override
     public Object getObject(Object object) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         return artDAO.getObject(object);
     }
 
     @Override
     public int updateObject(Object obj) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         return artDAO.updateObject(obj);
     }
 
     @Override
     public int getCount(Object obj) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         return artDAO.getCount(obj);
     }
 
     @Override
     public void deleteObject(Object obj) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         artDAO.deleteObject(obj);
     }
 
@@ -58,13 +58,13 @@ public class ArticuloFachada implements GestionFachada {
 
     @Override
     public List getListByCondition(Object object) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         return artDAO.getListByCondition(object);
     }
 
     @Override
     public List getListByPagination(Object object) {
-        GestionDAO artDAO = new ArticuloDAO();
+        GestionDAO artDAO = new EstructuraDAO();
         return artDAO.getListByPagination(object);
     }
 

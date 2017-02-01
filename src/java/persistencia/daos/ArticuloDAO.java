@@ -67,35 +67,17 @@ public class ArticuloDAO implements GestionDAO {
     public List getListObject(Object obj) {
         Articulo articulo = (Articulo) obj;
         ArrayList<Articulo> listArt = new ArrayList<Articulo>();
-        String rango = "";
-        String categoria="";
-        String like="";
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            if (!articulo.getRango().isEmpty()) {
-                rango = "LIMIT " + articulo.getRango();
-            } else {
-                rango = "";
-            }
-            if(articulo.getCategoria()!=null)
-            {
-                categoria=" AND art.categoria_codigo=? ";
-            }
-            if(articulo.getBusqueda()!=null)
-            {
-                like=" AND titulo LIKE '%"+articulo.getBusqueda()+"%' ";
-            }
+
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
                     + "artEstado.codigo,artEstado.nombre nombreEstado "
                     + "FROM articulo art JOIN "
                     + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? "
-                    + categoria
-                    + like
-                    + rango;
+                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
@@ -180,9 +162,9 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "INSERT INTO articulo( usuario_codigo, titulo, descripcion,"
-                    + "fecha_publicacion, precio, fecha_fin_publicacion, prioridad_codigo,"
+                    + " precio, fecha_fin_publicacion, prioridad_codigo,"
                     + "estados_codigo,tipo_articulo_codigo,categoria_codigo) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
                 pS.setInt(1, art.getUsuario().getCodigo());
                 pS.setString(2, art.getTitulo());
@@ -266,12 +248,124 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Articulo articulo = (Articulo) object;
+        ArrayList<Articulo> listArt = new ArrayList<Articulo>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
+                    + "artEstado.codigo,artEstado.nombre nombreEstado"
+                    + " FROM articulo art JOIN "
+                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
+                    + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
+                    + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
+                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? "
+                    + "OR art.categoria_codigo=? OR art.titulo LIKE ?"
+                    + "OR art.descripcion LIKE ?";
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
+            pS.setInt(2, articulo.getUsuario().getCodigo());
+            pS.setInt(3, articulo.getCategoria().getCodigo());
+            pS.setString(4, "%"+articulo.getBusqueda());
+            pS.setString(5, "%"+articulo.getBusqueda()); 
+            System.out.print("consulta categoria:"+query);
+            System.out.print("busqueda:"+articulo.getBusqueda());
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Articulo art = new Articulo();
+                Categoria cat = new Categoria();
+                ArticuloEstado estado = new ArticuloEstado(rS.getInt("estados_codigo"));
+                estado.setNombre(rS.getString("nombreEstado"));
+                Usuario usr = new Usuario();
+                art.setCodigo(rS.getInt("codigo"));
+                usr.setCodigo(rS.getInt("usuario_codigo"));
+                usr.setNombres(rS.getString("nombres"));
+                usr.setApellidos(rS.getString("apellidos"));
+                art.setUsuario(usr);
+                cat.setCodigo(rS.getInt("codigo"));
+                cat.setNombre(rS.getString("nombre"));
+                art.setCategoria(cat);
+                art.setTitulo(rS.getString("titulo"));
+                art.setDescripcion(rS.getString("descripcion"));
+                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
+                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
+                art.setActivo(rS.getShort("activo"));
+                art.setEstado(estado);
+                listArt.add(art);
+            }
+            rS.close();
+            pS.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listArt;
     }
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Articulo articulo = (Articulo) object;
+        ArrayList<Articulo> listArt = new ArrayList<Articulo>();
+        String rango = "";
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            if (!articulo.getRango().isEmpty()) {
+                rango = "LIMIT " + articulo.getRango();
+            } else {
+                rango = "";
+            }
+            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
+                    + "artEstado.codigo,artEstado.nombre nombreEstado"
+                    + " FROM articulo art JOIN "
+                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
+                    + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
+                    + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
+                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? "
+                    + rango;
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
+            pS.setInt(2, articulo.getUsuario().getCodigo());
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Articulo art = new Articulo();
+                Categoria cat = new Categoria();
+                ArticuloEstado estado = new ArticuloEstado(rS.getInt("estados_codigo"));
+                estado.setNombre(rS.getString("nombreEstado"));
+                Usuario usr = new Usuario();
+                art.setCodigo(rS.getInt("codigo"));
+                usr.setCodigo(rS.getInt("usuario_codigo"));
+                usr.setNombres(rS.getString("nombres"));
+                usr.setApellidos(rS.getString("apellidos"));
+                art.setUsuario(usr);
+                cat.setCodigo(rS.getInt("codigo"));
+                cat.setNombre(rS.getString("nombre"));
+                art.setCategoria(cat);
+                art.setTitulo(rS.getString("titulo"));
+                art.setDescripcion(rS.getString("descripcion"));
+                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
+                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
+                art.setActivo(rS.getShort("activo"));
+                art.setEstado(estado);
+                listArt.add(art);
+            }
+            rS.close();
+            pS.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listArt;
     }
 
 }

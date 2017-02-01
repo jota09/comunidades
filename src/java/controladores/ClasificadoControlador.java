@@ -8,6 +8,7 @@ package controladores;
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
 import fachada.PrioridadFachada;
+import fachada.UsuarioFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -64,7 +65,7 @@ public class ClasificadoControlador extends HttpServlet {
                     crearRegistros(request, response);
                     break;
                 case 4:
-                    //pintarRegistros(request, response);
+                    recuperarUsuario(request, response);
                     break;
                 case 5:
                     //editarRegistros(request, response);
@@ -107,6 +108,21 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
+    
+    private void recuperarUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            UsuarioFachada userFachada = new UsuarioFachada();
+            List<Usuario> listUsuario = userFachada.getListObject();
+            JSONArray array = new JSONArray();
+            for (Usuario prio : listUsuario) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", prio.getCodigo());
+                obj.put("username", prio.getUserName());
+                array.add(obj);
+            }
+            out.print(array);
+        }
+    }
 
     private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
@@ -130,6 +146,9 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTipoArticulo(new TipoArticulo(1));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
             System.out.println(art);
+            ArticuloFachada artFachada = new ArticuloFachada();
+            artFachada.insertObject(art);
+            out.print(1);
         } catch (ParseException ex) {
             Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
         }    }
