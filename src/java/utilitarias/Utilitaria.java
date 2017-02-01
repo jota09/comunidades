@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.Menu;
+import persistencia.entidades.Prioridad;
 
 /**
  *
@@ -64,7 +65,7 @@ public class Utilitaria {
         }
         return imprime;
     }
-
+    
     public static List<String> getPaginacion(int numRegistrosTabla, int cantPag) {
         double result = (double) numRegistrosTabla / (double) cantPag;
         int rangos = (int) result;
