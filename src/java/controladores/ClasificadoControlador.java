@@ -29,6 +29,7 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -89,6 +90,7 @@ public class ClasificadoControlador extends HttpServlet {
         }
     }
 
+
     private void recuperarPrioridad(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             PrioridadFachada prioFachada = new PrioridadFachada();
@@ -112,26 +114,25 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTitulo(request.getParameter("tituloClasificado"));
             art.setDescripcion(request.getParameter("cuerpoClasificado"));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
-            art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
+            
+            art.setDescripcion(request.getParameter("precioClasificado"));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
-            art.setUsuario(usr);
+            art.setUsuario(usr);            
+            art.setFechaPublicacion(null);
             art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
             art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("finPublicacion"));
-            java.sql.Date fechaFin = new java.sql.Date(parsed.getTime());
-            //art.setFechaFinPublicacion(fechaFin);
+            java.sql.Date sql = new java.sql.Date(parsed.getTime());
+            System.out.println(sql);
+            art.setFechaFinPublicacion(sql);
             art.setEstado(new ArticuloEstado(1));
-            //art.setTipoArticulo(new TipoArticulo(1));
+            art.setTipoArticulo(new TipoArticulo(1));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
-            ArticuloFachada artFach = new ArticuloFachada();
-            artFach.insertObject(art);
             System.out.println(art);
-            
         } catch (ParseException ex) {
             Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+        }    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

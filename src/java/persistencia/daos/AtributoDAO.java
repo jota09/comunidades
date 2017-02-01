@@ -123,7 +123,30 @@ public class AtributoDAO implements GestionDAO {
 
     @Override
     public int getCount(Object obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        int tamano = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select count(codigo) from atributo";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                tamano = rS.getInt(1);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return tamano;
     }
 
     @Override
@@ -160,7 +183,7 @@ public class AtributoDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "select * from atributo where referencia like ?";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setString(1, condicion+"%");
+            pS.setString(1, condicion + "%");
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Atributo atributo = new Atributo();
@@ -168,17 +191,52 @@ public class AtributoDAO implements GestionDAO {
                 atributo.setReferencia(rS.getString(2));
                 atributos.add(atributo);
             }
+            rS.close();
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return atributos;
     }
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String rango = String.valueOf(object);
+        Connection con = null;
+        List<Atributo> atributos = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "select * from atributo  limit "+rango;
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Atributo atributo = new Atributo();
+                atributo.setCodigo(rS.getInt(1));
+                atributo.setReferencia(rS.getString(2));
+                atributos.add(atributo);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return atributos;
     }
 
 }

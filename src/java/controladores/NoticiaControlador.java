@@ -211,6 +211,7 @@ public class NoticiaControlador extends HttpServlet {
                 if(!request.getParameter("cat").equals(""))
                     articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
             }
+            System.out.println("categoria del articulo filtrado:"+articulo.getCategoria().getCodigo());
             List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
             JSONArray jsonArray=new JSONArray();
             for (Articulo art : listArticulo) {

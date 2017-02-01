@@ -77,8 +77,40 @@ public class AtributoControlador extends HttpServlet {
                 getAtributosConCondicion(request, response);
                 break;
             }
+            case 9: {
+                getAtributoVistaConCondicion(request, response);
+                break;
+            }
+            case 10: {
+                getAtributoConPaginacion(request, response);
+                break;
+            }
+            case 11: {
+                getVistaAtributoConPaginacion(request, response);
+                break;
+            }
         }
 
+    }
+
+    public void getVistaAtributoConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String rango = request.getParameter("rango");
+            JSONArray arrayAtributos = new JSONArray();
+            GestionFachada vistaAtributoFachada = new VistaAtributoFachada();
+            List<VistaAtributo> vistaAtributos = vistaAtributoFachada.getListByPagination(rango);
+            for (VistaAtributo va : vistaAtributos) {
+                JSONObject obj = new JSONObject();
+                obj.put("codVA", va.getCodigo());
+                obj.put("valor", va.getValor());
+                obj.put("codVista", va.getVistaCodigo().getCodigo());
+                obj.put("nombre", va.getVistaCodigo().getNombre());
+                obj.put("codAtr", va.getCodigo());
+                obj.put("referencia", va.getAtributoCodigo().getReferencia());
+                arrayAtributos.add(obj);
+            }
+            out.print(arrayAtributos);
+        }
     }
 
     public void elimiarVistaAtributo(HttpServletRequest request, HttpServletResponse response) {
@@ -88,6 +120,42 @@ public class AtributoControlador extends HttpServlet {
         vistaAtributo.setCodigo(codVistaAtributo);
         vistaAtributoFachada.deleteObject(vistaAtributo);
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino Correctamente la Asociación", "success"));
+    }
+
+    public void getAtributoConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String rango = request.getParameter("rango");
+            JSONArray arrayAtributos = new JSONArray();
+            GestionFachada atributoFachada = new AtributoFachada();
+            List<Atributo> atributos = atributoFachada.getListByPagination(rango);
+            for (Atributo atributo : atributos) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", atributo.getCodigo());
+                obj.put("referencia", atributo.getReferencia());
+                arrayAtributos.add(obj);
+            }
+            out.print(arrayAtributos);
+        }
+    }
+
+    public void getAtributoVistaConCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String condicion = request.getParameter("condicion");
+            JSONArray arrayAtributos = new JSONArray();
+            GestionFachada vistaAtributoFachada = new VistaAtributoFachada();
+            List<VistaAtributo> vistaAtributos = vistaAtributoFachada.getListByCondition(condicion);
+            for (VistaAtributo va : vistaAtributos) {
+                JSONObject obj = new JSONObject();
+                obj.put("codVA", va.getCodigo());
+                obj.put("valor", va.getValor());
+                obj.put("codVista", va.getVistaCodigo().getCodigo());
+                obj.put("nombre", va.getVistaCodigo().getNombre());
+                obj.put("codAtr", va.getCodigo());
+                obj.put("referencia", va.getAtributoCodigo().getReferencia());
+                arrayAtributos.add(obj);
+            }
+            out.print(arrayAtributos);
+        }
     }
 
     public void getAtributosConCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {

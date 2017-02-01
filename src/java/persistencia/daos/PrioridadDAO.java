@@ -39,7 +39,7 @@ public class PrioridadDAO implements GestionDAO{
         try
         {
             con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM categoria WHERE activo=1";
+            String query="SELECT * FROM prioridad WHERE activo=1";
             PreparedStatement pS=con.prepareStatement(query);
             ResultSet rS=pS.executeQuery();            
             while(rS.next()){
