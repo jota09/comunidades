@@ -24,7 +24,26 @@ public class EstructuraDAO implements GestionDAO{
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Estructura estruc = (Estructura) object;
+        try {
+            Connection con=null;
+            con=ConexionBD.obtenerConexion();
+            String query = "SELECT * FROM estructura WHERE referencia=?";
+            PreparedStatement pS=con.prepareStatement(query);
+            pS.setString(1, estruc.getReferencia());
+            ResultSet rS=pS.executeQuery();
+            if(rS.next())
+            {
+                estruc.setCodigo(rS.getInt("codigo"));
+                estruc.setDireccion(rS.getString("direccion"));
+                estruc.setDescripcion(rS.getString("descripcion"));
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return estruc;
     }
 
     @Override

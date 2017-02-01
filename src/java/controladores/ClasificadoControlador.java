@@ -7,6 +7,7 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
+import fachada.EstructuraFachada;
 import fachada.PrioridadFachada;
 import fachada.UsuarioFachada;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import org.json.simple.JSONObject;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
+import persistencia.entidades.Estructura;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
@@ -51,7 +53,7 @@ public class ClasificadoControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        System.out.println(request);
+        //System.out.println(request);
         if (request.getParameter("opc") != null) {
             int opcion = Integer.parseInt(request.getParameter("opc"));
             switch (opcion) {
@@ -65,10 +67,13 @@ public class ClasificadoControlador extends HttpServlet {
                     crearRegistros(request, response);
                     break;
                 case 4:
-                    recuperarUsuario(request, response);
+                    recuperarMostrar(request, response);
                     break;
                 case 5:
-                    //editarRegistros(request, response);
+                    recuperarRangoPrecio(request, response);
+                    break;
+                case 6:
+                    recuperarOrdenarPor(request, response);
                     break;
             }
         }
@@ -109,16 +114,67 @@ public class ClasificadoControlador extends HttpServlet {
         }
     }
     
-    private void recuperarUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void recuperarMostrar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            UsuarioFachada userFachada = new UsuarioFachada();
-            List<Usuario> listUsuario = userFachada.getListObject();
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            String ref = "rangoPaginas";
+            Estructura estruc = new Estructura(ref);
+            estruc = (Estructura) estrucFachada.getObject(estruc);
+           // System.out.println(estruc);
+            String[] mostrar = estruc.getDireccion().split(";");
             JSONArray array = new JSONArray();
-            for (Usuario prio : listUsuario) {
+            for(int i = 0; i<mostrar.length;i++){
                 JSONObject obj = new JSONObject();
-                obj.put("codigo", prio.getCodigo());
-                obj.put("username", prio.getUserName());
+                obj.put("cantidad", mostrar[i]);
                 array.add(obj);
+            }
+            out.print(array);
+        }
+    }
+    
+    private void recuperarRangoPrecio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            String ref = "rangoPrecio";
+            Estructura estruc = new Estructura(ref);
+            estruc = (Estructura) estrucFachada.getObject(estruc);
+           // System.out.println(estruc);
+            String[] rango = estruc.getDireccion().split(";");
+            JSONArray array = new JSONArray();
+            for(int i = 1; i<rango.length;i++){
+                JSONObject obj = new JSONObject();
+                obj.put("rango", rango[i-1]+" $ - "+rango[i]+" $");
+                array.add(obj);
+            }
+            out.print(array);
+        }
+    }
+    
+    private void recuperarOrdenarPor(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            String ref = "ordenarPor";
+            Estructura estruc = new Estructura(ref);
+            estruc = (Estructura) estrucFachada.getObject(estruc);
+           // System.out.println(estruc);
+            String[] rango = estruc.getDireccion().split(";");
+            String ref2 = "clasificadoOrdenar";
+            Estructura estruc2 = new Estructura(ref2);
+            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
+           // System.out.println(estruc);
+            String[] rango2 = estruc.getDireccion().split(";");
+            JSONArray array = new JSONArray();
+            for(int i = 0; i<rango2.length;i++){
+                for(int j = 0; i<rango.length;i++){
+                JSONObject obj = new JSONObject();
+                if(rango[i].equals("ASC")){
+                    obj.put("campo", rango2[i]);
+                    rango2[i]=rango2[i].replace("_", " ");
+                    obj.put("nombre", rango2[i]+" Reciente");
+                    obj.put("orden", rango[i]);
+                }
+                array.add(obj);
+                }
             }
             out.print(array);
         }

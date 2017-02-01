@@ -19,11 +19,18 @@ public class Estructura {
         this.codigo = codigo;
     }
 
+    public Estructura() {
+    }
+
     public Estructura(int codigo, String referencia, String direccion, String descripcion) {
         this.codigo = codigo;
         this.referencia = referencia;
         this.direccion = direccion;
         this.descripcion = descripcion;
+    }
+
+    public Estructura(String referencia) {
+        this.referencia = referencia;
     }
 
     public int getCodigo() {
