@@ -162,9 +162,9 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "INSERT INTO articulo( usuario_codigo, titulo, descripcion,"
-                    + "fecha_publicacion, precio, fecha_fin_publicacion, prioridad_codigo,"
+                    + " precio, fecha_fin_publicacion, prioridad_codigo,"
                     + "estados_codigo,tipo_articulo_codigo,categoria_codigo) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
                 pS.setInt(1, art.getUsuario().getCodigo());
                 pS.setString(2, art.getTitulo());

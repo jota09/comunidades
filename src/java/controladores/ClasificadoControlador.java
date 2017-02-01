@@ -130,6 +130,9 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTipoArticulo(new TipoArticulo(1));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
             System.out.println(art);
+            ArticuloFachada artFachada = new ArticuloFachada();
+            artFachada.insertObject(art);
+            out.print(1);
         } catch (ParseException ex) {
             Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
         }    }
