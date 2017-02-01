@@ -194,12 +194,14 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public int getCount(Object obj) {
+        int tipo=Integer.parseInt(String.valueOf(obj));
         Connection con = null;
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM articulo ";
+            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, tipo);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
