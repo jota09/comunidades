@@ -36,7 +36,6 @@ public class ConstruyePaginacion extends HttpServlet {
         String tipo = request.getParameter("tipo");
         int codigoTipo = 0;
         try (PrintWriter out = response.getWriter()) {
-            System.out.println(obj);
             Class clase = Class.forName("fachada." + obj + "Fachada");
             GestionFachada gestionFachada = (GestionFachada) clase.newInstance();
             if (tipo != null) {
@@ -48,18 +47,18 @@ public class ConstruyePaginacion extends HttpServlet {
             out.println("<ul class='pagination'>");
             String li = "<li id='pag-" + cont + "' style=\"cursor:pointer;\" >";
             out.println(li);
-            String a = "<a onclick='mostrarNoticia('" + paginas.get(0) + "', 'pag-" + cont + "',"+tipo+")'>";
+            String a = "<a onclick=\"mostrar"+obj+"('" + paginas.get(0) + "', 'pag-" + cont +"'"+((tipo!=null)?",'"+tipo+"'":"")+")\">";
             out.println(a);
             out.println("<span aria-hidden='true'>&laquo;</span>");
             out.println("</a>");
             out.println("</li>");
             for (String p : paginas) {
-                li = "<li id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrarNoticia('" + p + "', '" + cont + "',"+tipo+")\" >" + cont + "</a></li>";
+                li = "<li id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrar"+obj+"('" + p + "', '" + cont + "'"+((tipo!=null)?","+tipo:"")+")\" >" + cont + "</a></li>";
                 out.println(li);
                 cont++;
             }
             li = "<li id='pag-" + cont + "' style='cursor:pointer;'>";
-            a = "<a onclick=\"mostrarNoticia('" + paginas.get(paginas.size() - 1) + "', 'pag-" + cont + "',"+tipo+")\">";
+            a = "<a onclick=\"mostrar"+obj+"('" + paginas.get(paginas.size() - 1) + "', 'pag-" + cont+"'" +((tipo!=null)?",'"+tipo+"'":"")+")\">";
             out.println(li);
             out.println(a);
             out.println("<span aria-hidden=\"true\">&raquo;</span>");

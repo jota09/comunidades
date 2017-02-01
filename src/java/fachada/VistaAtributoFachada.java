@@ -17,7 +17,8 @@ public class VistaAtributoFachada implements GestionFachada {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO vistaAtributoDAO = new VistaAtributoDAO();
+        return vistaAtributoDAO.getCount(object);
     }
 
     @Override
@@ -61,7 +62,8 @@ public class VistaAtributoFachada implements GestionFachada {
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO vistaAtributoDAO = new VistaAtributoDAO();
+        return vistaAtributoDAO.getListByPagination(object);
     }
 
 }

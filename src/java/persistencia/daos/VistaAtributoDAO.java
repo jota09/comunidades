@@ -26,7 +26,28 @@ public class VistaAtributoDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        int tamano = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select count(codigo) from vista_atributo";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                tamano = rS.getInt(1);
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return tamano;
     }
 
     @Override
@@ -174,13 +195,58 @@ public class VistaAtributoDAO implements GestionDAO {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return vistaAtributos;
     }
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        String rango = String.valueOf(object);
+        List<VistaAtributo> vistaAtributos = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select v.codigo,v.nombre,a.codigo,a.referencia,"
+                    + "va.codigo,va.valor  from vista_atributo va join vista v "
+                    + "on va.vista_codigo=v.codigo join"
+                    + " atributo a on va.atributo_codigo=a.codigo where "
+                    + " va.activo=1 limit " + rango;
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                VistaAtributo vistaAtributo = new VistaAtributo();
+                Vista vista = new Vista();
+                Atributo atributo = new Atributo();
+                vista.setCodigo(rS.getInt(1));
+                vista.setNombre(rS.getString(2));
+                atributo.setCodigo(rS.getInt(3));
+                atributo.setReferencia(rS.getString(4));
+                vistaAtributo.setCodigo(rS.getInt(5));
+                vistaAtributo.setValor(rS.getString(6));
+                vistaAtributo.setVistaCodigo(vista);
+                vistaAtributo.setAtributoCodigo(atributo);
+                vistaAtributos.add(vistaAtributo);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return vistaAtributos;
     }
 
 }
