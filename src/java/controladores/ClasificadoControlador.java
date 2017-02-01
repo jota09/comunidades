@@ -29,6 +29,7 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -88,6 +89,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
+
 
     private void recuperarPrioridad(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
