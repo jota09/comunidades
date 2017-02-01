@@ -1,6 +1,7 @@
 package persistencia.entidades;
 
 import java.sql.Timestamp;
+import java.sql.Date;
 import java.util.List;
 
 
@@ -11,9 +12,9 @@ public class Articulo {
     private int usuariocodigoadm;
     private String titulo;
     private String descripcion;
-    private Timestamp fechapublicacion;
+    private Date fechapublicacion;
     private double precio;
-    private Timestamp fechafinpublicacion;
+    private Date fechafinpublicacion;
     private double costo;
     private Prioridad prioridad;
     private short activo;
@@ -71,11 +72,11 @@ public class Articulo {
         this.descripcion = descripcion;
     }
 
-    public Timestamp getFechaPublicacion() {
+    public Date getFechaPublicacion() {
         return this.fechapublicacion;
     }
 
-    public void setFechaPublicacion(Timestamp fechapublicacion) {
+    public void setFechaPublicacion(Date fechapublicacion) {
         this.fechapublicacion = fechapublicacion;
     }
 
@@ -87,11 +88,11 @@ public class Articulo {
         this.precio = precio;
     }
 
-    public Timestamp getFechaFinPublicacion() {
+    public Date getFechaFinPublicacion() {
         return this.fechafinpublicacion;
     }
 
-    public void setFechaFinPublicacion(Timestamp fechafinpublicacion) {
+    public void setFechaFinPublicacion(Date fechafinpublicacion) {
         this.fechafinpublicacion = fechafinpublicacion;
     }
 
@@ -198,4 +199,11 @@ public class Articulo {
     public void setBusqueda(String busqueda) {
         this.busqueda = busqueda;
     }
+
+    @Override
+    public String toString() {
+        return "Articulo{" + "codigo=" + codigo + ", usuario=" + usuario + ", usuariocodigoadm=" + usuariocodigoadm + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechapublicacion=" + fechapublicacion + ", precio=" + precio + ", fechafinpublicacion=" + fechafinpublicacion + ", costo=" + costo + ", prioridad=" + prioridad + ", activo=" + activo + ", creacion=" + creacion + ", actualizacion=" + actualizacion + ", eliminado=" + eliminado + ", observacionesadmon=" + observacionesadmon + ", estado=" + estado + ", tipoarticulo=" + tipoarticulo + ", categoria=" + categoria + ", listaInteres=" + listaInteres + ", rango=" + rango + ", busqueda=" + busqueda + '}';
+    }
+
+    
 }

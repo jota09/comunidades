@@ -13,6 +13,10 @@ public class TipoArticulo {
     public TipoArticulo() {
     }
 
+    public TipoArticulo(int codigo) {
+        this.codigo = codigo;
+    }
+    
     public int getCodigo() {
         return this.codigo;
     }
