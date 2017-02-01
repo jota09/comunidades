@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
-import persistencia.entidades.Prioridad;
+import persistencia.entidades.Estructura;
 
 /**
  *
  * @author Jesus.Ramos
  */
-public class PrioridadDAO implements GestionDAO{
+public class EstructuraDAO implements GestionDAO{
 
     @Override
     public Object getObject(Object object) {
@@ -34,19 +34,17 @@ public class PrioridadDAO implements GestionDAO{
     
     @Override
     public List getListObject() {
-        ArrayList<Prioridad> listPrioridad=new ArrayList<Prioridad>();                
+        ArrayList<Estructura> listEstructura=new ArrayList<Estructura>();                
         Connection con=null;
         try
         {
             con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM prioridad WHERE activo=1";
+            String query="SELECT * FROM prioridad";
             PreparedStatement pS=con.prepareStatement(query);
             ResultSet rS=pS.executeQuery();            
             while(rS.next()){
-                Prioridad prio=new Prioridad(rS.getInt("codigo"), rS.getString("nombre"), rS.getInt("valor"), rS.getShort("activo"));
-                prio.setCodigo(rS.getInt("codigo"));
-                prio.setNombre(rS.getString("nombre"));
-                listPrioridad.add(prio);
+                Estructura prio=new Estructura(rS.getInt("codigo"), rS.getString("referencia"), rS.getString("direccion"), rS.getString("descripcion"));
+                listEstructura.add(prio);
             }
             rS.close();
             pS.close();
@@ -62,7 +60,7 @@ public class PrioridadDAO implements GestionDAO{
                 Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return listPrioridad;
+        return listEstructura;
     }   
     
     @Override
