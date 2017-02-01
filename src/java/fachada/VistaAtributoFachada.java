@@ -55,7 +55,8 @@ public class VistaAtributoFachada implements GestionFachada {
 
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO vistaAtributoDAO = new VistaAtributoDAO();
+        return vistaAtributoDAO.getListByCondition(object);
     }
 
     @Override
