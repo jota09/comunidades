@@ -31,7 +31,7 @@ import utilitarias.Utilitaria;
  *
  * @author ferney.medina
  */
-@WebServlet(name = "Noticia", urlPatterns = {"/Noticia"})
+@WebServlet(name = "Noticia", urlPatterns = {"/NoticiaControlador"})
 public class NoticiaControlador extends HttpServlet {
 
     /**
@@ -68,6 +68,12 @@ public class NoticiaControlador extends HttpServlet {
                 case 6:
                     cargarCategorias(request, response);
                     break;
+                case 7:
+                    filtrarCategorias(request, response);
+                    break;
+                case 8:
+                    buscarRegistros(request, response);
+                    break;
             }
         }
         else
@@ -94,7 +100,7 @@ public class NoticiaControlador extends HttpServlet {
             {
                 articulo.setBusqueda(request.getParameter("buscar"));
             }
-            List<Articulo> listArticulo = artFachada.getListObject(articulo);
+            List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
             JSONArray jsonArray=new JSONArray();
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj=new JSONObject();
@@ -191,7 +197,65 @@ public class NoticiaControlador extends HttpServlet {
             out.print(Utilitaria.construirCategorias(catFachada.getListObject()));          
         }
     }
-        
+      
+    private void filtrarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tipArt = new TipoArticulo();
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
+            Articulo articulo=new Articulo();
+            articulo.setTipoArticulo(tipArt);
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            if(request.getParameter("cat")!=null)
+            {
+                if(!request.getParameter("cat").equals(""))
+                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
+            }
+            List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
+            JSONArray jsonArray=new JSONArray();
+            for (Articulo art : listArticulo) {
+                JSONObject jsonObj=new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo",art.getTitulo());
+                jsonObj.put("nombreUsuario",art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado",art.getCategoria().getNombre());
+                jsonObj.put("fechaPublicacion",art.getFechaPublicacion());
+                jsonArray.add(jsonObj);
+            }
+            out.print(jsonArray);       
+        }
+    }
+    
+    private void buscarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {            
+            ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tipArt = new TipoArticulo();
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
+            Articulo articulo=new Articulo();
+            articulo.setTipoArticulo(tipArt);            
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));            
+            if(request.getParameter("buscar")!=null)
+            {
+                articulo.setBusqueda(request.getParameter("buscar"));
+            }
+            List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
+            JSONArray jsonArray=new JSONArray();
+            for (Articulo art : listArticulo) {
+                JSONObject jsonObj=new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo",art.getTitulo());
+                jsonObj.put("nombreUsuario",art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado",art.getCategoria().getNombre());
+                jsonObj.put("fechaPublicacion",art.getFechaPublicacion());
+                jsonArray.add(jsonObj);
+            }
+            out.print(jsonArray);
+        }
+    }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

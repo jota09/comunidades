@@ -22,9 +22,9 @@ public class ArticuloFachada implements GestionFachada {
     }
 
     @Override
-    public List getListObject(Object rango) {
+    public List getListObject(Object obj) {
         GestionDAO artDAO = new ArticuloDAO();
-        return artDAO.getListObject(rango);
+        return artDAO.getListObject(obj);
     }
 
     @Override
@@ -58,12 +58,14 @@ public class ArticuloFachada implements GestionFachada {
 
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO artDAO = new ArticuloDAO();
+        return artDAO.getListByCondition(object);
     }
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO artDAO = new ArticuloDAO();
+        return artDAO.getListByPagination(object);
     }
 
 }
