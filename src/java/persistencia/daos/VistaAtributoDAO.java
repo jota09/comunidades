@@ -139,7 +139,43 @@ public class VistaAtributoDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        String condicion = String.valueOf(object) + "%";
+        List<VistaAtributo> vistaAtributos = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select v.codigo,v.nombre,a.codigo,a.referencia,"
+                    + "va.codigo,va.valor  from vista_atributo va join vista v "
+                    + "on va.vista_codigo=v.codigo join"
+                    + " atributo a on va.atributo_codigo=a.codigo where "
+                    + "(v.nombre like ? or a.referencia like ? or va.valor like ?) and va.activo=1 ";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, condicion);
+            pS.setString(2, condicion);
+            pS.setString(3, condicion);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                VistaAtributo vistaAtributo = new VistaAtributo();
+                Vista vista = new Vista();
+                Atributo atributo = new Atributo();
+                vista.setCodigo(rS.getInt(1));
+                vista.setNombre(rS.getString(2));
+                atributo.setCodigo(rS.getInt(3));
+                atributo.setReferencia(rS.getString(4));
+                vistaAtributo.setCodigo(rS.getInt(5));
+                vistaAtributo.setValor(rS.getString(6));
+                vistaAtributo.setVistaCodigo(vista);
+                vistaAtributo.setAtributoCodigo(atributo);
+                vistaAtributos.add(vistaAtributo);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return vistaAtributos;
     }
 
     @Override

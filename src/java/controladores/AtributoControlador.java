@@ -77,6 +77,10 @@ public class AtributoControlador extends HttpServlet {
                 getAtributosConCondicion(request, response);
                 break;
             }
+            case 9: {
+                getAtributoVistaConCondicion(request, response);
+                break;
+            }
         }
 
     }
@@ -88,6 +92,26 @@ public class AtributoControlador extends HttpServlet {
         vistaAtributo.setCodigo(codVistaAtributo);
         vistaAtributoFachada.deleteObject(vistaAtributo);
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino Correctamente la Asociación", "success"));
+    }
+
+    public void getAtributoVistaConCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String condicion = request.getParameter("condicion");
+            JSONArray arrayAtributos = new JSONArray();
+            GestionFachada vistaAtributoFachada = new VistaAtributoFachada();
+            List<VistaAtributo> vistaAtributos = vistaAtributoFachada.getListByCondition(condicion);
+            for (VistaAtributo va : vistaAtributos) {
+                JSONObject obj = new JSONObject();
+                obj.put("codVA", va.getCodigo());
+                obj.put("valor", va.getValor());
+                obj.put("codVista", va.getVistaCodigo().getCodigo());
+                obj.put("nombre", va.getVistaCodigo().getNombre());
+                obj.put("codAtr", va.getCodigo());
+                obj.put("referencia", va.getAtributoCodigo().getReferencia());
+                arrayAtributos.add(obj);
+            }
+            out.print(arrayAtributos);
+        }
     }
 
     public void getAtributosConCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {
