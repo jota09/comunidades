@@ -5,6 +5,8 @@
  */
 package controladores;
 
+import fachada.EstructuraFachada;
+import fachada.GestionFachada;
 import fachada.SeguridadFachada;
 import fachada.UsuarioFachada;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import persistencia.entidades.Estructura;
 import persistencia.entidades.SeguridadUsuario;
 import persistencia.entidades.Usuario;
 import utilitarias.Cifrar;
@@ -81,20 +84,21 @@ public class Inicio extends HttpServlet {
                 if (usr.getNombres() != null) {
                     HttpSession sesion = request.getSession(true);
                     sesion.setAttribute("user", usr);
-                    sesion.setMaxInactiveInterval(op);
+                    GestionFachada estructuraFachada = new EstructuraFachada();
+                    Estructura estructura = new Estructura();
+                    estructura.setReferencia("tiempoSesion");
+                    estructuraFachada.getObject(estructura);
+                    sesion.setMaxInactiveInterval(Integer.parseInt(estructura.getValor()));
                     request.getSession().setAttribute("view", "menuprincipal.html");
                     response.sendRedirect("/Comunidades");
-                    //request.setAttribute("view", "menuprincipal.html");
-                    //response.sendRedirect("/Comunidades");
-                    //request.getServletContext().getRequestDispatcher("/").forward(request, response);
                     //crear sesion, validar perfil y redireccionar a menu
                 } else {
                     HttpSession sesion = request.getSession();
                     if (op == 1) {
-                        sesion.setAttribute("message",Utilitaria.createAlert("Error", "Documento no Valido", "danger"));
+                        sesion.setAttribute("message", Utilitaria.createAlert("Error", "Documento no Valido", "danger"));
                         response.sendRedirect("/Comunidades");
                     } else if (op == 2) {
-                        sesion.setAttribute("message",Utilitaria.createAlert("Error", "Correo no Valido", "danger") );
+                        sesion.setAttribute("message", Utilitaria.createAlert("Error", "Correo no Valido", "danger"));
                         response.sendRedirect("/Comunidades");
                     } else if (op == 3) {
                         sesion.setAttribute("message", Utilitaria.createAlert("Error", "Usuario no Valido", "danger"));
