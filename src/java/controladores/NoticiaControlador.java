@@ -7,14 +7,25 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.RequestContext;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 import org.json.simple.JSONArray;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
@@ -44,7 +55,7 @@ public class NoticiaControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, FileUploadException {
         response.setContentType("text/html;charset=UTF-8");
         if(request.getParameter("op")!=null)
         {
@@ -117,8 +128,47 @@ public class NoticiaControlador extends HttpServlet {
         }
     }
 
-    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
         try (PrintWriter out = response.getWriter()) {
+            response.setContentType("text/html;charset=UTF-8");
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);        
+        
+        if (isMultipart) { 
+            System.out.println("entro porque hay archivos");
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            RequestContext requestContext = new ServletRequestContext(request);
+            ServletContext servletContext = this.getServletConfig().getServletContext();
+            File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
+            factory.setRepository(repository);
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            List<FileItem> items = upload.parseRequest(requestContext);
+            Iterator iterator = items.iterator();
+            Usuario usr=(Usuario)request.getSession().getAttribute("user");
+            System.out.println("Usuario:"+usr.getCodigo());
+            while(iterator.hasNext()) {
+                FileItem fil = (FileItem) iterator.next();
+                String extension = fil.getName();
+                int startExtension = extension.indexOf(".") + 1;
+                extension = extension.substring(startExtension, extension.length());                               
+                String ruta="/xampp/htdocs/archivoSubidos";                               
+                File dir=new File(ruta);
+                if(!dir.exists())
+                    dir.mkdirs();//la difrenecia con mkdir es que con esta instrucción crea toda la ruta
+                String nuevaRuta=dir+File.separator+fil.getName(); 
+                /*Archivo arch=new Archivo();
+                arch.setExtension(extension);
+                arch.setNombre(fil.getName()); 
+                arch.setUrl(nuevaRuta);
+                arch.setUsuario(usr);
+                ArchivoFachada  achFachada=new ArchivoFachada();
+                achFachada.insertObject(arch);
+                File files=new File(nuevaRuta);
+                fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta */               
+                }            
+            }
+            
+            
+            
             String codArt = request.getParameter("codArt");
             Articulo art = new Articulo();
             art.setTitulo(request.getParameter("titulo"));
@@ -271,7 +321,11 @@ public class NoticiaControlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (FileUploadException ex) {
+            Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -285,7 +339,11 @@ public class NoticiaControlador extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (FileUploadException ex) {
+            Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
