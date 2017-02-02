@@ -120,7 +120,7 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
             // System.out.println(estruc);
-            String[] mostrar = estruc.getDireccion().split(";");
+            String[] mostrar = estruc.getValor().split(";");
             JSONArray array = new JSONArray();
             for (int i = 0; i < mostrar.length; i++) {
                 JSONObject obj = new JSONObject();
@@ -138,7 +138,7 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
             // System.out.println(estruc);
-            String[] rango = estruc.getDireccion().split(";");
+            String[] rango = estruc.getValor().split(";");
             JSONArray array = new JSONArray();
             for (int i = 1; i < rango.length; i++) {
                 JSONObject obj = new JSONObject();
@@ -156,13 +156,13 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
             // System.out.println(estruc);
-            String[] rango = estruc.getDireccion().split(";");
+            String[] rango = estruc.getValor().split(";");
             System.out.println(rango[0]);
             String ref2 = "clasificadoOrdenar";
             Estructura estruc2 = new Estructura(ref2);
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             // System.out.println(estruc);
-            String[] rango2 = estruc2.getDireccion().split(";");
+            String[] rango2 = estruc2.getValor().split(";");
             System.out.println(rango2[0]);
             JSONArray array = new JSONArray();
             for (int i = 0; i < rango2.length; i++) {

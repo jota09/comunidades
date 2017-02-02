@@ -12,7 +12,7 @@ package persistencia.entidades;
 public class Estructura {
     private int codigo;
     private String referencia;
-    private String direccion;
+    private String valor;
     private String descripcion;
 
     public Estructura(int codigo) {
@@ -22,10 +22,10 @@ public class Estructura {
     public Estructura() {
     }
 
-    public Estructura(int codigo, String referencia, String direccion, String descripcion) {
+    public Estructura(int codigo, String referencia, String valor, String descripcion) {
         this.codigo = codigo;
         this.referencia = referencia;
-        this.direccion = direccion;
+        this.valor = valor;
         this.descripcion = descripcion;
     }
 
@@ -41,8 +41,8 @@ public class Estructura {
         return referencia;
     }
 
-    public String getDireccion() {
-        return direccion;
+    public String getValor() {
+        return valor;
     }
 
     public String getDescripcion() {
@@ -57,8 +57,8 @@ public class Estructura {
         this.referencia = referencia;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
+    public void setValor(String direccion) {
+        this.valor = direccion;
     }
 
     public void setDescripcion(String descripcion) {
@@ -67,7 +67,7 @@ public class Estructura {
 
     @Override
     public String toString() {
-        return "Estructura{" + "codigo=" + codigo + ", referencia=" + referencia + ", direccion=" + direccion + ", descripcion=" + descripcion + '}';
+        return "Estructura{" + "codigo=" + codigo + ", referencia=" + referencia + ", direccion=" + valor + ", descripcion=" + descripcion + '}';
     }
     
 }

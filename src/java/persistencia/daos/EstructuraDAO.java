@@ -28,14 +28,14 @@ public class EstructuraDAO implements GestionDAO{
         try {
             Connection con=null;
             con=ConexionBD.obtenerConexion();
-            String query = "SELECT codigo,direccion,descripcion FROM estructura WHERE referencia=?";
+            String query = "SELECT codigo,valor,descripcion FROM estructura WHERE referencia=?";
             PreparedStatement pS=con.prepareStatement(query);
             pS.setString(1, estruc.getReferencia());
             ResultSet rS=pS.executeQuery();
             if(rS.next())
             {
                 estruc.setCodigo(rS.getInt(1));
-                estruc.setDireccion(rS.getString(2));
+                estruc.setValor(rS.getString(2));
                 estruc.setDescripcion(rS.getString(3));
             }
         } catch (ClassNotFoundException ex) {
@@ -62,7 +62,7 @@ public class EstructuraDAO implements GestionDAO{
             PreparedStatement pS=con.prepareStatement(query);
             ResultSet rS=pS.executeQuery();            
             while(rS.next()){
-                Estructura prio=new Estructura(rS.getInt("codigo"), rS.getString("referencia"), rS.getString("direccion"), rS.getString("descripcion"));
+                Estructura prio=new Estructura(rS.getInt("codigo"), rS.getString("referencia"), rS.getString("valor"), rS.getString("descripcion"));
                 listEstructura.add(prio);
             }
             rS.close();

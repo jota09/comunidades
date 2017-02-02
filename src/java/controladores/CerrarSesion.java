@@ -20,7 +20,7 @@ public class CerrarSesion extends HttpServlet {
         sesion.removeAttribute("user");
         sesion.invalidate();
         //request.getServletContext().getRequestDispatcher("menuprincipal.jsp").forward(request, response);//redirige con los valores de request y response y mantiene la url
-        response.sendRedirect("menuprincipal.jsp");//redirige totalmente a la pagina
+        response.sendRedirect("/Comunidades");//redirige totalmente a la pagina
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

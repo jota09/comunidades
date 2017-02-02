@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Atributo;
@@ -43,7 +44,7 @@ public class GeneradorView extends HttpServlet {
         session.removeAttribute("view");
         try (PrintWriter out = response.getWriter()) {
             String rutaView = LecturaConfig.getValue("pathView");
-            if (view == null) {
+            if (view == null || session.getAttribute("user") == null) {
                 view = LecturaConfig.getValue("paginicio");
             }
             VistaFachada vistaFachada = new VistaFachada();
@@ -91,7 +92,7 @@ public class GeneradorView extends HttpServlet {
                 Estructura estructura = new Estructura();
                 estructura.setReferencia("rangoPaginas");
                 estructura = (Estructura) estructuraFachada.getObject(estructura);
-                String[] rangos = estructura.getDireccion().split(";");
+                String[] rangos = estructura.getValor().split(";");
                 String html = "<option value='" + rangos[0] + "' selected='selected'>Mostrar</option>";
                 for (String r : rangos) {
                     html += "<option value='" + r + "'>" + r + "</option>";
@@ -106,9 +107,14 @@ public class GeneradorView extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getSession().getAttribute("user") == null) {
+            if (request.getParameter("view") != null) {
+                try (PrintWriter out = response.getWriter()) {                    
+                    out.println("<script>$('#cierre').submit();</script>");
+                }
+            }
             processRequest(request, response);
         } else {
-            if (request.getParameter("view")== null) {
+            if (request.getParameter("view") == null) {
                 request.getSession().setAttribute("view", "menuprincipal.html");
             }
             processRequest(request, response);

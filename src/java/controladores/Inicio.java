@@ -81,6 +81,7 @@ public class Inicio extends HttpServlet {
                 if (usr.getNombres() != null) {
                     HttpSession sesion = request.getSession(true);
                     sesion.setAttribute("user", usr);
+                    sesion.setMaxInactiveInterval(op);
                     request.getSession().setAttribute("view", "menuprincipal.html");
                     response.sendRedirect("/Comunidades");
                     //request.setAttribute("view", "menuprincipal.html");
