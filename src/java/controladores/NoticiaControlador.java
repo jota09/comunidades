@@ -131,34 +131,35 @@ public class NoticiaControlador extends HttpServlet {
     private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
         try (PrintWriter out = response.getWriter()) {
             response.setContentType("text/html;charset=UTF-8");
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);        
-        System.out.println("metodo crearnoticias llamado desde la opcion 2");
-        if (isMultipart) { 
-            System.out.println("entro porque hay archivos");
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            RequestContext requestContext = new ServletRequestContext(request);
-            ServletContext servletContext = this.getServletConfig().getServletContext();
-            File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
-            factory.setRepository(repository);
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            List<FileItem> items = upload.parseRequest(requestContext);
-            Iterator iterator = items.iterator();
-            Usuario usr=(Usuario)request.getSession().getAttribute("user");
-            System.out.println("Usuario:"+usr.getCodigo());
-            while(iterator.hasNext()) {
-                FileItem fil = (FileItem) iterator.next();
-                String extension = fil.getName();
-                int startExtension = extension.indexOf(".") + 1;
-                extension = extension.substring(startExtension, extension.length());                               
-                String ruta="/xampp/htdocs/archivoSubidos";                               
-                File dir=new File(ruta);
-                if(!dir.exists())
-                    dir.mkdirs();//la difrenecia con mkdir es que con esta instrucción crea toda la ruta
-                String nuevaRuta=dir+File.separator+fil.getName(); 
-                File files=new File(nuevaRuta);
-                try {
-                    fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta
-                    /*Archivo arch=new Archivo();
+            boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+            System.out.println("metodo crearnoticias llamado desde la opcion 2");
+            if (isMultipart) {
+                System.out.println("entro porque hay archivos");
+                DiskFileItemFactory factory = new DiskFileItemFactory();
+                RequestContext requestContext = new ServletRequestContext(request);
+                ServletContext servletContext = this.getServletConfig().getServletContext();
+                File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
+                factory.setRepository(repository);
+                ServletFileUpload upload = new ServletFileUpload(factory);
+                List<FileItem> items = upload.parseRequest(requestContext);
+                Iterator iterator = items.iterator();
+                Usuario usr = (Usuario) request.getSession().getAttribute("user");
+                System.out.println("Usuario:" + usr.getCodigo());
+                while (iterator.hasNext()) {
+                    FileItem fil = (FileItem) iterator.next();
+                    String extension = fil.getName();
+                    int startExtension = extension.indexOf(".") + 1;
+                    extension = extension.substring(startExtension, extension.length());
+                    String ruta = "/xampp/htdocs/archivoSubidos";
+                    File dir = new File(ruta);
+                    if (!dir.exists()) {
+                        dir.mkdirs();//la difrenecia con mkdir es que con esta instrucción crea toda la ruta
+                    }
+                    String nuevaRuta = dir + File.separator + fil.getName();
+                    File files = new File(nuevaRuta);
+                    try {
+                        fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta
+                        /*Archivo arch=new Archivo();
                     arch.setExtension(extension);
                     arch.setNombre(fil.getName());
                     arch.setUrl(nuevaRuta);
@@ -167,14 +168,12 @@ public class NoticiaControlador extends HttpServlet {
                     achFachada.insertObject(arch);
                     File files=new File(nuevaRuta);
                     fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta */
-                } catch (Exception ex) {
-                    Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-                }            
             }
-            
-            
-            
+
             String codArt = request.getParameter("codArt");
             Articulo art = new Articulo();
             art.setTitulo(request.getParameter("titulo"));
@@ -182,7 +181,7 @@ public class NoticiaControlador extends HttpServlet {
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(usr);
             int cat;
-            cat = Integer.parseInt(request.getParameter("categoria"));                                               
+            cat = Integer.parseInt(request.getParameter("categoria"));
             ArticuloEstado artEstado = new ArticuloEstado();
             artEstado.setCodigo(1);
             art.setEstado(artEstado);
@@ -195,9 +194,9 @@ public class NoticiaControlador extends HttpServlet {
             categ.setCodigo(cat);
             art.setCategoria(categ);
             //System.out.println("este es codArt: "+codArt);
-            if(codArt.equals("")){
+            if (codArt.equals("")) {
                 artFach.insertObject(art);
-            }else{
+            } else {
                 art.setCodigo(Integer.parseInt(codArt));
                 artFach.updateObject(art);
             }
