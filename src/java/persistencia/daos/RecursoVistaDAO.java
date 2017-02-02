@@ -26,7 +26,30 @@ public class RecursoVistaDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        int tamano = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select count(codigo) from recurso_vista";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                tamano = rS.getInt(1);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return tamano;
     }
 
     @Override
@@ -146,7 +169,46 @@ public class RecursoVistaDAO implements GestionDAO {
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        List<RecursoVista> recursoVistas = new ArrayList();
+        String rango=String.valueOf(object);
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "select r.*,v.*,rv.codigo from recurso_vista rv join recurso r on r.codigo=rv.recurso_codigo "
+                    + " join vista v on v.codigo=rv.vista_codigo order by v.nombre limit "+rango;
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Recurso recurso = new Recurso();
+                Vista vista = new Vista();
+                RecursoVista recursoVista = new RecursoVista();
+                recurso.setCodigo(rS.getInt(1));
+                recurso.setNombre(rS.getString(2));
+                recurso.setRuta(rS.getString(3));
+                recurso.setActivo(rS.getShort(4));
+                vista.setCodigo(rS.getInt(5));
+                vista.setNombre(rS.getString(6));
+                vista.setUrl(rS.getString(7));
+                vista.setActivo(rS.getShort(8));
+                recursoVista.setRecursoCodigo(recurso);
+                recursoVista.setCodigo(rS.getInt(9));
+                recursoVista.setVistaCodigo(vista);
+                recursoVistas.add(recursoVista);
+            }
+            rS.close();
+            pS.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return recursoVistas;
     }
 
 }

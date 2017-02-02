@@ -21,7 +21,7 @@ import persistencia.entidades.Estructura;
  * @author Jesus.Ramos
  */
 public class EstructuraDAO implements GestionDAO{
-
+// Este metodo trae uno especifico...
     @Override
     public Object getObject(Object object) {
         Estructura estruc = (Estructura) object;

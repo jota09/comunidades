@@ -40,7 +40,8 @@ public class RecursoFachada implements GestionFachada {
 
     @Override
     public int getCount(Object obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO recursoDAO = new RecursoDAO();
+        return recursoDAO.getCount(obj);
     }
 
     @Override
@@ -62,7 +63,8 @@ public class RecursoFachada implements GestionFachada {
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO recursoDAO = new RecursoDAO();
+        return recursoDAO.getListByPagination(object);
     }
 
 }
