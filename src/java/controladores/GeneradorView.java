@@ -86,21 +86,18 @@ public class GeneradorView extends HttpServlet {
                 List<Menu> menus = menFac.getListObject(pf);
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
             }
-             if(pagina.contains("<@rangoPagina@>")){
-                 GestionFachada estructuraFachada = new EstructuraFachada();
-                 Estructura estructura=new Estructura();
-                 estructura.setReferencia("rangoPaginas");
-                 estructura=(Estructura)estructuraFachada.getObject(estructura);
-                 String [] rangos=estructura.getDireccion().split(";");
-                 String html="<option value='"+rangos[0]+"' selected='selected'>Mostrar</option>";
-                 for(String r:rangos){
-                     html+="<option value='"+r+"'>"+r+"</option>";
-                 }
-                 pagina=pagina.replace("<@rangoPagina@>", html);
-             }
-            
-          
-           
+            if (pagina.contains("<@rangoPagina@>")) {
+                GestionFachada estructuraFachada = new EstructuraFachada();
+                Estructura estructura = new Estructura();
+                estructura.setReferencia("rangoPaginas");
+                estructura = (Estructura) estructuraFachada.getObject(estructura);
+                String[] rangos = estructura.getDireccion().split(";");
+                String html = "<option value='" + rangos[0] + "' selected='selected'>Mostrar</option>";
+                for (String r : rangos) {
+                    html += "<option value='" + r + "'>" + r + "</option>";
+                }
+                pagina = pagina.replace("<@rangoPagina@>", html);
+            }
             out.print(pagina);
         }
     }
@@ -108,7 +105,14 @@ public class GeneradorView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        if (request.getSession().getAttribute("user") == null) {
+            processRequest(request, response);
+        } else {
+            if (request.getParameter("view")== null) {
+                request.getSession().setAttribute("view", "menuprincipal.html");
+            }
+            processRequest(request, response);
+        }
     }
 
     @Override
