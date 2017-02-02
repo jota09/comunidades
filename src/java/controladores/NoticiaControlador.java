@@ -132,7 +132,7 @@ public class NoticiaControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             response.setContentType("text/html;charset=UTF-8");
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);        
-        
+        System.out.println("metodo crearnoticias llamado desde la opcion 2");
         if (isMultipart) { 
             System.out.println("entro porque hay archivos");
             DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -155,15 +155,21 @@ public class NoticiaControlador extends HttpServlet {
                 if(!dir.exists())
                     dir.mkdirs();//la difrenecia con mkdir es que con esta instrucción crea toda la ruta
                 String nuevaRuta=dir+File.separator+fil.getName(); 
-                /*Archivo arch=new Archivo();
-                arch.setExtension(extension);
-                arch.setNombre(fil.getName()); 
-                arch.setUrl(nuevaRuta);
-                arch.setUsuario(usr);
-                ArchivoFachada  achFachada=new ArchivoFachada();
-                achFachada.insertObject(arch);
                 File files=new File(nuevaRuta);
-                fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta */               
+                try {
+                    fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta
+                    /*Archivo arch=new Archivo();
+                    arch.setExtension(extension);
+                    arch.setNombre(fil.getName());
+                    arch.setUrl(nuevaRuta);
+                    arch.setUsuario(usr);
+                    ArchivoFachada  achFachada=new ArchivoFachada();
+                    achFachada.insertObject(arch);
+                    File files=new File(nuevaRuta);
+                    fil.write(files);//FileItem es el cre crea el archivo en la nueva ruta */
+                } catch (Exception ex) {
+                    Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 }            
             }
             
