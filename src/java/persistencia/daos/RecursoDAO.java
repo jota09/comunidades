@@ -213,10 +213,11 @@ public class RecursoDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         Connection con = null;
-        String rango=String.valueOf(object);
+        String rango=String.valueOf(object).replace("'", "");
         List<Recurso> recursos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
+            System.out.println("Rango:"+rango);
             String sql = "select * from recurso where activo=1 limit "+rango;
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();

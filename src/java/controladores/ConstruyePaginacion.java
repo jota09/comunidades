@@ -34,6 +34,7 @@ public class ConstruyePaginacion extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String obj = request.getParameter("obj");
         String tipo = request.getParameter("tipo");
+        int rango=Integer.parseInt(request.getParameter("rango"));
         int codigoTipo = 0;
         try (PrintWriter out = response.getWriter()) {
             Class clase = Class.forName("fachada." + obj + "Fachada");
@@ -42,7 +43,7 @@ public class ConstruyePaginacion extends HttpServlet {
                 codigoTipo = Integer.parseInt(tipo);
             }
             int cont = 1;
-            List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(codigoTipo), 10);
+            List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(codigoTipo), rango);
             out.println("<nav aria-label='Page navigation'>");
             out.println("<ul class='pagination'>");
             String li = "<li  id='pag-" + cont + "' style=\"cursor:pointer;\" >";

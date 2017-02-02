@@ -208,7 +208,7 @@ public class VistaAtributoDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         Connection con = null;
-        String rango = String.valueOf(object);
+        String rango = String.valueOf(object).replace("'", "");
         List<VistaAtributo> vistaAtributos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
