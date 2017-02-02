@@ -82,6 +82,7 @@ public class GeneradorView extends HttpServlet {
                 List<Menu> menus = menFac.getListObject(pf);
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
             }
+            //pagina.replace(pagin, pagina)
             out.print(pagina);
         }
     }

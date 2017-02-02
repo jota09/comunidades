@@ -17,7 +17,8 @@ public class RecursoVistaFachada implements GestionFachada {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO recursoVistaDAO = new RecursoVistaDAO();
+        return recursoVistaDAO.getCount(object);
     }
 
     @Override
@@ -60,7 +61,8 @@ public class RecursoVistaFachada implements GestionFachada {
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO recursoVistaDAO = new RecursoVistaDAO();
+        return recursoVistaDAO.getListByPagination(object);
     }
 
 }

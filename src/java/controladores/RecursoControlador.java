@@ -78,7 +78,53 @@ public class RecursoControlador extends HttpServlet {
                 asociarRecursoAVista(request, response);
                 break;
             }
+            case 9:{
+                getRecursoConPaginacion(request, response);
+                break;
+            }
+            case 10:{
+                getRecursoVistaConPaginacion(request, response);
+                break;
+            }
 
+        }
+    }
+
+    public void getRecursoConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String rango = request.getParameter("rango");
+        GestionFachada recursoFacade = new RecursoFachada();
+        try (PrintWriter out = response.getWriter()) {
+            JSONArray arrayRecursos = new JSONArray();
+            List<Recurso> recursos = recursoFacade.getListByPagination(rango);
+            for (Recurso r : recursos) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", r.getCodigo());
+                obj.put("nombre", r.getNombre());
+                obj.put("ruta", r.getRuta().replace("<", "&lt;").replace(">", "&gt;"));
+                arrayRecursos.add(obj);
+            }
+            out.print(arrayRecursos);
+
+        }
+
+    }
+
+    public void getRecursoVistaConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String rango = request.getParameter("rango");
+        GestionFachada recursoVistaFachada = new RecursoVistaFachada();
+        try (PrintWriter out = response.getWriter()) {
+            JSONArray arrayRecursos = new JSONArray();
+            List<RecursoVista> recursoVistas =  recursoVistaFachada.getListByPagination(rango);
+            for (RecursoVista rv : recursoVistas) {
+                JSONObject obj = new JSONObject();
+                obj.put("codRecurso", rv.getRecursoCodigo().getCodigo());
+                obj.put("nombreRecurso", rv.getRecursoCodigo().getNombre());
+                obj.put("codVista", rv.getVistaCodigo().getCodigo());
+                obj.put("nombreVista", rv.getVistaCodigo().getNombre());
+                obj.put("codRV", rv.getCodigo());
+                arrayRecursos.add(obj);
+            }
+            out.print(arrayRecursos);
         }
     }
 
