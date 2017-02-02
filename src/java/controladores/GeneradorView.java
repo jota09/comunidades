@@ -1,6 +1,9 @@
 package controladores;
 
 import fachada.AtributoFachada;
+import fachada.EstadoFachada;
+import fachada.EstructuraFachada;
+import fachada.GestionFachada;
 import fachada.MenuFachada;
 import fachada.RecursoFachada;
 import fachada.VistaFachada;
@@ -17,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Atributo;
+import persistencia.entidades.Estructura;
 import persistencia.entidades.Menu;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.Recurso;
@@ -82,7 +86,21 @@ public class GeneradorView extends HttpServlet {
                 List<Menu> menus = menFac.getListObject(pf);
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
             }
-            //pagina.replace(pagin, pagina)
+             if(pagina.contains("<@rangoPagina@>")){
+                 GestionFachada estructuraFachada = new EstructuraFachada();
+                 Estructura estructura=new Estructura();
+                 estructura.setReferencia("rangoPaginas");
+                 estructura=(Estructura)estructuraFachada.getObject(estructura);
+                 String [] rangos=estructura.getDireccion().split(";");
+                 String html="<option value='"+rangos[0]+"' selected='selected'>Mostrar</option>";
+                 for(String r:rangos){
+                     html+="<option value='"+r+"'>"+r+"</option>";
+                 }
+                 pagina=pagina.replace("<@rangoPagina@>", html);
+             }
+            
+          
+           
             out.print(pagina);
         }
     }

@@ -171,7 +171,7 @@ public class RecursoVistaDAO implements GestionDAO {
     public List getListByPagination(Object object) {
         Connection con = null;
         List<RecursoVista> recursoVistas = new ArrayList();
-        String rango=String.valueOf(object);
+        String rango=String.valueOf(object).replace("'", "");
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "select r.*,v.*,rv.codigo from recurso_vista rv join recurso r on r.codigo=rv.recurso_codigo "

@@ -28,15 +28,15 @@ public class EstructuraDAO implements GestionDAO{
         try {
             Connection con=null;
             con=ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM estructura WHERE referencia=?";
+            String query = "SELECT codigo,direccion,descripcion FROM estructura WHERE referencia=?";
             PreparedStatement pS=con.prepareStatement(query);
             pS.setString(1, estruc.getReferencia());
             ResultSet rS=pS.executeQuery();
             if(rS.next())
             {
-                estruc.setCodigo(rS.getInt("codigo"));
-                estruc.setDireccion(rS.getString("direccion"));
-                estruc.setDescripcion(rS.getString("descripcion"));
+                estruc.setCodigo(rS.getInt(1));
+                estruc.setDireccion(rS.getString(2));
+                estruc.setDescripcion(rS.getString(3));
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
