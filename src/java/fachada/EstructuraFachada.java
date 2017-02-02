@@ -29,8 +29,8 @@ public class EstructuraFachada implements GestionFachada {
 
     @Override
     public Object getObject(Object object) {
-        GestionDAO artDAO = new EstructuraDAO();
-        return artDAO.getObject(object);
+        GestionDAO estrucDAO = new EstructuraDAO();
+        return estrucDAO.getObject(object);
     }
 
     @Override

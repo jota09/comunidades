@@ -36,23 +36,6 @@ public class Utilitaria {
         }
         return imprime;
     }
-
-    /*public static String construirCategorias(List<Categoria> listCategoria) {
-        String imprime = "";
-        for (Categoria cat : listCategoria) {
-            imprime += "<li class='liPersonalizada'><input type=\"radio\" "
-                    + "name='categoria' id='categoria' "
-                    + "class=\"checkPersonalizado\" value='" + cat.getCodigo()
-                    + "'/><label>" + cat.getNombre() + "</label>";
-            if (cat.getListaCategorias().size() > 0) {
-                imprime += "<ul class='ulPersonalizada'>";
-                imprime += construirCategorias(cat.getListaCategorias());
-                imprime += "</ul>";
-            }
-            imprime += "</li>";
-        }
-        return imprime;
-    }*/
     
     public static String construirCategorias(List<Categoria> listCategoria) {
         String imprime = "";        
