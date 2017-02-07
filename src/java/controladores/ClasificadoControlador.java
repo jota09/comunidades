@@ -155,31 +155,25 @@ public class ClasificadoControlador extends HttpServlet {
             String ref = "ordenarPor";
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
-            // System.out.println(estruc);
             String[] rango = estruc.getValor().split(";");
-            System.out.println(rango[0]);
             String ref2 = "clasificadoOrdenar";
             Estructura estruc2 = new Estructura(ref2);
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            // System.out.println(estruc);
             String[] rango2 = estruc2.getValor().split(";");
-            System.out.println(rango2[0]);
             JSONArray array = new JSONArray();
             for (int i = 0; i < rango2.length; i++) {
+                String[] ordenar = rango2[i].split(",");
                 System.out.println(rango2[i]);
                 for (int j = 0; j < rango.length; j++) {
-                    System.out.println(rango[j]);
                     JSONObject obj = new JSONObject();
                     if (rango[j].equals("ASC")) {
-                        obj.put("campo", rango2[i]);
-                        rango2[i] = rango2[j].replace("_", " ");
-                        obj.put("nombre", rango2[i] + " Reciente");
+                        obj.put("campo", ordenar[0]);
+                        obj.put("nombre", ordenar[1] + " más reciente");
                         obj.put("orden", rango[j]);
                     }
                     if (rango[j].equals("DESC")) {
-                        obj.put("campo", rango2[i]);
-                        rango2[i] = rango2[j].replace("_", " ");
-                        obj.put("nombre", rango2[i] + " Antiguo");
+                        obj.put("campo", ordenar[0]);
+                        obj.put("nombre", ordenar[1] + " más antiguo");
                         obj.put("orden", rango[j]);
                     }
                     array.add(obj);
