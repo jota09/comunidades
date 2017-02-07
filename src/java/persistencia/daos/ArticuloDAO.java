@@ -159,20 +159,22 @@ public class ArticuloDAO implements GestionDAO {
         int result = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "INSERT INTO articulo( usuario_codigo, titulo, descripcion,"
+            String sql = "INSERT INTO articulo( codigo,usuario_codigo, titulo, descripcion,"
                     + " precio, fecha_fin_publicacion, prioridad_codigo,"
                     + "estados_codigo,tipo_articulo_codigo,categoria_codigo) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
-                pS.setInt(1, art.getUsuario().getCodigo());
-                pS.setString(2, art.getTitulo());
-                pS.setString(3, art.getDescripcion());
-                pS.setDouble(4, art.getPrecio());
-                pS.setDate(5, art.getFechaFinPublicacion());
-                pS.setInt(6, art.getPrioridad().getCodigo());
-                pS.setInt(7, art.getEstado().getCodigo());
-                pS.setInt(8, art.getTipoArticulo().getCodigo());
-                pS.setInt(9, art.getCategoria().getCodigo());
+                art.setCodigo(getMaxCodigo());
+                pS.setInt(1, art.getCodigo());
+                pS.setInt(2, art.getUsuario().getCodigo());
+                pS.setString(3, art.getTitulo());
+                pS.setString(4, art.getDescripcion());
+                pS.setDouble(5, art.getPrecio());
+                pS.setDate(6, art.getFechaFinPublicacion());
+                pS.setInt(7, art.getPrioridad().getCodigo());
+                pS.setInt(8, art.getEstado().getCodigo());
+                pS.setInt(9, art.getTipoArticulo().getCodigo());
+                pS.setInt(10, art.getCategoria().getCodigo());
                 result = pS.executeUpdate();
             }
         } catch (Exception e) {
@@ -194,7 +196,7 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public int getCount(Object obj) {
-        int tipo=Integer.parseInt(String.valueOf(obj));
+        int tipo = Integer.parseInt(String.valueOf(obj));
         Connection con = null;
         int cont = 0;
         try {
@@ -256,14 +258,14 @@ public class ArticuloDAO implements GestionDAO {
                     + "    categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "    articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
                     + "    WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=?"
-                    + "    "+((articulo.getCategoria()!=null)?" AND art.categoria_codigo="+articulo.getCategoria().getCodigo()+" AND":"AND ")
+                    + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
                     + "    OR art.descripcion LIKE ?)";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
-            pS.setInt(2, articulo.getUsuario().getCodigo());            
-            pS.setString(3, articulo.getBusqueda()+"%");
-            pS.setString(4, articulo.getBusqueda()+"%");
+            pS.setInt(2, articulo.getUsuario().getCodigo());
+            pS.setString(3, articulo.getBusqueda() + "%");
+            pS.setString(4, articulo.getBusqueda() + "%");
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
@@ -360,6 +362,32 @@ public class ArticuloDAO implements GestionDAO {
             }
         }
         return listArt;
+    }
+
+    private int getMaxCodigo() {
+        Connection con = null;
+        int cont = 1;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT MAX(codigo)+1 codigo FROM articulo ";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                int max=rS.getInt(1);
+                cont = ((max>0)?max:cont);
+            }
+            rS.close();
+            pS.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return cont;
     }
 
 }
