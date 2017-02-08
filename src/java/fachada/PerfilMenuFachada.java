@@ -7,59 +7,60 @@ package fachada;
 
 import java.util.List;
 import persistencia.daos.GestionDAO;
-import persistencia.daos.MenuDAO;
+import persistencia.daos.PerfilMenuDAO;
 
 /**
  *
- * @author ferney.medina
+ * @author manuel.alcala
  */
-public class MenuFachada implements GestionFachada {
-
+public class PerfilMenuFachada implements GestionFachada {
+    
     @Override
-    public List getListObject(Object object) {
-        GestionDAO menDAO = new MenuDAO();
-        return menDAO.getListObject(object);
+    public int getCount(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public Object getObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         GestionDAO perfilMenuDAO = new PerfilMenuDAO();
+         return perfilMenuDAO.insertObject(object);
     }
-
+    
     @Override
-    public int updateObject(Object obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List getListObject(Object object) {
+        GestionDAO perfilMenuDAO = new PerfilMenuDAO();
+        return perfilMenuDAO.getListObject(object);
     }
-
-    @Override
-    public int getCount(Object obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
     @Override
     public List getListObject() {
-        GestionDAO menDAO = new MenuDAO();
-        return menDAO.getListObject();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    @Override
+    public int updateObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public void deleteObject(Object object) {
+        GestionDAO perfilMenuDAO = new PerfilMenuDAO();
+        perfilMenuDAO.deleteObject(object);
+    }
+    
     @Override
     public List getListByCondition(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
 }

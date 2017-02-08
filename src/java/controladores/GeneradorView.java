@@ -108,7 +108,7 @@ public class GeneradorView extends HttpServlet {
             throws ServletException, IOException {
         if (request.getSession().getAttribute("user") == null) {
             if (request.getParameter("view") != null) {
-                try (PrintWriter out = response.getWriter()) {                    
+                try (PrintWriter out = response.getWriter()) {
                     out.println("<script>$('#cierre').submit();</script>");
                 }
             }

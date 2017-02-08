@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,7 +67,33 @@ public class PerfilDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Perfil> perfiles = new ArrayList();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select * from perfil where activo=1";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Perfil perfil = new Perfil();
+                perfil.setCodigo(rS.getInt(1));
+                perfil.setNombre(rS.getString(2));
+                perfiles.add(perfil);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(PerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return perfiles;
     }
 
     @Override

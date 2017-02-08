@@ -209,7 +209,7 @@ public class AtributoDAO implements GestionDAO {
 
     @Override
     public List getListByPagination(Object object) {
-        String rango = String.valueOf(object);
+        String rango = String.valueOf(object).replace("'", "");
         Connection con = null;
         List<Atributo> atributos = new ArrayList();
         try {

@@ -104,7 +104,68 @@ public class MenuDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Menu> listaMenus = new ArrayList<Menu>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT * from menu where codigo_padre is null";
+
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Menu menu = new Menu();
+                menu.setCodigo(rS.getInt("codigo"));
+                menu.setCodigoPadre(rS.getInt("codigo_padre"));
+                menu.setNombre(rS.getString("nombre"));
+                menu.setUrl(rS.getString("url"));
+                menu.setListaMenu(getHijos(menu.getCodigo()));
+                listaMenus.add(menu);
+            }
+            rS.close();
+            pS.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listaMenus;
+    }
+
+    private List<Menu> getHijos(int codMenu) {
+        ArrayList<Menu> listaMenus = new ArrayList<Menu>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT * from menu where codigo_padre=?";
+
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, codMenu);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Menu menu = new Menu();
+                menu.setCodigo(rS.getInt("codigo"));
+                menu.setCodigoPadre(rS.getInt("codigo_padre"));
+                menu.setNombre(rS.getString("nombre"));
+                menu.setUrl(rS.getString("url"));
+                menu.setListaMenu(getHijos(menu.getCodigo()));
+                listaMenus.add(menu);
+            }
+            rS.close();
+            pS.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listaMenus;
     }
 
     @Override
