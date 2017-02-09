@@ -122,10 +122,10 @@ public class GestionPermisosControlador extends HttpServlet {
         for (Menu m : menus) {
             if (m.getListaMenu().size() > 0) {
                 html += "<div class=\"panel-group\">"
-                        + "  <div class=\"panel panel-primary\">"
+                        + "  <div class=\"panel panel-info\">"
                         + "    <div class=\"panel-heading\">"
                         + "      <h4 class=\"panel-title\">"
-                        + "        <a data-toggle=\"collapse\" href=\"#collapse" + m.getCodigo() + "\"><strong>" + m.getNombre() + "</strong></a><input id='permiso" + m.getCodigo() + "' type='checkbox' onclick=\"desChequeaCheck(" + m.getCodigo() + ")\" class=' checkbox permisos pull-right'>"
+                        + "        <a data-toggle=\"collapse\" href=\"#collapse" + m.getCodigo() + "\"><strong>" + m.getNombre() + "</strong></a><input id='permiso" + m.getCodigo() + "' type='checkbox' onclick=\"desChequeaCheck(" + m.getCodigo() + ")\" class='  permisos pull-right'>"
                         + "      </h4>"
                         + "    </div>"
                         + "    <div id=\"collapse" + m.getCodigo() + "\" class=\"panel-collapse collapse\">"
@@ -137,7 +137,7 @@ public class GestionPermisosControlador extends HttpServlet {
                         + "  </div>"
                         + "</div>";
             } else {
-                html += "<div  class=\"list-group-item\"><strong>" + m.getNombre() + "</strong><input id='permiso" + m.getCodigo() + "' type='checkbox' onclick=\"chequeaPadre(" + m.getCodigoPadre() + ")\" class=' checkbox permisos pull-right'></div><br/>";
+                html += "<div  class=\"list-group-item\"><strong>" + m.getNombre() + "</strong><input id='permiso" + m.getCodigo() + "' type='checkbox' onclick=\"chequeaPadre(" + m.getCodigoPadre() + ")\" class='  permisos pull-right'></div><br/>";
             }
         }
         return html;
