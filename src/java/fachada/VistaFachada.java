@@ -23,7 +23,8 @@ public class VistaFachada implements GestionFachada {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO vistaDAO = new VistaDAO();
+        return vistaDAO.insertObject(object);
     }
 
     @Override

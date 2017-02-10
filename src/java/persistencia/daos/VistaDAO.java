@@ -92,7 +92,27 @@ public class VistaDAO implements GestionDAO {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Vista vista = (Vista) object;
+        Connection con = null;
+        int insert = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "INSERT INTO vista(codigo,nombre,url) values(?,?,?)";
+            PreparedStatement pS = con.prepareCall(sql);
+            pS.setInt(1, vista.getCodigo());
+            pS.setString(2, vista.getNombre());
+            pS.setString(3, vista.getUrl());
+            insert = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return insert;
+
     }
 
     @Override

@@ -7,18 +7,17 @@ package fachada;
 
 import java.util.List;
 import persistencia.daos.GestionDAO;
-import persistencia.daos.MenuDAO;
+import persistencia.daos.VistaGViewDAO;
 
 /**
  *
- * @author ferney.medina
+ * @author manuel.alcala
  */
-public class MenuFachada implements GestionFachada {
+public class VistaGViewFachada implements GestionFachada {
 
     @Override
-    public List getListObject(Object object) {
-        GestionDAO menDAO = new MenuDAO();
-        return menDAO.getListObject(object);
+    public int getCount(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -28,29 +27,28 @@ public class MenuFachada implements GestionFachada {
 
     @Override
     public int insertObject(Object object) {
-        GestionDAO menDAO = new MenuDAO();
-        return menDAO.insertObject(object);
-    }
-
-    @Override
-    public int updateObject(Object obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getCount(Object obj) {
+    public List getListObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List getListObject() {
+        GestionDAO vistaGviewDAO = new VistaGViewDAO();
+        return vistaGviewDAO.getListObject();
+    }
+
+    @Override
+    public int updateObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void deleteObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List getListObject() {
-        GestionDAO menDAO = new MenuDAO();
-        return menDAO.getListObject();
     }
 
     @Override
