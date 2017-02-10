@@ -7,25 +7,21 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.tomcat.util.http.fileupload.FileItem;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.RequestContext;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 import org.json.simple.JSONArray;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
@@ -55,7 +51,7 @@ public class NoticiaControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, FileUploadException {
+            throws ServletException, IOException, FileUploadException, ParseException {
         response.setContentType("text/html;charset=UTF-8");
         if(request.getParameter("op")!=null)
         {
@@ -120,15 +116,15 @@ public class NoticiaControlador extends HttpServlet {
                 jsonObj.put("nombreUsuario",art.getUsuario().getNombres());
                 jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
                 jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
-                jsonObj.put("nombreEstado",art.getCategoria().getNombre());
-                jsonObj.put("fechaPublicacion",art.getFechaPublicacion());
+                jsonObj.put("nombreEstado",art.getCategoria().getNombre());                
+                jsonObj.put("fechafinPublicacion",art.getFechaFinPublicacion().toString());
                 jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
         }
     }
 
-    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
+    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             response.setContentType("text/html;charset=UTF-8");
             String codArt = request.getParameter("codArt");
@@ -150,7 +146,10 @@ public class NoticiaControlador extends HttpServlet {
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
             art.setCategoria(categ);
-            //System.out.println("este es codArt: "+codArt);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsed = format.parse(request.getParameter("finPublicacion"));
+            java.sql.Date date = new java.sql.Date(parsed.getTime());
+            art.setFechaFinPublicacion(date);
             if (codArt.equals("")) {
                 artFach.insertObject(art);
             } else {
@@ -175,7 +174,7 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
             obj.put("fecha_publicacion", art.getFechaPublicacion());
-            obj.put("fecha_fin_publicacion", art.getFechaFinPublicacion());
+            obj.put("fecha_fin_publicacion", art.getFechaFinPublicacion().toString());
             obj.put("actualizacion", art.getActualizacion());
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
@@ -236,7 +235,7 @@ public class NoticiaControlador extends HttpServlet {
                 jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
                 jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
                 jsonObj.put("nombreEstado",art.getCategoria().getNombre());
-                jsonObj.put("fechaPublicacion",art.getFechaPublicacion());
+                jsonObj.put("fechafinPublicacion",art.getFechaFinPublicacion().toString());
                 jsonArray.add(jsonObj);
             }
             out.print(jsonArray);       
@@ -265,7 +264,7 @@ public class NoticiaControlador extends HttpServlet {
                 jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
                 jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
                 jsonObj.put("nombreEstado",art.getCategoria().getNombre());
-                jsonObj.put("fechaPublicacion",art.getFechaPublicacion());
+                jsonObj.put("fechafinPublicacion",art.getFechaFinPublicacion().toString());
                 jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
@@ -288,6 +287,8 @@ public class NoticiaControlador extends HttpServlet {
             processRequest(request, response);
         } catch (FileUploadException ex) {
             Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -305,6 +306,8 @@ public class NoticiaControlador extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (FileUploadException ex) {
+            Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
