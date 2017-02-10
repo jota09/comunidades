@@ -4,12 +4,10 @@
  * and open the template in the editor.
  */
 package controladores;
-
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
 import fachada.EstructuraFachada;
 import fachada.PrioridadFachada;
-import fachada.UsuarioFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -32,7 +30,6 @@ import persistencia.entidades.Estructura;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
-import utilitarias.Utilitaria;
 
 /**
  *
@@ -53,7 +50,7 @@ public class ClasificadoControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        //System.out.println(request);
+       // System.out.println(request);
         if (request.getParameter("opc") != null) {
             int opcion = Integer.parseInt(request.getParameter("opc"));
             switch (opcion) {
@@ -74,6 +71,12 @@ public class ClasificadoControlador extends HttpServlet {
                     break;
                 case 6:
                     recuperarOrdenarPor(request, response);
+                    break;
+                case 7:
+                    recuperarUltimosClasificados(request, response);
+                    break;
+                case 8:
+                    recuperarClasificado(request, response);
                     break;
             }
         }
@@ -189,8 +192,6 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTitulo(request.getParameter("tituloClasificado"));
             art.setDescripcion(request.getParameter("cuerpoClasificado"));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
-
-            art.setDescripcion(request.getParameter("precioClasificado"));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(usr);
             art.setFechaPublicacion(null);
@@ -210,6 +211,40 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(1);
         } catch (ParseException ex) {
             Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void recuperarUltimosClasificados(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            String ref = "cantidadUltimosClasificados";
+            Estructura estruc = new Estructura(ref);
+            estruc = (Estructura) estrucFachada.getObject(estruc);
+            ArticuloFachada artFachada = new ArticuloFachada();
+            List<Articulo> listArticulo = artFachada.getListObject(estruc);
+            JSONArray array = new JSONArray();
+            for (Articulo art : listArticulo) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", art.getCodigo());
+                obj.put("nombre", art.getTitulo());
+                array.add(obj);
+            }
+            out.print(array);
+        }
+    }
+    
+    private void recuperarClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            System.out.println("Entro a la opcion 8");
+            Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
+            ArticuloFachada artFachada = new ArticuloFachada();
+            art = (Articulo) artFachada.getObject(art);
+            System.out.println(art);
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", art.getCodigo());
+            obj.put("titulo", art.getTitulo());
+            obj.put("activo", art.getActivo());            
+            out.print(obj);
         }
     }
 

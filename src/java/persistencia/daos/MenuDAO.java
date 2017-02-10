@@ -104,11 +104,10 @@ public class MenuDAO implements GestionDAO {
         int insert = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "INSERT INTO menu(codigo_padre,url,nombre) values(?,?,?)";
+            String sql = "INSERT INTO menu(codigo_padre,url,nombre) values(" + ((menu.getCodigoPadre() != 0) ? menu.getCodigoPadre() : null) + ",?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, menu.getCodigoPadre());
-            pS.setString(2, menu.getUrl());
-            pS.setString(3, menu.getNombre());
+            pS.setString(1, menu.getUrl());
+            pS.setString(2, menu.getNombre());
             insert = pS.executeUpdate();
             pS.close();
 
@@ -195,7 +194,23 @@ public class MenuDAO implements GestionDAO {
 
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Menu menu = (Menu) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "DELETE FROM menu where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, menu.getCodigo());
+            pS.executeUpdate();
+            pS.close();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
     }
 
     @Override

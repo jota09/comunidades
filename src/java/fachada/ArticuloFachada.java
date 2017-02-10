@@ -53,7 +53,8 @@ public class ArticuloFachada implements GestionFachada {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO artDAO = new ArticuloDAO();
+        return artDAO.getListObject();
     }
 
     @Override
