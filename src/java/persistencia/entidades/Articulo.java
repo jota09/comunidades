@@ -32,6 +32,10 @@ public class Articulo {
     public Articulo() {
     }
 
+    public Articulo(int codigo) {
+        this.codigo = codigo;
+    }
+
     public int getCodigo() {
         return this.codigo;
     }

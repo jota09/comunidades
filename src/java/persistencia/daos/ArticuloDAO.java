@@ -17,6 +17,7 @@ import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
+import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 
@@ -64,46 +65,25 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object obj) {
-        Articulo articulo = (Articulo) obj;
+        Estructura estructura = (Estructura) obj;
         ArrayList<Articulo> listArt = new ArrayList<Articulo>();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
 
-            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
-                    + "artEstado.codigo,artEstado.nombre nombreEstado "
-                    + "FROM articulo art JOIN "
-                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
-                    + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
-                    + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? ";
+            String query = "SELECT CODIGO, TITULO "
+                    + "FROM comunidades.articulo "
+                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ACTIVO = ? "
+                    + "ORDER BY FECHA_PUBLICACION DESC "
+                    + "LIMIT "+ Integer.parseInt(estructura.getValor()) +" ";
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
-            pS.setInt(2, articulo.getUsuario().getCodigo());
-            if (articulo.getCategoria() != null) {
-                pS.setInt(3, articulo.getCategoria().getCodigo());
-            }
+            pS.setInt(1, 1);
+            pS.setInt(2, 1);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
-                Categoria cat = new Categoria();
-                ArticuloEstado estado = new ArticuloEstado(rS.getInt("estados_codigo"));
-                estado.setNombre(rS.getString("nombreEstado"));
-                Usuario usr = new Usuario();
-                art.setCodigo(rS.getInt("codigo"));
-                usr.setCodigo(rS.getInt("usuario_codigo"));
-                usr.setNombres(rS.getString("nombres"));
-                usr.setApellidos(rS.getString("apellidos"));
-                art.setUsuario(usr);
-                cat.setCodigo(rS.getInt("codigo"));
-                cat.setNombre(rS.getString("nombre"));
-                art.setCategoria(cat);
-                art.setTitulo(rS.getString("titulo"));
-                art.setDescripcion(rS.getString("descripcion"));
-                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
-                art.setEstado(estado);
+                art.setCodigo(rS.getInt("CODIGO"));
+                art.setTitulo(rS.getString("TITULO"));
                 listArt.add(art);
             }
             rS.close();
