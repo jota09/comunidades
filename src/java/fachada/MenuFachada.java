@@ -44,7 +44,8 @@ public class MenuFachada implements GestionFachada {
 
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO menDAO = new MenuDAO();
+        menDAO.deleteObject(object);
     }
 
     @Override

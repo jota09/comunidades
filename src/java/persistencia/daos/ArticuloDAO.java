@@ -64,60 +64,61 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object obj) {
-        Articulo articulo = (Articulo) obj;
-        ArrayList<Articulo> listArt = new ArrayList<Articulo>();
-        Connection con = null;
-        try {
-            con = ConexionBD.obtenerConexion();
-
-            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
-                    + "artEstado.codigo,artEstado.nombre nombreEstado "
-                    + "FROM articulo art JOIN "
-                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
-                    + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
-                    + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? ";
-            PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
-            pS.setInt(2, articulo.getUsuario().getCodigo());
-            if (articulo.getCategoria() != null) {
-                pS.setInt(3, articulo.getCategoria().getCodigo());
-            }
-            ResultSet rS = pS.executeQuery();
-            while (rS.next()) {
-                Articulo art = new Articulo();
-                Categoria cat = new Categoria();
-                ArticuloEstado estado = new ArticuloEstado(rS.getInt("estados_codigo"));
-                estado.setNombre(rS.getString("nombreEstado"));
-                Usuario usr = new Usuario();
-                art.setCodigo(rS.getInt("codigo"));
-                usr.setCodigo(rS.getInt("usuario_codigo"));
-                usr.setNombres(rS.getString("nombres"));
-                usr.setApellidos(rS.getString("apellidos"));
-                art.setUsuario(usr);
-                cat.setCodigo(rS.getInt("codigo"));
-                cat.setNombre(rS.getString("nombre"));
-                art.setCategoria(cat);
-                art.setTitulo(rS.getString("titulo"));
-                art.setDescripcion(rS.getString("descripcion"));
-                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
-                art.setEstado(estado);
-                listArt.add(art);
-            }
-            rS.close();
-            pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return listArt;
+//        Articulo articulo = (Articulo) obj;
+//        ArrayList<Articulo> listArt = new ArrayList<Articulo>();
+//        Connection con = null;
+//        try {
+//            con = ConexionBD.obtenerConexion();
+//
+//            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
+//                    + "artEstado.codigo,artEstado.nombre nombreEstado "
+//                    + "FROM articulo art JOIN "
+//                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
+//                    + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
+//                    + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
+//                    + "WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=? ";
+//            PreparedStatement pS = con.prepareStatement(query);
+//            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
+//            pS.setInt(2, articulo.getUsuario().getCodigo());
+//            if (articulo.getCategoria() != null) {
+//                pS.setInt(3, articulo.getCategoria().getCodigo());
+//            }
+//            ResultSet rS = pS.executeQuery();
+//            while (rS.next()) {
+//                Articulo art = new Articulo();
+//                Categoria cat = new Categoria();
+//                ArticuloEstado estado = new ArticuloEstado(rS.getInt("estados_codigo"));
+//                estado.setNombre(rS.getString("nombreEstado"));
+//                Usuario usr = new Usuario();
+//                art.setCodigo(rS.getInt("codigo"));
+//                usr.setCodigo(rS.getInt("usuario_codigo"));
+//                usr.setNombres(rS.getString("nombres"));
+//                usr.setApellidos(rS.getString("apellidos"));
+//                art.setUsuario(usr);
+//                cat.setCodigo(rS.getInt("codigo"));
+//                cat.setNombre(rS.getString("nombre"));
+//                art.setCategoria(cat);
+//                art.setTitulo(rS.getString("titulo"));
+//                art.setDescripcion(rS.getString("descripcion"));
+//                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
+//                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
+//                art.setActivo(rS.getShort("activo"));
+//                art.setEstado(estado);
+//                listArt.add(art);
+//            }
+//            rS.close();
+//            pS.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                con.close();
+//            } catch (SQLException ex) {
+//                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//        return listArt;
+    return null;
     }
 
     @Override
