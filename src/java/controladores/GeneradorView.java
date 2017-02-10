@@ -32,7 +32,7 @@ import utilitarias.Utilitaria;
 
 @WebServlet(urlPatterns = {"/"})
 public class GeneradorView extends HttpServlet {
-
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -88,11 +88,15 @@ public class GeneradorView extends HttpServlet {
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
             } else {
                 Perfil pf = new Perfil();
-                pf.setCodigo(3);
+                GestionFachada estructuraFachada = new EstructuraFachada();
+                Estructura estructura = new Estructura();
+                estructura.setReferencia("PerfilAnonimo");
+                estructura = (Estructura) estructuraFachada.getObject(estructura);
+                pf.setCodigo(Integer.parseInt(estructura.getValor()));
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(pf);
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
-
+                
             }
             if (pagina.contains("<@rangoPagina@>")) {
                 GestionFachada estructuraFachada = new EstructuraFachada();
@@ -109,7 +113,7 @@ public class GeneradorView extends HttpServlet {
             out.print(pagina);
         }
     }
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -127,13 +131,13 @@ public class GeneradorView extends HttpServlet {
             processRequest(request, response);
         }
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
+    
     @Override
     public String getServletInfo() {
         return "Short description";
