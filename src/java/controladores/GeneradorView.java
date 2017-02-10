@@ -86,6 +86,13 @@ public class GeneradorView extends HttpServlet {
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(pf);
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
+            } else {
+                Perfil pf = new Perfil();
+                pf.setCodigo(3);
+                MenuFachada menFac = new MenuFachada();
+                List<Menu> menus = menFac.getListObject(pf);
+                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
+
             }
             if (pagina.contains("<@rangoPagina@>")) {
                 GestionFachada estructuraFachada = new EstructuraFachada();
