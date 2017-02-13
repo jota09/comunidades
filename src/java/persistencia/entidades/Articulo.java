@@ -15,16 +15,12 @@ public class Articulo {
     private Date fechapublicacion;
     private double precio;
     private Date fechafinpublicacion;
-    private double costo;
     private Prioridad prioridad;
-    private short activo;
-    private Timestamp creacion;
-    private Timestamp actualizacion;
-    private short eliminado;
     private String observacionesadmon;
     private ArticuloEstado estado;
     private TipoArticulo tipoarticulo;
     private Categoria categoria;
+    private Comunidad comunidad;
     private List<ClasificadoInteres> listaInteres;
     private String rango;
     private String busqueda;
@@ -100,52 +96,12 @@ public class Articulo {
         this.fechafinpublicacion = fechafinpublicacion;
     }
 
-    public double getCosto() {
-        return this.costo;
-    }
-
-    public void setCosto(double costo) {
-        this.costo = costo;
-    }
-
     public Prioridad getPrioridad() {
         return this.prioridad;
     }
 
     public void setPrioridad(Prioridad prioridad) {
         this.prioridad = prioridad;
-    }
-
-    public short getActivo() {
-        return this.activo;
-    }
-
-    public void setActivo(short activo) {
-        this.activo = activo;
-    }
-
-    public Timestamp getCreacion() {
-        return this.creacion;
-    }
-
-    public void setCreacion(Timestamp creacion) {
-        this.creacion = creacion;
-    }
-
-    public Timestamp getActualizacion() {
-        return this.actualizacion;
-    }
-
-    public void setActualizacion(Timestamp actualizacion) {
-        this.actualizacion = actualizacion;
-    }
-
-    public short getEliminado() {
-        return this.eliminado;
-    }
-
-    public void setEliminado(short eliminado) {
-        this.eliminado = eliminado;
     }
 
     public String getObservacionesAdmon() {
@@ -202,12 +158,19 @@ public class Articulo {
 
     public void setBusqueda(String busqueda) {
         this.busqueda = busqueda;
-    }
+    }    
 
     @Override
     public String toString() {
-        return "Articulo{" + "codigo=" + codigo + ", usuario=" + usuario + ", usuariocodigoadm=" + usuariocodigoadm + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechapublicacion=" + fechapublicacion + ", precio=" + precio + ", fechafinpublicacion=" + fechafinpublicacion + ", costo=" + costo + ", prioridad=" + prioridad + ", activo=" + activo + ", creacion=" + creacion + ", actualizacion=" + actualizacion + ", eliminado=" + eliminado + ", observacionesadmon=" + observacionesadmon + ", estado=" + estado + ", tipoarticulo=" + tipoarticulo + ", categoria=" + categoria + ", listaInteres=" + listaInteres + ", rango=" + rango + ", busqueda=" + busqueda + '}';
+        return "Articulo{" + "codigo=" + codigo + ", usuario=" + usuario + ", usuariocodigoadm=" + usuariocodigoadm + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechapublicacion=" + fechapublicacion + ", precio=" + precio + ", fechafinpublicacion=" + fechafinpublicacion + ", prioridad=" + prioridad + ", observacionesadmon=" + observacionesadmon + ", estado=" + estado + ", tipoarticulo=" + tipoarticulo + ", categoria=" + categoria + ", comunidad=" + comunidad + ", listaInteres=" + listaInteres + ", rango=" + rango + ", busqueda=" + busqueda + '}';
     }
 
+    public void setComunidad(Comunidad comunidad) {
+        this.comunidad = comunidad;
+    }
+
+    public Comunidad getComunidad() {
+        return comunidad;
+    }
     
 }

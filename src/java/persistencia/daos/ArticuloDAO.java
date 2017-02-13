@@ -52,7 +52,6 @@ public class ArticuloDAO implements GestionDAO {
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
             }
         } catch (ClassNotFoundException ex) {
@@ -265,7 +264,6 @@ public class ArticuloDAO implements GestionDAO {
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
                 listArt.add(art);
             }
@@ -326,7 +324,6 @@ public class ArticuloDAO implements GestionDAO {
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
                 listArt.add(art);
             }
