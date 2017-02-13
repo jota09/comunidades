@@ -24,6 +24,10 @@ public class Usuario {
     public Usuario() {
     }
 
+    public Usuario(int codigo) {
+        this.codigo = codigo;
+    }
+
     public int getCodigo() {
         return this.codigo;
     }

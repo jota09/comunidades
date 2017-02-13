@@ -16,6 +16,8 @@ public class Articulo {
     private double precio;
     private Date fechafinpublicacion;
     private Prioridad prioridad;
+    private Timestamp creacion;
+    private Timestamp actualizacion;
     private String observacionesadmon;
     private ArticuloEstado estado;
     private TipoArticulo tipoarticulo;
@@ -171,6 +173,22 @@ public class Articulo {
 
     public Comunidad getComunidad() {
         return comunidad;
+    }
+
+    public Timestamp getCreacion() {
+        return creacion;
+    }
+
+    public Timestamp getActualizacion() {
+        return actualizacion;
+    }
+
+    public void setCreacion(Timestamp creacion) {
+        this.creacion = creacion;
+    }
+
+    public void setActualizacion(Timestamp actualizacion) {
+        this.actualizacion = actualizacion;
     }
     
 }

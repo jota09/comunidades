@@ -8,6 +8,7 @@ import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
 import fachada.EstructuraFachada;
 import fachada.PrioridadFachada;
+import fachada.UsuarioFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -238,10 +239,22 @@ public class ClasificadoControlador extends HttpServlet {
             Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
             ArticuloFachada artFachada = new ArticuloFachada();
             art = (Articulo) artFachada.getObject(art);
+            Usuario user = new Usuario(art.getUsuario().getCodigo());
+            UsuarioFachada userFachada = new UsuarioFachada();
+            user = (Usuario) userFachada.getObject(user);
+            art.setUsuario(user);
             System.out.println(art);
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
+            obj.put("nombreUsuario",art.getUsuario().getNombres());
+            obj.put("apellidoUsuario",art.getUsuario().getApellidos());
+            obj.put("telefonoUsuario",art.getUsuario().getTelefono());
+            obj.put("celularUsuario",art.getUsuario().getCelular());
             obj.put("titulo", art.getTitulo());
+            obj.put("descripcion", art.getDescripcion());
+            obj.put("fechaPublicacion", art.getFechaPublicacion());
+            obj.put("descripcion", art.getDescripcion());
+            obj.put("precio",art.getPrecio());
             out.print(obj);
         }
     }
