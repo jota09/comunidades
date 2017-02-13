@@ -69,12 +69,11 @@ public class GestionMenuControlador extends HttpServlet {
         Menu menu = new Menu();
         menu.setCodigo(Integer.parseInt(request.getParameter("codMenu")));
         menuFachada.deleteObject(menu);
-        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "<strong>Se Agrego la Nueva Opción</strong>", "success"));
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "<strong>Se Elimino la Opción</strong>", "success"));
     }
 
     private void agregarMenu(HttpServletRequest request, HttpServletResponse response) {
         int codPadre = Integer.parseInt(request.getParameter("codPadre"));
-        int codVista = Integer.parseInt(request.getParameter("codVista"));
         String nombreMenu = request.getParameter("nombreMenu");
         String urlMenu = request.getParameter("urlMenu");
         String nombreVista = request.getParameter("nombreVista");
@@ -83,13 +82,11 @@ public class GestionMenuControlador extends HttpServlet {
         if (!nombreMenu.isEmpty()) {
             GestionFachada menuFachada = new MenuFachada();
             Menu menu = new Menu();
-
             menu.setCodigoPadre(codPadre);
-
             menu.setNombre(nombreMenu);
             menu.setUrl(urlMenu);
-
             if (onVista.equals("1")) {
+                int codVista = Integer.parseInt(request.getParameter("codVista"));
                 if (codVista != 0 && !urlMenu.isEmpty()) {
                     GestionFachada vistaFachada = new VistaFachada();
                     Vista vista = new Vista();
