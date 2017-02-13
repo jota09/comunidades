@@ -72,12 +72,11 @@ public class ArticuloDAO implements GestionDAO {
 
             String query = "SELECT CODIGO, TITULO "
                     + "FROM comunidades.articulo "
-                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ACTIVO = ? "
+                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ?  "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT "+ Integer.parseInt(estructura.getValor()) +" ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, 1);
-            pS.setInt(2, 1);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();

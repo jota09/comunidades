@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Estructura;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -65,6 +66,7 @@ public class EstructuraControlador extends HttpServlet {
         Estructura estructura = new Estructura();
         estructura.setCodigo(Integer.parseInt(request.getParameter("codigo")));
         estructuraFachada.deleteObject(estructura);
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Elimino el parametro", "success"));
     }
 
     private void getParametro(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -90,9 +92,11 @@ public class EstructuraControlador extends HttpServlet {
         estructura.setDescripcion(request.getParameter("descripcion"));
         if (codigo.equals("")) {
             estructuraFachada.insertObject(estructura);
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Agrego el Parametro", "success"));
         } else {
             estructura.setCodigo(Integer.parseInt(codigo));
             estructuraFachada.updateObject(estructura);
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Actualizo el Parametro", "success"));
         }
     }
 

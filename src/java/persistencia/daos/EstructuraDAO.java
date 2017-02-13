@@ -90,7 +90,30 @@ public class EstructuraDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Estructura estructura = (Estructura) object;
+        Connection con = null;
+        int tamano = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "UPDATE estructura set valor=?,descripcion=? where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, estructura.getValor());
+            pS.setString(2, estructura.getDescripcion());
+            pS.setInt(3, estructura.getCodigo());
+            tamano = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Error:" + ex.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Error:" + ex.getMessage());
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                System.out.println("Error:" + ex.getMessage());
+            }
+        }
+        return tamano;
     }
 
     @Override
@@ -158,6 +181,7 @@ public class EstructuraDAO implements GestionDAO {
             String sql = "Delete from estructura where codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, estructura.getCodigo());
+            pS.execute();
             pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
