@@ -235,7 +235,6 @@ public class ClasificadoControlador extends HttpServlet {
     
     private void recuperarClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            System.out.println("Entro a la opcion 8");
             Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
             ArticuloFachada artFachada = new ArticuloFachada();
             art = (Articulo) artFachada.getObject(art);
