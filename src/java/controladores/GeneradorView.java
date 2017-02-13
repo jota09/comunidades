@@ -62,6 +62,7 @@ public class GeneradorView extends HttpServlet {
             AtributoFachada atributoFachada = new AtributoFachada();
             List<Atributo> atributos = atributoFachada.getListObject(vista);
             for (Atributo atributo : atributos) {
+                atributo.setValor(atributo.getValor().replace("{ipservidor}", LecturaConfig.getValue("ipservidor")));
                 pagina = pagina.replace(atributo.getReferencia(), atributo.getValor());
             }
             RecursoFachada recursoFachada = new RecursoFachada();
