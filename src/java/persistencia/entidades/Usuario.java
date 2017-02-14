@@ -47,11 +47,7 @@ public class Usuario {
         this.listaSeguridad = listaSeguridad;
         this.listaAutorizacion = listaAutorizacion;
         this.comunidad = comunidad;
-    }
-
-    public Usuario(int codigo) {
-        this.codigo = codigo;
-    }
+    } 
 
     
     public int getCodigo() {

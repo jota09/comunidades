@@ -41,18 +41,18 @@ public class UsuarioPerfilDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select  * from usuario_perfil up join perfil p on up.perfil_codigo=p.codigo "
-                    + "join comunidad c p.comunidad_codigo=c.codigo where up.usuario_codigo=?";
+                    + "join comunidad c on p.comunidad_codigo=c.codigo where up.usuario_codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1,usuarioPerfil.getUsuario().getCodigo());
             ResultSet rS=pS.executeQuery();
             while(rS.next()){
-            
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return perfiles;
     }
 
     @Override
