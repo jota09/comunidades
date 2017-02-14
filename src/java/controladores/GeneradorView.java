@@ -42,7 +42,9 @@ public class GeneradorView extends HttpServlet {
         if (view == null) {
             view = request.getParameter("view");
         }
-        session.removeAttribute("view");
+        if(view!=null && !view.equals("validacomunidad.html")){
+            session.removeAttribute("view");
+        }
         try (PrintWriter out = response.getWriter()) {
             String rutaView = LecturaConfig.getValue("pathView");
             if (view == null || session.getAttribute("user") == null) {
@@ -84,13 +86,9 @@ public class GeneradorView extends HttpServlet {
 
             if (view.equals("menuprincipal.html") && session.getAttribute("user") != null) {
                 Usuario user = (Usuario) session.getAttribute("user");
-                GestionFachada usuarioPerfilFachada = new UsuarioPerfilFachada();
-                List<Perfil> perfiles = usuarioPerfilFachada.getListObject(user);
-                if (perfiles.size() == 1) {
-                    MenuFachada menFac = new MenuFachada();
-                    List<Menu> menus = menFac.getListObject(perfiles.get(0));
-                    pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
-                }
+                MenuFachada menFac = new MenuFachada();
+                List<Menu> menus = menFac.getListObject(user.getPerfilCodigo());
+                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
             } else {
                 Perfil pf = new Perfil();
                 GestionFachada estructuraFachada = new EstructuraFachada();
@@ -131,7 +129,7 @@ public class GeneradorView extends HttpServlet {
             }
             processRequest(request, response);
         } else {
-            if (request.getParameter("view") == null) {
+            if (request.getParameter("view") == null && request.getSession().getAttribute("view")==null) {
                 request.getSession().setAttribute("view", "menuprincipal.html");
             }
             processRequest(request, response);
