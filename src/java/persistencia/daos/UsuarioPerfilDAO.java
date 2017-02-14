@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
+import persistencia.entidades.Comunidad;
 import persistencia.entidades.Perfil;
+import persistencia.entidades.Usuario;
 import persistencia.entidades.UsuarioPerfil;
 
 /**
@@ -35,24 +37,34 @@ public class UsuarioPerfilDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object object) {
-        UsuarioPerfil usuarioPerfil = (UsuarioPerfil) object;
+        Usuario usuario = (Usuario) object;
         List<Perfil> perfiles=new ArrayList();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select  * from usuario_perfil up join perfil p on up.perfil_codigo=p.codigo "
-                    + "join comunidad c p.comunidad_codigo=c.codigo where up.usuario_codigo=?";
+            String sql = "Select  p.codigo,p.nombre,c.codigo,c.nombre,c.direccion,c.telefono from usuario_perfil up join perfil p on up.perfil_codigo=p.codigo "
+                    + "join comunidad c on p.comunidad_codigo=c.codigo where up.usuario_codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1,usuarioPerfil.getUsuario().getCodigo());
+            pS.setInt(1,usuario.getCodigo());
             ResultSet rS=pS.executeQuery();
             while(rS.next()){
-            
+                Perfil perfil=new Perfil();
+                Comunidad comunidad=new Comunidad();
+                perfil.setCodigo(rS.getInt(1));
+                perfil.setNombre(rS.getString(2));
+                comunidad.setCodigo(rS.getInt(3));
+                comunidad.setNombre(rS.getString(4));
+                comunidad.setDireccion(rS.getString(5));
+                comunidad.setTelefono(rS.getString(6));
+                perfil.setComunidad(comunidad);
+                perfiles.add(perfil);
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return perfiles;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class UsuarioDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT  usr.nombres,usr.apellidos,usr.correo,usr.celular,"
-                    + "usr.telefono,usr.user_name,usr.perfil_codigo,usr.activo,"
+                    + "usr.telefono,usr.user_name,usr.activo,"
                     + "sgUsr.contrasena,sgUsr.activo,usr.codigo_documento,usr.activo,sgUsr.activo,sgUsr.codigo FROM usuario usr "
                     + "JOIN seguridad_usuario sgUsr ON sgUsr.usuario_codigo=usr.codigo "
                     + "WHERE ((usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1) or usr.codigo=?";
@@ -42,15 +42,12 @@ public class UsuarioDAO implements GestionDAO {
             pS.setInt(5, user.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
-                System.out.println("dentro if");
                 user.setNombres(rS.getString("nombres"));
-                System.out.println("Apellidos del usuario:" + rS.getString("apellidos"));
                 user.setApellidos(rS.getString("apellidos"));
                 user.setCorreo(rS.getString("correo"));
                 user.setCelular(rS.getString("celular"));
                 user.setTelefono(rS.getString("telefono"));
                 user.setCodigo(rS.getInt("codigo"));
-                user.setPerfilCodigo(rS.getInt("perfil_codigo"));
             }
             rS.close();
             pS.close();

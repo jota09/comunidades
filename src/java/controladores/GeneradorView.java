@@ -6,6 +6,7 @@ import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MenuFachada;
 import fachada.RecursoFachada;
+import fachada.UsuarioPerfilFachada;
 import fachada.VistaFachada;
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +33,7 @@ import utilitarias.Utilitaria;
 
 @WebServlet(urlPatterns = {"/"})
 public class GeneradorView extends HttpServlet {
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -80,13 +81,16 @@ public class GeneradorView extends HttpServlet {
             } else {
                 pagina = pagina.replace("<@message@>", "");
             }
+
             if (view.equals("menuprincipal.html") && session.getAttribute("user") != null) {
                 Usuario user = (Usuario) session.getAttribute("user");
-                Perfil pf = new Perfil();
-                pf.setCodigo(user.getPerfilCodigo());
-                MenuFachada menFac = new MenuFachada();
-                List<Menu> menus = menFac.getListObject(pf);
-                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
+                GestionFachada usuarioPerfilFachada = new UsuarioPerfilFachada();
+                List<Perfil> perfiles = usuarioPerfilFachada.getListObject(user);
+                if (perfiles.size() == 1) {
+                    MenuFachada menFac = new MenuFachada();
+                    List<Menu> menus = menFac.getListObject(perfiles.get(0));
+                    pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
+                }
             } else {
                 Perfil pf = new Perfil();
                 GestionFachada estructuraFachada = new EstructuraFachada();
@@ -97,8 +101,9 @@ public class GeneradorView extends HttpServlet {
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(pf);
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
-                
+
             }
+
             if (pagina.contains("<@rangoPagina@>")) {
                 GestionFachada estructuraFachada = new EstructuraFachada();
                 Estructura estructura = new Estructura();
@@ -114,7 +119,7 @@ public class GeneradorView extends HttpServlet {
             out.print(pagina);
         }
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -132,13 +137,13 @@ public class GeneradorView extends HttpServlet {
             processRequest(request, response);
         }
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
-    
+
     @Override
     public String getServletInfo() {
         return "Short description";
