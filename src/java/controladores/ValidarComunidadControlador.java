@@ -61,6 +61,7 @@ public class ValidarComunidadControlador extends HttpServlet {
         Perfil perfil = new Perfil();
         Comunidad comunidad = new Comunidad();
         comunidad.setCodigo(codigoComunidad);
+        perfil.setComunidad(comunidad);
         perfil.setCodigo(codigoPerfil);
         user.setPerfilCodigo(perfil);
         session.setAttribute("user", user);
