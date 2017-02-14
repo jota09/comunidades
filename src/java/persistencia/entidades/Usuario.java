@@ -20,12 +20,33 @@ public class Usuario {
     private int edad;
     private SeguridadUsuario listaSeguridad;
     private Autorizacion listaAutorizacion;
+    private Comunidad comunidad;
 
     public Usuario() {
     }
 
     public Usuario(int codigo) {
         this.codigo = codigo;
+    }
+
+    public Usuario(int codigo, int codigodocumento, int tipodocumentocodigo, int perfilcodigo, String nombres, String apellidos, String correo, String celular, String telefono, String username, short activo, Timestamp creacion, Timestamp actualizacion, int edad, SeguridadUsuario listaSeguridad, Autorizacion listaAutorizacion, Comunidad comunidad) {
+        this.codigo = codigo;
+        this.codigodocumento = codigodocumento;
+        this.tipodocumentocodigo = tipodocumentocodigo;
+        this.perfilcodigo = perfilcodigo;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.correo = correo;
+        this.celular = celular;
+        this.telefono = telefono;
+        this.username = username;
+        this.activo = activo;
+        this.creacion = creacion;
+        this.actualizacion = actualizacion;
+        this.edad = edad;
+        this.listaSeguridad = listaSeguridad;
+        this.listaAutorizacion = listaAutorizacion;
+        this.comunidad = comunidad;
     }
 
     public int getCodigo() {
@@ -139,8 +160,8 @@ public class Usuario {
     public void setEdad(int edad) {
         this.edad = edad;
     }
-    
-        public SeguridadUsuario getListaSeguridad() {
+
+    public SeguridadUsuario getListaSeguridad() {
         return listaSeguridad;
     }
 
@@ -156,8 +177,16 @@ public class Usuario {
         this.listaAutorizacion = listaAutorizacion;
     }
 
+    public Comunidad getComunidad() {
+        return comunidad;
+    }
+
+    public void setComunidad(Comunidad comunidad) {
+        this.comunidad = comunidad;
+    }
+
     @Override
     public String toString() {
-        return codigo+" "+nombres+" "+apellidos;
+        return codigo + " " + nombres + " " + apellidos;
     }
 }
