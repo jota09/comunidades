@@ -3,6 +3,8 @@ import java.util.Map;
 import java.util.Set;
 import persistencia.daos.GestionDAO;
 import persistencia.daos.MenuDAO;
+import persistencia.daos.UsuarioDAO;
+import persistencia.entidades.Usuario;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,7 +25,11 @@ public class prueba {
         System.out.println("ruta:"+env.get("CONFIGCOMUNIDADES"));*/
         int doc=1010194766;
         System.out.println(doc);
-            
+        Usuario usr=new Usuario(1);
+        UsuarioDAO usrDAO=new UsuarioDAO();
+        usrDAO.getObject(usr);
+        System.out.println(usr);
+        
         
     }
 

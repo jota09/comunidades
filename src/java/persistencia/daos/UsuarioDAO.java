@@ -33,12 +33,13 @@ public class UsuarioDAO implements GestionDAO {
                     + "usr.telefono,usr.user_name,usr.perfil_codigo,usr.activo,"
                     + "sgUsr.contrasena,sgUsr.activo,usr.codigo_documento,usr.activo,sgUsr.activo,sgUsr.codigo FROM usuario usr "
                     + "JOIN seguridad_usuario sgUsr ON sgUsr.usuario_codigo=usr.codigo "
-                    + "WHERE (usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1";
+                    + "WHERE ((usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1) or usr.codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setString(1, user.getUserName());
             pS.setString(2, user.getCorreo());
             pS.setInt(3, user.getCodigoDocumento());
             pS.setString(4, user.getListaSeguridad().getContrasena());
+            pS.setInt(5, user.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 System.out.println("dentro if");
