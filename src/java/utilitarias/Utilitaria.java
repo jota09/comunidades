@@ -5,11 +5,13 @@
  */
 package utilitarias;
 
+import java.sql.Date;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.Menu;
-import persistencia.entidades.Prioridad;
 
 /**
  *
@@ -80,5 +82,52 @@ public class Utilitaria {
                 + "  <a href=\"#\" class=\"close\"  data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n"
                 + "  <strong>" + title + "!</strong> " + message + "\n"
                 + "</div>";
+    }
+    
+    public static String convertirFecha(Date fecha) {
+        String [] fechaFraccionada = fecha.toString().split("-");
+        if (fechaFraccionada[1].equals("01")){
+            fechaFraccionada[1] = "Enero";
+        }
+        if (fechaFraccionada[1].equals("02")){
+            fechaFraccionada[1] = "Febrero";
+        }
+        if (fechaFraccionada[1].equals("03")){
+            fechaFraccionada[1] = "Marzo";
+        }
+        if (fechaFraccionada[1].equals("04")){
+            fechaFraccionada[1] = "Abril";
+        }
+        if (fechaFraccionada[1].equals("05")){
+            fechaFraccionada[1] = "Mayo";
+        }
+        if (fechaFraccionada[1].equals("06")){
+            fechaFraccionada[1] = "Junio";
+        }
+        if (fechaFraccionada[1].equals("07")){
+            fechaFraccionada[1] = "Julio";
+        }
+        if (fechaFraccionada[1].equals("08")){
+            fechaFraccionada[1] = "Agosto";
+        }
+        if (fechaFraccionada[1].equals("09")){
+            fechaFraccionada[1] = "Septiembre";
+        }
+        if (fechaFraccionada[1].equals("10")){
+            fechaFraccionada[1] = "Octubre";
+        }
+        if (fechaFraccionada[1].equals("11")){
+            fechaFraccionada[1] = "Noviembre";
+        }
+        if (fechaFraccionada[1].equals("12")){
+            fechaFraccionada[1] = "Diciembre";
+        }
+        return fechaFraccionada[2]+" "+fechaFraccionada[1]+" de "+fechaFraccionada[0];
+        
+    }
+    public static String conversionNatural(double valor)
+    {
+      DecimalFormat num = new DecimalFormat("#,###");
+      return num.format(valor);
     }
 }
