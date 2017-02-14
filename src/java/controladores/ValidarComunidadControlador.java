@@ -40,23 +40,27 @@ public class ValidarComunidadControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        int op=Integer.parseInt(request.getParameter("op"));
-        switch(op){
-            case 1:{
+        int op = Integer.parseInt(request.getParameter("op"));
+        switch (op) {
+            case 1: {
                 getPerfiles(request, response);
                 break;
             }
-            case 2:{
-                redirigirAComunidad(request,response);
+            case 2: {
+                redirigirAComunidad(request, response);
                 break;
             }
         }
     }
-    private void redirigirAComunidad(HttpServletRequest request,HttpServletResponse response) throws IOException{
-        int codigoPerfil=Integer.parseInt(request.getParameter("codigoPerfil"));
-        HttpSession session=request.getSession();
-        Usuario user=(Usuario)session.getAttribute("user");
-        Perfil perfil=new Perfil();
+
+    private void redirigirAComunidad(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int codigoPerfil = Integer.parseInt(request.getParameter("codigoPerfil"));
+        int codigoComunidad = Integer.parseInt(request.getParameter("codigoComun"));
+        HttpSession session = request.getSession();
+        Usuario user = (Usuario) session.getAttribute("user");
+        Perfil perfil = new Perfil();
+        Comunidad comunidad = new Comunidad();
+        comunidad.setCodigo(codigoComunidad);
         perfil.setCodigo(codigoPerfil);
         user.setPerfilCodigo(perfil);
         session.setAttribute("user", user);
@@ -64,23 +68,25 @@ public class ValidarComunidadControlador extends HttpServlet {
         request.getSession().setAttribute("view", "menuprincipal.html");
         response.sendRedirect("/Comunidades");
     }
-    private void getPerfiles(HttpServletRequest request,HttpServletResponse response) throws IOException{
-        List<Perfil> perfiles=(List<Perfil>)request.getSession().getAttribute("perfiles");
-        JSONArray array=new JSONArray();
-        for(Perfil p:perfiles){
-            Comunidad comunidad=p.getComunidad();
-            JSONObject com=new JSONObject();
-            com.put("codigo",comunidad.getCodigo());
-            com.put("nombre",comunidad.getNombre());
-            com.put("rutaImg",LecturaConfig.getValue("rutaImg")+"logo/"+comunidad.getCodigo()+".png");
-            com.put("codigoPerfil",p.getCodigo());
+
+    private void getPerfiles(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<Perfil> perfiles = (List<Perfil>) request.getSession().getAttribute("perfiles");
+        JSONArray array = new JSONArray();
+        for (Perfil p : perfiles) {
+            Comunidad comunidad = p.getComunidad();
+            JSONObject com = new JSONObject();
+            com.put("codigo", comunidad.getCodigo());
+            com.put("nombre", comunidad.getNombre());
+            com.put("rutaImg", LecturaConfig.getValue("rutaImg") + "logo/" + comunidad.getCodigo() + ".png");
+            com.put("codigoPerfil", p.getCodigo());
             array.add(com);
         }
-        try(PrintWriter out=response.getWriter()){
+        try (PrintWriter out = response.getWriter()) {
             out.print(array);
         }
         
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
