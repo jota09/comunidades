@@ -21,16 +21,10 @@ public class prueba {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        /*Map<String, String> env = System.getenv();
-        System.out.println("ruta:"+env.get("CONFIGCOMUNIDADES"));*/
-        int doc=1010194766;
-        System.out.println(doc);
-        Usuario usr=new Usuario(1);
-        UsuarioDAO usrDAO=new UsuarioDAO();
-        usrDAO.getObject(usr);
-        System.out.println(usr);
-        
+        GestionDAO usuarioDAO = new UsuarioDAO();
+        Usuario usuario = new Usuario(1);
+        System.out.println(usuarioDAO.getObject(usuario));
         
     }
-
+    
 }

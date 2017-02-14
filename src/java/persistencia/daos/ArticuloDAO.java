@@ -52,7 +52,6 @@ public class ArticuloDAO implements GestionDAO {
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
             }
         } catch (ClassNotFoundException ex) {
@@ -73,12 +72,12 @@ public class ArticuloDAO implements GestionDAO {
 
             String query = "SELECT CODIGO, TITULO "
                     + "FROM comunidades.articulo "
-                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ACTIVO = ? "
+                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT "+ Integer.parseInt(estructura.getValor()) +" ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, 1);
-            pS.setInt(2, 1);
+            pS.setInt(2, 2);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
@@ -265,7 +264,6 @@ public class ArticuloDAO implements GestionDAO {
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
                 listArt.add(art);
             }
@@ -326,7 +324,6 @@ public class ArticuloDAO implements GestionDAO {
                 art.setDescripcion(rS.getString("descripcion"));
                 art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setActivo(rS.getShort("activo"));
                 art.setEstado(estado);
                 listArt.add(art);
             }

@@ -38,7 +38,7 @@ public class UsuarioDAO implements GestionDAO {
             pS.setString(1, user.getUserName());
             pS.setString(2, user.getCorreo());
             pS.setInt(3, user.getCodigoDocumento());
-            pS.setString(4, user.getListaSeguridad().getContrasena());
+            pS.setString(4, ((user.getListaSeguridad()!=null)?user.getListaSeguridad().getContrasena():null));
             pS.setInt(5, user.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
