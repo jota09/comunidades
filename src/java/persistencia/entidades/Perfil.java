@@ -4,6 +4,7 @@ public class Perfil {
 
     private int codigo;
     private String nombre;
+    private Comunidad comunidad;
     private short activo;
 
     public Perfil() {
@@ -32,4 +33,13 @@ public class Perfil {
     public void setActivo(short activo) {
         this.activo = activo;
     }
+
+    public Comunidad getComunidad() {
+        return comunidad;
+    }
+
+    public void setComunidad(Comunidad comunidad) {
+        this.comunidad = comunidad;
+    }
+    
 }

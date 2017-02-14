@@ -13,6 +13,14 @@ public class TipoArticulo {
     public TipoArticulo() {
     }
 
+    public TipoArticulo(int codigo, String nombre, short activo, List<Articulo> listaArticulos, String rango) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.activo = activo;
+        this.listaArticulos = listaArticulos;
+        this.rango = rango;
+    }
+
     public TipoArticulo(int codigo) {
         this.codigo = codigo;
     }

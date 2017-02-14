@@ -7,9 +7,10 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
+import fachada.GestionFachada;
+import fachada.TipoArticuloFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,6 +82,9 @@ public class NoticiaControlador extends HttpServlet {
                 case 8:
                     buscarRegistros(request, response);
                     break;
+                case 9:
+                    tipoArticulo(request, response);
+                    break;
             }
         }
         else
@@ -88,11 +92,22 @@ public class NoticiaControlador extends HttpServlet {
             System.out.println("La opcion es nula por favor verificar");
         }
     }
+    
+    private void tipoArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
+        try (PrintWriter out = response.getWriter()) {
+            GestionFachada tpArtFach=new TipoArticuloFachada();
+            TipoArticulo tpArt=new TipoArticulo();
+            tpArt.setNombre("Noticia");
+            tpArt=(TipoArticulo)tpArtFach.getObject(tpArt);
+            out.print(tpArt.getCodigo());
+        }
+    }
 
     private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
             TipoArticulo tipArt = new TipoArticulo();
+            System.out.println("Esto es tipoArticulo:"+request.getParameter("tipo"));
             tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
             Articulo articulo=new Articulo();
             articulo.setTipoArticulo(tipArt);
@@ -132,7 +147,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setTitulo(request.getParameter("titulo"));
             art.setDescripcion(request.getParameter("descripcion"));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
-            art.setUsuario(usr);
+            art.setUsuario(usr);            
             int cat;
             cat = Integer.parseInt(request.getParameter("categoria"));
             ArticuloEstado artEstado = new ArticuloEstado();
@@ -150,6 +165,7 @@ public class NoticiaControlador extends HttpServlet {
             Date parsed = format.parse(request.getParameter("finPublicacion"));
             java.sql.Date date = new java.sql.Date(parsed.getTime());
             art.setFechaFinPublicacion(date);
+            //art.setComunidad();
             if (codArt.equals("")) {
                 artFach.insertObject(art);
             } else {
