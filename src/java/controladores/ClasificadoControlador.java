@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package controladores;
+
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
 import fachada.EstructuraFachada;
@@ -31,6 +32,7 @@ import persistencia.entidades.Estructura;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -51,7 +53,7 @@ public class ClasificadoControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-       // System.out.println(request);
+        // System.out.println(request);
         if (request.getParameter("opc") != null) {
             int opcion = Integer.parseInt(request.getParameter("opc"));
             switch (opcion) {
@@ -167,7 +169,6 @@ public class ClasificadoControlador extends HttpServlet {
             JSONArray array = new JSONArray();
             for (int i = 0; i < rango2.length; i++) {
                 String[] ordenar = rango2[i].split(",");
-                System.out.println(rango2[i]);
                 for (int j = 0; j < rango.length; j++) {
                     JSONObject obj = new JSONObject();
                     if (rango[j].equals("ASC")) {
@@ -233,7 +234,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
-    
+
     private void recuperarClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
@@ -243,18 +244,20 @@ public class ClasificadoControlador extends HttpServlet {
             UsuarioFachada userFachada = new UsuarioFachada();
             user = (Usuario) userFachada.getObject(user);
             art.setUsuario(user);
-            System.out.println(art);
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
-            obj.put("nombreUsuario",art.getUsuario().getNombres());
-            obj.put("apellidoUsuario",art.getUsuario().getApellidos());
-            obj.put("telefonoUsuario",art.getUsuario().getTelefono());
-            obj.put("celularUsuario",art.getUsuario().getCelular());
+            obj.put("nombreUsuario", art.getUsuario().getUserName());
+            if (art.getUsuario().getCelular() != null) {
+                obj.put("telefono", art.getUsuario().getCelular());
+            } else {
+                obj.put("telefono", art.getUsuario().getTelefono());
+            }
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
-            obj.put("fechaPublicacion", art.getFechaPublicacion());
+            obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
             obj.put("descripcion", art.getDescripcion());
-            obj.put("precio",art.getPrecio());
+            obj.put("precio", "$"+Utilitaria.conversionNatural(art.getPrecio()));
+            System.out.println(obj);
             out.print(obj);
         }
     }

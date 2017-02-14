@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
+import persistencia.entidades.Comunidad;
 import persistencia.entidades.Perfil;
 
 /**
@@ -71,13 +72,17 @@ public class PerfilDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select * from perfil where activo=1";
+            String sql = "Select p.codigo,p.nombre,c.codigo,c.nombre from perfil p left join comunidad c on p.comunidad_codigo=c.codigo  where p.activo=1 order by p.nombre";
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Perfil perfil = new Perfil();
+                Comunidad comunidad=new Comunidad();
                 perfil.setCodigo(rS.getInt(1));
                 perfil.setNombre(rS.getString(2));
+                comunidad.setCodigo(rS.getInt(3));
+                comunidad.setNombre(rS.getString(4));
+                perfil.setComunidad(comunidad);
                 perfiles.add(perfil);
             }
             rS.close();

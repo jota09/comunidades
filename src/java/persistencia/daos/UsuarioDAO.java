@@ -48,6 +48,7 @@ public class UsuarioDAO implements GestionDAO {
                 user.setCelular(rS.getString("celular"));
                 user.setTelefono(rS.getString("telefono"));
                 user.setCodigo(rS.getInt("codigo"));
+                user.setUserName(rS.getString("user_name"));
             }
             rS.close();
             pS.close();

@@ -7,11 +7,19 @@ package controladores;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import persistencia.entidades.Comunidad;
+import persistencia.entidades.Perfil;
+import persistencia.entidades.Usuario;
+import utilitarias.LecturaConfig;
 
 /**
  *
@@ -38,9 +46,39 @@ public class ValidarComunidadControlador extends HttpServlet {
                 getPerfiles(request, response);
                 break;
             }
+            case 2:{
+                redirigirAComunidad(request,response);
+                break;
+            }
         }
     }
-    private void getPerfiles(HttpServletRequest request,HttpServletResponse response){
+    private void redirigirAComunidad(HttpServletRequest request,HttpServletResponse response) throws IOException{
+        int codigoPerfil=Integer.parseInt(request.getParameter("codigoPerfil"));
+        HttpSession session=request.getSession();
+        Usuario user=(Usuario)session.getAttribute("user");
+        Perfil perfil=new Perfil();
+        perfil.setCodigo(codigoPerfil);
+        user.setPerfilCodigo(perfil);
+        session.setAttribute("user", user);
+        session.removeAttribute("perfiles");
+        request.getSession().setAttribute("view", "menuprincipal.html");
+        response.sendRedirect("/Comunidades");
+    }
+    private void getPerfiles(HttpServletRequest request,HttpServletResponse response) throws IOException{
+        List<Perfil> perfiles=(List<Perfil>)request.getSession().getAttribute("perfiles");
+        JSONArray array=new JSONArray();
+        for(Perfil p:perfiles){
+            Comunidad comunidad=p.getComunidad();
+            JSONObject com=new JSONObject();
+            com.put("codigo",comunidad.getCodigo());
+            com.put("nombre",comunidad.getNombre());
+            com.put("rutaImg",LecturaConfig.getValue("rutaImg")+"logo/"+comunidad.getCodigo()+".png");
+            com.put("codigoPerfil",p.getCodigo());
+            array.add(com);
+        }
+        try(PrintWriter out=response.getWriter()){
+            out.print(array);
+        }
         
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

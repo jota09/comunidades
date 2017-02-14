@@ -20,6 +20,7 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -53,6 +54,7 @@ public class ArticuloDAO implements GestionDAO {
                 art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
                 art.setEstado(estado);
+                art.setPrecio(rS.getDouble("precio"));
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
