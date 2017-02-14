@@ -9,10 +9,12 @@ import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.SeguridadFachada;
 import fachada.UsuarioFachada;
+import fachada.UsuarioPerfilFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Estructura;
+import persistencia.entidades.Perfil;
 import persistencia.entidades.SeguridadUsuario;
 import persistencia.entidades.Usuario;
 import utilitarias.Cifrar;
@@ -77,19 +80,28 @@ public class Inicio extends HttpServlet {
                 usr.setListaSeguridad(sgUsr);
                 SeguridadFachada sgdadFach = new SeguridadFachada();
                 sgdadFach.updateObject(sgUsr);
-
+                
                 UsuarioFachada usrFachada = new UsuarioFachada();
                 usr = (Usuario) usrFachada.getObject(usr);
                 //out.println("nombre:"+usr.getNombres());
                 if (usr.getNombres() != null) {
                     HttpSession sesion = request.getSession(true);
-                    sesion.setAttribute("user", usr);
+                    
                     GestionFachada estructuraFachada = new EstructuraFachada();
+                    GestionFachada usuarioPerfilFachada = new UsuarioPerfilFachada();
+                    List<Perfil> perfiles = usuarioPerfilFachada.getListObject(usr);
+                    if (perfiles.size() == 1) {
+                        usr.setPerfilCodigo(perfiles.get(0));
+                        request.getSession().setAttribute("view", "menuprincipal.html");
+                    }else{
+                        request.getSession().setAttribute("perfiles",perfiles);
+                        request.getSession().setAttribute("view", "validacomunidad.html");
+                    }
+                    sesion.setAttribute("user", usr);
                     Estructura estructura = new Estructura();
                     estructura.setReferencia("tiempoSesion");
                     estructuraFachada.getObject(estructura);
                     sesion.setMaxInactiveInterval(Integer.parseInt(estructura.getValor()));
-                    request.getSession().setAttribute("view", "menuprincipal.html");
                     response.sendRedirect("/Comunidades");
                     //crear sesion, validar perfil y redireccionar a menu
                 } else {
@@ -118,7 +130,7 @@ public class Inicio extends HttpServlet {
             }
         }
     }
-
+    
     public int validadorCampos(String campo) {
         int validador = 0;
         Pattern pat = Pattern.compile("^\\d+$");

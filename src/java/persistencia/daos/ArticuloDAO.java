@@ -123,6 +123,7 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(10, art.getCategoria().getCodigo());
             pS.setInt(11, art.getCodigo());
             numfilas = pS.executeUpdate();
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -140,8 +141,8 @@ public class ArticuloDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "INSERT INTO articulo( codigo,usuario_codigo, titulo, descripcion,"
                     + " precio, fecha_fin_publicacion, prioridad_codigo,"
-                    + "estados_codigo,tipo_articulo_codigo,categoria_codigo) "
-                    + "VALUES (?,?,?,?,?,?,?,?,?,?)";
+                    + "estados_codigo,tipo_articulo_codigo,categoria_codigo,comunidad_codigo,visibilidad) "
+                    + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
                 art.setCodigo(getMaxCodigo());
                 pS.setInt(1, art.getCodigo());
@@ -154,7 +155,10 @@ public class ArticuloDAO implements GestionDAO {
                 pS.setInt(8, art.getEstado().getCodigo());
                 pS.setInt(9, art.getTipoArticulo().getCodigo());
                 pS.setInt(10, art.getCategoria().getCodigo());
+                pS.setInt(11, art.getComunidad().getCodigo());
+                pS.setShort(12, art.getVisibilidad());
                 result = pS.executeUpdate();
+                pS.close();
             }
         } catch (Exception e) {
             e.printStackTrace();

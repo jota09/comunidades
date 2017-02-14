@@ -26,7 +26,9 @@ public class Articulo {
     private List<ClasificadoInteres> listaInteres;
     private String rango;
     private String busqueda;
+    private short visibilidad;
 
+    
     public Articulo() {
     }
 
@@ -191,4 +193,11 @@ public class Articulo {
         this.actualizacion = actualizacion;
     }
     
+    public short getVisibilidad() {
+        return visibilidad;
+    }
+
+    public void setVisibilidad(short visibilidad) {
+        this.visibilidad = visibilidad;// 1 para privado y 0 publico
+    }
 }

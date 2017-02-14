@@ -165,7 +165,8 @@ public class NoticiaControlador extends HttpServlet {
             Date parsed = format.parse(request.getParameter("finPublicacion"));
             java.sql.Date date = new java.sql.Date(parsed.getTime());
             art.setFechaFinPublicacion(date);
-            //art.setComunidad();
+            art.setComunidad(usr.getPerfilCodigo().getComunidad());
+            art.setVisibilidad(Short.parseShort(request.getParameter("visibilidad")));
             if (codArt.equals("")) {
                 artFach.insertObject(art);
             } else {

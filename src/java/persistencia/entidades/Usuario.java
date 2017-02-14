@@ -7,7 +7,7 @@ public class Usuario {
     private int codigo;
     private int codigodocumento;
     private int tipodocumentocodigo;
-    private int perfilcodigo;
+    private Perfil perfilcodigo;
     private String nombres;
     private String apellidos;
     private String correo;
@@ -20,7 +20,6 @@ public class Usuario {
     private int edad;
     private SeguridadUsuario listaSeguridad;
     private Autorizacion listaAutorizacion;
-    private Comunidad comunidad;
 
     public Usuario() {
     }
@@ -29,7 +28,7 @@ public class Usuario {
         this.codigo = codigo;
     }
 
-    public Usuario(int codigo, int codigodocumento, int tipodocumentocodigo, int perfilcodigo, String nombres, String apellidos, String correo, String celular, String telefono, String username, short activo, Timestamp creacion, Timestamp actualizacion, int edad, SeguridadUsuario listaSeguridad, Autorizacion listaAutorizacion, Comunidad comunidad) {
+    public Usuario(int codigo, int codigodocumento, int tipodocumentocodigo, Perfil perfilcodigo, String nombres, String apellidos, String correo, String celular, String telefono, String username, short activo, Timestamp creacion, Timestamp actualizacion, int edad, SeguridadUsuario listaSeguridad, Autorizacion listaAutorizacion) {
         this.codigo = codigo;
         this.codigodocumento = codigodocumento;
         this.tipodocumentocodigo = tipodocumentocodigo;
@@ -46,7 +45,6 @@ public class Usuario {
         this.edad = edad;
         this.listaSeguridad = listaSeguridad;
         this.listaAutorizacion = listaAutorizacion;
-        this.comunidad = comunidad;
     } 
 
     
@@ -74,11 +72,11 @@ public class Usuario {
         this.tipodocumentocodigo = tipodocumentocodigo;
     }
 
-    public int getPerfilCodigo() {
+    public Perfil getPerfilCodigo() {
         return this.perfilcodigo;
     }
 
-    public void setPerfilCodigo(int perfilcodigo) {
+    public void setPerfilCodigo(Perfil perfilcodigo) {
         this.perfilcodigo = perfilcodigo;
     }
 
@@ -176,15 +174,7 @@ public class Usuario {
 
     public void setListaAutorizacion(Autorizacion listaAutorizacion) {
         this.listaAutorizacion = listaAutorizacion;
-    }
-
-    public Comunidad getComunidad() {
-        return comunidad;
-    }
-
-    public void setComunidad(Comunidad comunidad) {
-        this.comunidad = comunidad;
-    }
+    }    
 
     @Override
     public String toString() {
