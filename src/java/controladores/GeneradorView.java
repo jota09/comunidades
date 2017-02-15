@@ -1,12 +1,10 @@
 package controladores;
 
 import fachada.AtributoFachada;
-import fachada.EstadoFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MenuFachada;
 import fachada.RecursoFachada;
-import fachada.UsuarioPerfilFachada;
 import fachada.VistaFachada;
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Atributo;
