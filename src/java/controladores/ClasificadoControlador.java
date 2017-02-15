@@ -81,6 +81,9 @@ public class ClasificadoControlador extends HttpServlet {
                 case 8:
                     recuperarClasificado(request, response);
                     break;
+                case 9:
+                    recuperarInicioClasificado(request, response);
+                    break;
             }
         }
     }
@@ -209,16 +212,25 @@ public class ClasificadoControlador extends HttpServlet {
     private void recuperarUltimosClasificados(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
+            Articulo art = new Articulo();
             String ref = "cantidadUltimosClasificados";
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
+            art.setRango("0,"+estruc.getValor());
+            String ref2 = "tipoClasificado";
+            Estructura estruc2 = new Estructura(ref2);
+            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
+            art.setEstado(new ArticuloEstado(2));
             ArticuloFachada artFachada = new ArticuloFachada();
-            List<Articulo> listArticulo = artFachada.getListObject(estruc);
+            System.out.println(art);
+            List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
-            for (Articulo art : listArticulo) {
+            for (Articulo art2 : listArticulo) {
                 JSONObject obj = new JSONObject();
-                obj.put("codigo", art.getCodigo());
-                obj.put("nombre", art.getTitulo());
+                System.out.println(art.getCodigo());
+                obj.put("codigo", art2.getCodigo());
+                obj.put("nombre", art2.getTitulo());
                 array.add(obj);
             }
             out.print(array);
@@ -227,28 +239,30 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            String ref = "clasificadoMostrarInicio";
+            Estructura estruc = new Estructura(ref);
+            estruc = (Estructura) estrucFachada.getObject(estruc);
+            int rangoSup = Integer.parseInt(request.getParameter("limIni"))+Integer.parseInt(estruc.getValor());
+            ref = "tipoClasificado";
+            estruc.setReferencia(ref);
+            estruc = (Estructura) estrucFachada.getObject(estruc);
+            Articulo art = new Articulo();
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc.getValor())));
+            art.setUsuario(new Usuario(0));
+            art.setRango(request.getParameter("limIni")+","+rangoSup);
+            art.setBusqueda(request.getParameter("busqueda"));
             ArticuloFachada artFachada = new ArticuloFachada();
-            art = (Articulo) artFachada.getObject(art);
-            Usuario user = new Usuario(art.getUsuario().getCodigo());
-            UsuarioFachada userFachada = new UsuarioFachada();
-            user = (Usuario) userFachada.getObject(user);
-            art.setUsuario(user);
-            JSONObject obj = new JSONObject();
-            obj.put("codigo", art.getCodigo());
-            obj.put("nombreUsuario", art.getUsuario().getUserName());
-            if (art.getUsuario().getCelular() != null) {
-                obj.put("telefono", art.getUsuario().getCelular());
-            } else {
-                obj.put("telefono", art.getUsuario().getTelefono());
+            List<Articulo> listArticulo = artFachada.getListByPagination(art);
+            JSONArray array = new JSONArray();
+            for (Articulo art2 : listArticulo) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", art2.getCodigo());
+                obj.put("titulo", art2.getTitulo());
+                obj.put("precio", Utilitaria.conversionNatural(art2.getPrecio()));
+                array.add(obj);
             }
-            obj.put("titulo", art.getTitulo());
-            obj.put("descripcion", art.getDescripcion());
-            obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
-            obj.put("descripcion", art.getDescripcion());
-            obj.put("precio", "$"+Utilitaria.conversionNatural(art.getPrecio()));
-            System.out.println(obj);
-            out.print(obj);
+            out.print(array);
         }
     }
 
@@ -273,7 +287,7 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("descripcion", art.getDescripcion());
             obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
             obj.put("descripcion", art.getDescripcion());
-            obj.put("precio", "$"+Utilitaria.conversionNatural(art.getPrecio()));
+            obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
             System.out.println(obj);
             out.print(obj);
         }
