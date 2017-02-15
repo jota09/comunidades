@@ -101,6 +101,7 @@ public class GestionPermisosControlador extends HttpServlet {
             JSONObject perfil = new JSONObject();
             perfil.put("codigo", p.getCodigo());
             perfil.put("nombre", p.getNombre());
+            perfil.put("nombreComunidad",p.getComunidad().getNombre());
             arrayPerfil.add(perfil);
         }
         try (PrintWriter out = response.getWriter()) {
