@@ -87,18 +87,8 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void recuperarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            CategoriaFachada catFachada = new CategoriaFachada();
-            List<Categoria> listCategoria = catFachada.getListObject();
-            JSONArray array = new JSONArray();
-            for (Categoria cat : listCategoria) {
-                JSONObject obj = new JSONObject();
-                obj.put("codigo", cat.getCodigo());
-                obj.put("nombre", cat.getNombre());
-                obj.put("codigopadre", cat.getCodigoPadre());
-                obj.put("activo", cat.getActivo());
-                array.add(obj);
-            }
-            out.print(array);
+            CategoriaFachada catFachada=new CategoriaFachada();                    
+            out.print(Utilitaria.construirCategorias(catFachada.getListObject()));
         }
     }
 
@@ -232,6 +222,33 @@ public class ClasificadoControlador extends HttpServlet {
                 array.add(obj);
             }
             out.print(array);
+        }
+    }
+
+    private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
+            ArticuloFachada artFachada = new ArticuloFachada();
+            art = (Articulo) artFachada.getObject(art);
+            Usuario user = new Usuario(art.getUsuario().getCodigo());
+            UsuarioFachada userFachada = new UsuarioFachada();
+            user = (Usuario) userFachada.getObject(user);
+            art.setUsuario(user);
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", art.getCodigo());
+            obj.put("nombreUsuario", art.getUsuario().getUserName());
+            if (art.getUsuario().getCelular() != null) {
+                obj.put("telefono", art.getUsuario().getCelular());
+            } else {
+                obj.put("telefono", art.getUsuario().getTelefono());
+            }
+            obj.put("titulo", art.getTitulo());
+            obj.put("descripcion", art.getDescripcion());
+            obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
+            obj.put("descripcion", art.getDescripcion());
+            obj.put("precio", "$"+Utilitaria.conversionNatural(art.getPrecio()));
+            System.out.println(obj);
+            out.print(obj);
         }
     }
 
