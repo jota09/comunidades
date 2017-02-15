@@ -237,14 +237,13 @@ public class ClasificadoControlador extends HttpServlet {
             String ref = "clasificadoMostrarInicio";
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
-            int rangoSup = Integer.parseInt(request.getParameter("limIni"))+Integer.parseInt(estruc.getValor());
             ref = "tipoClasificado";
             estruc.setReferencia(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
             Articulo art = new Articulo();
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc.getValor())));
             art.setUsuario(new Usuario(0));
-            art.setRango(request.getParameter("limIni")+","+rangoSup);
+            art.setRango(request.getParameter("limIni")+","+estruc.getValor());
             art.setBusqueda(request.getParameter("busqueda"));
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(art);
