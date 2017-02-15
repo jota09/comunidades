@@ -217,7 +217,6 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "DELETE FROM articulo WHERE codigo=? AND tipo_articulo_codigo=?";
-            System.out.println("sql:" + sql);
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, art.getCodigo());
             pS.setInt(2, art.getTipoArticulo().getCodigo());
@@ -314,8 +313,9 @@ public class ArticuloDAO implements GestionDAO {
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
                     + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
                     + busqueda + " "
+                    + "ORDER BY FECHA_PUBLICACION DESC "
                     + rango;
-            System.out.println(query);
+//            System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());

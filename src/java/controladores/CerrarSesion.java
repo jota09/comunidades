@@ -1,4 +1,3 @@
-
 package controladores;
 
 import java.io.IOException;
@@ -12,12 +11,13 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "CerrarSesion", urlPatterns = {"/CerrarSesion"})
 public class CerrarSesion extends HttpServlet {
 
-   
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession sesion=request.getSession(false);//el constructor con false permite que no vuelva a crear el obj session
-        sesion.removeAttribute("user");
+        HttpSession sesion = request.getSession(false);//el constructor con false permite que no vuelva a crear el obj session
+        if (sesion.getAttribute("user") != null) {
+            sesion.removeAttribute("user");
+        }
         sesion.invalidate();
         //request.getServletContext().getRequestDispatcher("menuprincipal.jsp").forward(request, response);//redirige con los valores de request y response y mantiene la url
         response.sendRedirect("/Comunidades");//redirige totalmente a la pagina
