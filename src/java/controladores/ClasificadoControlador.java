@@ -118,7 +118,6 @@ public class ClasificadoControlador extends HttpServlet {
             String ref = "rangoPaginas";
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
-            // System.out.println(estruc);
             String[] mostrar = estruc.getValor().split(";");
             JSONArray array = new JSONArray();
             for (int i = 0; i < mostrar.length; i++) {
@@ -136,7 +135,6 @@ public class ClasificadoControlador extends HttpServlet {
             String ref = "rangoPrecio";
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
-            // System.out.println(estruc);
             String[] rango = estruc.getValor().split(";");
             JSONArray array = new JSONArray();
             for (int i = 1; i < rango.length; i++) {
@@ -195,12 +193,10 @@ public class ClasificadoControlador extends HttpServlet {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("finPublicacion"));
             java.sql.Date sql = new java.sql.Date(parsed.getTime());
-            System.out.println(sql);
             art.setFechaFinPublicacion(sql);
             art.setEstado(new ArticuloEstado(1));
             art.setTipoArticulo(new TipoArticulo(1));
             art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
-            System.out.println(art);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.insertObject(art);
             out.print(1);
@@ -223,12 +219,10 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
             art.setEstado(new ArticuloEstado(2));
             ArticuloFachada artFachada = new ArticuloFachada();
-            System.out.println(art);
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
                 JSONObject obj = new JSONObject();
-                System.out.println(art.getCodigo());
                 obj.put("codigo", art2.getCodigo());
                 obj.put("nombre", art2.getTitulo());
                 array.add(obj);
@@ -288,7 +282,6 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
             obj.put("descripcion", art.getDescripcion());
             obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
-            System.out.println(obj);
             out.print(obj);
         }
     }
