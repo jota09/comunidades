@@ -56,4 +56,9 @@ public class TipoArticulo {
     public void setListaArticulos(List<Articulo> listaArticulos) {
         this.listaArticulos = listaArticulos;
     }
+
+    @Override
+    public String toString() {
+        return "TipoArticulo{" + "codigo=" + codigo + ", nombre=" + nombre + ", activo=" + activo + ", listaArticulos=" + listaArticulos + ", rango=" + rango + '}';
+    }
 }
