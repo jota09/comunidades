@@ -1,12 +1,10 @@
 package controladores;
 
 import fachada.AtributoFachada;
-import fachada.EstadoFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MenuFachada;
 import fachada.RecursoFachada;
-import fachada.UsuarioPerfilFachada;
 import fachada.VistaFachada;
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Atributo;
@@ -89,7 +86,7 @@ public class GeneradorView extends HttpServlet {
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(user.getPerfilCodigo());
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));     
-                pagina =pagina.replace("<@logo@>","<img style='width:40px;height:40px' class='img-circle' src='"+LecturaConfig.getValue("rutaImg")+"logo/"+user.getPerfilCodigo().getComunidad().getCodigo()+".png'");
+                pagina =pagina.replace("<@logo@>","<img style='width:40px;height:40px' alt='Brand' class='img-circle' src='"+LecturaConfig.getValue("rutaImg")+"logo/"+user.getPerfilCodigo().getComunidad().getCodigo()+".png'");
             } else {
                 Perfil pf = new Perfil();
                 GestionFachada estructuraFachada = new EstructuraFachada();
