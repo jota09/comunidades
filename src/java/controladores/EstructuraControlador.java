@@ -57,6 +57,9 @@ public class EstructuraControlador extends HttpServlet {
                 eliminarParametro(request, response);
                 break;
             }
+            case 5:
+                buscarPorCondicion(request, response);
+                break;
         }
 
     }
@@ -73,7 +76,7 @@ public class EstructuraControlador extends HttpServlet {
         GestionFachada estructuraFachada = new EstructuraFachada();
         Estructura estructura = new Estructura();
         estructura.setCodigo(Integer.parseInt(request.getParameter("codigo")));
-        estructura=(Estructura)estructuraFachada.getObject(estructura);
+        estructura = (Estructura) estructuraFachada.getObject(estructura);
         JSONObject obj = new JSONObject();
         obj.put("referencia", estructura.getReferencia());
         obj.put("valor", estructura.getValor());
@@ -102,7 +105,8 @@ public class EstructuraControlador extends HttpServlet {
 
     private void getListEstructura(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada estructuraFachada = new EstructuraFachada();
-        List<Estructura> estructuras = estructuraFachada.getListObject();
+        String rango = request.getParameter("rango");
+        List<Estructura> estructuras = estructuraFachada.getListByPagination(rango);
         JSONArray array = new JSONArray();
         for (Estructura e : estructuras) {
             JSONObject object = new JSONObject();
@@ -156,5 +160,23 @@ public class EstructuraControlador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void buscarPorCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        String condicion = request.getParameter("condicion");
+        List<Estructura> estructuras = estructuraFachada.getListByCondition(condicion);
+        JSONArray array = new JSONArray();
+        for (Estructura e : estructuras) {
+            JSONObject object = new JSONObject();
+            object.put("codigo", e.getCodigo());
+            object.put("referencia", e.getReferencia());
+            object.put("valor", e.getValor());
+            object.put("descripcion", e.getDescripcion());
+            array.add(object);
+        }
+        try (PrintWriter out = response.getWriter()) {
+            out.print(array);
+        }
+    }
 
 }

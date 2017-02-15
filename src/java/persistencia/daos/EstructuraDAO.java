@@ -198,12 +198,65 @@ public class EstructuraDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String condicion=String.valueOf(object);
+        ArrayList<Estructura> listEstructura = new ArrayList<Estructura>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT codigo,referencia,valor,descripcion FROM estructura where referencia like ? or valor like ? or descripcion like ?";
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setString(1, condicion+"%");
+            pS.setString(2, condicion+"%");
+            pS.setString(3, condicion+"%");
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Estructura est = new Estructura(rS.getInt(1), rS.getString(2), rS.getString(3), rS.getString(4));
+                listEstructura.add(est);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listEstructura;
     }
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String limit = String.valueOf(object);
+        ArrayList<Estructura> listEstructura = new ArrayList<Estructura>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT codigo,referencia,valor,descripcion FROM estructura limit " + limit;
+            PreparedStatement pS = con.prepareStatement(query);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Estructura est = new Estructura(rS.getInt(1), rS.getString(2), rS.getString(3), rS.getString(4));
+                listEstructura.add(est);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listEstructura;
     }
 
 }
