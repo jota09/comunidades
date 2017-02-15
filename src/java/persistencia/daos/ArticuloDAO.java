@@ -301,7 +301,7 @@ public class ArticuloDAO implements GestionDAO {
             } else {
                 rango = "";
             }
-            if (!articulo.getBusqueda().isEmpty()) {
+            if (articulo.getBusqueda()!=null && !articulo.getBusqueda().isEmpty()) {
                 busqueda = "OR ( fecha_publicacion <= NOW() or " + articulo.getBusqueda()+ ")";
             } else {
                 busqueda = "OR ( fecha_publicacion <= NOW() )";
