@@ -313,7 +313,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
                     + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
                     + busqueda + " "
-                    + "ORDER BY FECHA_PUBLICACION DESC "
+                    + "ORDER BY FECHA_PUBLICACION,CREACION DESC "
                     + rango;
 //            System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
