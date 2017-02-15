@@ -88,7 +88,8 @@ public class GeneradorView extends HttpServlet {
                 Usuario user = (Usuario) session.getAttribute("user");
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(user.getPerfilCodigo());
-                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
+                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));     
+                pagina =pagina.replace("<@logo@>","<img style='width:40px;height:40px' class='img-circle' src='"+LecturaConfig.getValue("rutaImg")+"logo/"+user.getPerfilCodigo().getComunidad().getCodigo()+".png'");
             } else {
                 Perfil pf = new Perfil();
                 GestionFachada estructuraFachada = new EstructuraFachada();
