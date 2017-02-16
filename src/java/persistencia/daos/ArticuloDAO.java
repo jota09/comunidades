@@ -288,6 +288,8 @@ public class ArticuloDAO implements GestionDAO {
         ArrayList<Articulo> listArt = new ArrayList<Articulo>();
         String rango = "";
         String busqueda = "";
+        String [] condicionSeparada;
+        String condicionArmada = "";
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
@@ -296,10 +298,17 @@ public class ArticuloDAO implements GestionDAO {
             } else {
                 rango = "";
             }
-            if (!articulo.getBusqueda().isEmpty()) {
-                busqueda = "OR ( fecha_publicacion <= NOW() or " + articulo.getBusqueda()+ ")";
+            if (articulo.getBusqueda()!= null && !articulo.getBusqueda().isEmpty()) {
+                System.out.println("Entro la condicion de busqueda");
+                String [] campos = articulo.getBusqueda().split(";");
+                System.out.println(campos);
+                for(int i=0;i<campos.length;i++){
+                    condicionSeparada = campos[i].split(",");
+                    condicionArmada += " and "+condicionSeparada[0]+"="+condicionSeparada[1];
+                }
+                busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ORDER BY FECHA_PUBLICACION DESC ";
             } else {
-                busqueda = "OR ( fecha_publicacion <= NOW() )";
+                busqueda = "OR ( fecha_publicacion <= NOW() ) ORDER BY FECHA_PUBLICACION DESC ";
             }
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
                     + "artEstado.codigo,artEstado.nombre nombreEstado"
@@ -309,9 +318,8 @@ public class ArticuloDAO implements GestionDAO {
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
                     + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
                     + busqueda + " "
-                    + "ORDER BY FECHA_PUBLICACION DESC "
                     + rango;
-//            System.out.println(query);
+            System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
