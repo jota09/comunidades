@@ -7,8 +7,11 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
+import fachada.EstructuraFachada;
 import fachada.GestionFachada;
+import fachada.MultimediaFachada;
 import fachada.TipoArticuloFachada;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -30,6 +33,8 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 import org.json.simple.JSONObject;
+import persistencia.entidades.Estructura;
+import persistencia.entidades.Multimedia;
 import persistencia.entidades.Prioridad;
 import utilitarias.Utilitaria;
 //Prueba de que ya sincronizo el proyecto con alejandro
@@ -95,11 +100,11 @@ public class NoticiaControlador extends HttpServlet {
     
     private void tipoArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
         try (PrintWriter out = response.getWriter()) {
-            GestionFachada tpArtFach=new TipoArticuloFachada();
-            TipoArticulo tpArt=new TipoArticulo();
-            tpArt.setNombre("Noticia");
-            tpArt=(TipoArticulo)tpArtFach.getObject(tpArt);
-            out.print(tpArt.getCodigo());
+            GestionFachada estFach=new EstructuraFachada();
+            Estructura estructura=new Estructura();
+            estructura.setReferencia("tipoNoticia");
+            Estructura est=(Estructura)estFach.getObject(estructura);            
+            out.print(est.getValor());
         }
     }
 
@@ -184,7 +189,20 @@ public class NoticiaControlador extends HttpServlet {
             Articulo art = new Articulo();
             art.setCodigo(cod);
             ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tpArt=new TipoArticulo();
+            GestionFachada estFach=new EstructuraFachada();
+            Estructura estructura=new Estructura();
+            estructura.setReferencia("tipoNoticia");
+            Estructura est=(Estructura)estFach.getObject(estructura);
+            tpArt.setCodigo(Integer.parseInt(est.getValor())); 
+            art.setTipoArticulo(tpArt);
+            Usuario usr = (Usuario) request.getSession().getAttribute("user");
+            art.setUsuario(usr); 
+            art.setComunidad(usr.getPerfilCodigo().getComunidad());
             art = (Articulo) artFachada.getObject(art);
+            MultimediaFachada multFachada=new MultimediaFachada();
+            List<Multimedia> listMult=multFachada.getListObject(art);
+            
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
@@ -195,6 +213,7 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
+            obj.put("visibilidad",art.getVisibilidad());
             out.print(obj);
         }
     }

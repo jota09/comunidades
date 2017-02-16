@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import persistencia.daos.MultimediaDAO;
+import persistencia.entidades.Articulo;
 import persistencia.entidades.Multimedia;
 import persistencia.entidades.TipoMultimedia;
 
@@ -49,7 +50,7 @@ public class SubeArchivoControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String id = request.getParameter("id");
             short destacada = Short.parseShort(request.getParameter("destacada"));
-            String encoded[] = request.getParameter("file").split(",");
+            String encoded[] = request.getParameter("file").split(",");            
             String ext = (encoded[0].split(";")[0]);
             ext = ext.split("/")[1];
             ext = ((ext.equals("vnd.openxmlformats-officedocument.wordprocessingml.document")) ? "docx" : ext);
@@ -61,28 +62,29 @@ public class SubeArchivoControlador extends HttpServlet {
             tipoMultimediaFachada.getObject(tipoMultimedia);
             Multimedia multimedia = new Multimedia();
             multimedia.setTipoMultimediaCodigo(tipoMultimedia.getCodigo());
-            multimedia.setArticuloCodigo(Integer.parseInt(id));
+            multimedia.setArticulocodigo(new Articulo(Integer.parseInt(id)));            
             multimedia.setDestacada(destacada);
             multimediaFachada.insertObject(multimedia);
             String content = encoded[1];
             byte[] decoded = Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8));
-            String path = "c:/files/" + multimedia.getCodigo() + ".resource"; 
+            String path = "c:/files/" + multimedia.getCodigo() + "." + ext;
             //generaArchivo(path, decoded);
-            //System.out.println("Decodificacion:"+request.getParameter("file"));
-            almacenarImgB64(path,request.getParameter("file"));
+            generarArchivoBase64(path,request.getParameter("file"));
+            System.out.println("Decodificacion:"+request.getParameter("file"));
         }
     }
 
-    private synchronized  void almacenarImgB64(String path,String content) throws IOException{
-        File file=new File(path);
-        FileWriter fW=new FileWriter(file);
-        BufferedWriter fBW=new BufferedWriter(fW);
-        fBW.write(content);
-        fBW.flush();
+    private void generarArchivoBase64(String ruta, String base64) throws IOException
+    {
+        FileWriter fW=new FileWriter(ruta,true);
+        BufferedWriter bW=new BufferedWriter(fW);
+        bW.write(base64);        
+        bW.flush();
+        bW.close();
         fW.flush();
-        fBW.close();
         fW.close();
     }
+    
     private synchronized void generaArchivo(String path, byte[] content) throws FileNotFoundException, IOException {
         File file=new File(path);
         BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(file));

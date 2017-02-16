@@ -23,6 +23,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -54,7 +55,6 @@ public class ClasificadoControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        // System.out.println(request);
         if (request.getParameter("opc") != null) {
             int opcion = Integer.parseInt(request.getParameter("opc"));
             switch (opcion) {
@@ -234,6 +234,8 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
+            Usuario user = (Usuario) request.getSession().getAttribute("user");
+            user.setCodigo(0);
             EstructuraFachada estrucFachada = new EstructuraFachada();
             String ref = "clasificadoMostrarInicio";
             Estructura estruc = new Estructura(ref);
@@ -244,7 +246,7 @@ public class ClasificadoControlador extends HttpServlet {
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             Articulo art = new Articulo();
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            art.setUsuario(new Usuario(0));
+            art.setUsuario(user);
             art.setRango(request.getParameter("limIni") + "," + estruc.getValor());
             JSONParser parser = new JSONParser();
             JSONObject jsonBusq = null;

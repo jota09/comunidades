@@ -37,6 +37,31 @@ public class Articulo implements Serializable {
         this.codigo = codigo;
     }
 
+    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, short visibilidad) {
+        this.codigo = codigo;
+        this.usuario = usuario;
+        this.usuariocodigoadm = usuariocodigoadm;
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.fechapublicacion = fechapublicacion;
+        this.precio = precio;
+        this.fechafinpublicacion = fechafinpublicacion;
+        this.prioridad = prioridad;
+        this.creacion = creacion;
+        this.actualizacion = actualizacion;
+        this.observacionesadmon = observacionesadmon;
+        this.estado = estado;
+        this.tipoarticulo = tipoarticulo;
+        this.categoria = categoria;
+        this.comunidad = comunidad;
+        this.listaInteres = listaInteres;
+        this.rango = rango;
+        this.busqueda = busqueda;
+        this.visibilidad = visibilidad;
+    }
+    
+    
+
     public int getCodigo() {
         return this.codigo;
     }
