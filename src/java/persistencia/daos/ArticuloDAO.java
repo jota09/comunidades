@@ -76,7 +76,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "FROM comunidades.articulo "
                     + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
-                    + "LIMIT "+ art.getRango() +" ";
+                    + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             pS.setInt(2, art.getEstado().getCodigo());
@@ -288,7 +288,6 @@ public class ArticuloDAO implements GestionDAO {
         ArrayList<Articulo> listArt = new ArrayList<Articulo>();
         String rango = "";
         String busqueda = "";
-        String [] condicionSeparada;
         String condicionArmada = "";
         Connection con = null;
         try {
@@ -298,18 +297,35 @@ public class ArticuloDAO implements GestionDAO {
             } else {
                 rango = "";
             }
-            if (articulo.getBusqueda()!= null && !articulo.getBusqueda().isEmpty()) {
-                System.out.println("Entro la condicion de busqueda");
-                String [] campos = articulo.getBusqueda().split(";");
-                System.out.println(campos);
-                for(int i=0;i<campos.length;i++){
-                    condicionSeparada = campos[i].split(",");
-                    condicionArmada += " and "+condicionSeparada[0]+"="+condicionSeparada[1];
+            if (articulo.getBusqueda() != null && !articulo.getBusqueda().isEmpty()) {
+                System.out.println(articulo.getBusqueda());
+                if (articulo.getBusqueda().indexOf("/") >= 0) {
+                    String[] separarCondiciones = articulo.getBusqueda().split("/");
+                    if (separarCondiciones.length > 1 && !separarCondiciones[0].equals("")) {
+                        String[] campos = separarCondiciones[0].split(",");
+                        for (int i = 0; i < campos.length; i++) {
+                            condicionArmada += " and " + campos[i];
+                        }
+                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ";
+                        
+                        busqueda += separarCondiciones[1].replace("/", " ") + " ";
+                        System.out.println("Entro aqui con where y con order");
+                    } else {
+                        System.out.println("Entro aqui sin where pero con order");
+                        busqueda = " OR ( fecha_publicacion <= NOW() ) " + separarCondiciones[1].replace("/", " ")  + " ";
+                    }
+                } else {
+                    String[] campos = articulo.getBusqueda().split(",");
+                    for (int i = 0; i < campos.length; i++) {
+                        condicionArmada += " and " + campos[i];
+                    }
+                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ";
+                    System.out.println("Entro aqui sin where y sin order");
                 }
-                busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ORDER BY FECHA_PUBLICACION DESC ";
             } else {
                 busqueda = "OR ( fecha_publicacion <= NOW() ) ORDER BY FECHA_PUBLICACION DESC ";
             }
+            System.out.println(busqueda);
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
                     + "artEstado.codigo,artEstado.nombre nombreEstado"
                     + " FROM articulo art JOIN "
@@ -369,8 +385,8 @@ public class ArticuloDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
-                int max=rS.getInt(1);
-                cont = ((max>0)?max:cont);
+                int max = rS.getInt(1);
+                cont = ((max > 0) ? max : cont);
             }
             rS.close();
             pS.close();

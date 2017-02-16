@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
@@ -90,7 +91,7 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void recuperarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            CategoriaFachada catFachada=new CategoriaFachada();                    
+            CategoriaFachada catFachada = new CategoriaFachada();
             out.print(Utilitaria.construirCategorias(catFachada.getListObject()));
         }
     }
@@ -139,7 +140,7 @@ public class ClasificadoControlador extends HttpServlet {
             JSONArray array = new JSONArray();
             for (int i = 1; i < rango.length; i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("rango", rango[i - 1] + " $ - " + rango[i] + " $");
+                obj.put("rango", "$"+rango[i - 1] + " - $" + rango[i] + " ");
                 array.add(obj);
             }
             out.print(array);
@@ -164,12 +165,12 @@ public class ClasificadoControlador extends HttpServlet {
                     JSONObject obj = new JSONObject();
                     if (rango[j].equals("ASC")) {
                         obj.put("campo", ordenar[0]);
-                        obj.put("nombre", ordenar[1] + " más reciente");
+                        obj.put("nombre", ordenar[1] + " más antiguo");
                         obj.put("orden", rango[j]);
                     }
                     if (rango[j].equals("DESC")) {
                         obj.put("campo", ordenar[0]);
-                        obj.put("nombre", ordenar[1] + " más antiguo");
+                        obj.put("nombre", ordenar[1] + " más reciente");
                         obj.put("orden", rango[j]);
                     }
                     array.add(obj);
@@ -212,7 +213,7 @@ public class ClasificadoControlador extends HttpServlet {
             String ref = "cantidadUltimosClasificados";
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
-            art.setRango("0,"+estruc.getValor());
+            art.setRango("0," + estruc.getValor());
             String ref2 = "tipoClasificado";
             Estructura estruc2 = new Estructura(ref2);
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
@@ -243,8 +244,39 @@ public class ClasificadoControlador extends HttpServlet {
             Articulo art = new Articulo();
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc.getValor())));
             art.setUsuario(new Usuario(0));
-            art.setRango(request.getParameter("limIni")+","+estruc.getValor());
-            art.setBusqueda(request.getParameter("busqueda"));
+            art.setRango(request.getParameter("limIni") + "," + estruc.getValor());
+            JSONParser parser = new JSONParser();
+            JSONObject jsonBusq = null;
+            try {
+                jsonBusq = (JSONObject) parser.parse(request.getParameter("busqueda"));
+            } catch (org.json.simple.parser.ParseException ex) {
+                Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(jsonBusq.get("categoria").toString());
+            System.out.println(jsonBusq.get("prioridad").toString());
+            System.out.println(jsonBusq.get("precio").toString());
+            art.setBusqueda("");
+            if (jsonBusq.get("categoria").toString() != null && !jsonBusq.get("categoria").toString().isEmpty()) {
+                art.setBusqueda("cat.codigo=" + jsonBusq.get("categoria") + ",");
+            }
+            if (jsonBusq.get("prioridad").toString() != null && !jsonBusq.get("prioridad").toString().isEmpty()) {
+                art.setBusqueda(art.getBusqueda() + "prioridad_codigo=" + jsonBusq.get("prioridad") + ",");
+            }
+            if (jsonBusq.get("precio").toString() != null && !jsonBusq.get("precio").toString().isEmpty()) {
+                String precio = jsonBusq.get("precio").toString().replace(" ", "");
+                precio = precio.replace("$", "");
+                String[] precioSplit = precio.split("-");
+                if (precioSplit.length > 1) {
+                    art.setBusqueda(art.getBusqueda() + "art.precio between " + precioSplit[0] + " AND " + precioSplit[1] + ",");
+                } else {
+                    art.setBusqueda(art.getBusqueda() + "art.precio > " + precioSplit[0] + ",");
+                }
+            }
+            if (jsonBusq.get("ordenar").toString() != null && !jsonBusq.get("ordenar").toString().isEmpty()) {
+                String orden = jsonBusq.get("ordenar").toString();
+                String[] ordenSplit = orden.split("-");
+                art.setBusqueda(art.getBusqueda() + "/ORDER BY " + ordenSplit[0] + " "+ordenSplit[1]);
+            }
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(art);
             JSONArray array = new JSONArray();
