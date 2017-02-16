@@ -2,10 +2,11 @@ package persistencia.entidades;
 
 public class Multimedia {
 
-    private int codigo;
+    private long codigo;
     private int articulocodigo;
     private int tipomultimediacodigo;
     private short activo;
+    private short destacada;
 
     public Multimedia() {
     }
@@ -14,19 +15,19 @@ public class Multimedia {
         this.codigo = codigo;
     }
 
-    public Multimedia(int codigo, int articulocodigo, int tipomultimediacodigo, short activo) {
+    public Multimedia(int codigo, int articulocodigo, int tipomultimediacodigo, short activo, short destacada) {
         this.codigo = codigo;
         this.articulocodigo = articulocodigo;
         this.tipomultimediacodigo = tipomultimediacodigo;
         this.activo = activo;
+        this.destacada = destacada;
     }
-
     
-    public int getCodigo() {
+    public long getCodigo() {
         return this.codigo;
     }
 
-    public void setCodigo(int codigo) {
+    public void setCodigo(long codigo) {
         this.codigo = codigo;
     }
 
@@ -53,4 +54,13 @@ public class Multimedia {
     public void setActivo(short activo) {
         this.activo = activo;
     }
+
+    public short getDestacada() {
+        return destacada;
+    }
+
+    public void setDestacada(short destacada) {
+        this.destacada = destacada;
+    }
+    
 }

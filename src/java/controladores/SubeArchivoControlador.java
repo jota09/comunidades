@@ -47,6 +47,7 @@ public class SubeArchivoControlador extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             String id = request.getParameter("id");
+            short destacada = Short.parseShort(request.getParameter("destacada"));
             String encoded[] = request.getParameter("file").split(",");
             String ext = (encoded[0].split(";")[0]);
             ext = ext.split("/")[1];
@@ -60,6 +61,7 @@ public class SubeArchivoControlador extends HttpServlet {
             Multimedia multimedia = new Multimedia();
             multimedia.setTipoMultimediaCodigo(tipoMultimedia.getCodigo());
             multimedia.setArticuloCodigo(Integer.parseInt(id));
+            multimedia.setDestacada(destacada);
             multimediaFachada.insertObject(multimedia);
             String content = encoded[1];
             byte[] decoded = Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8));
@@ -69,7 +71,8 @@ public class SubeArchivoControlador extends HttpServlet {
         }
     }
 
-    public synchronized void generaArchivo(String path, byte[] content) throws FileNotFoundException, IOException {
+    
+    private synchronized void generaArchivo(String path, byte[] content) throws FileNotFoundException, IOException {
         File file=new File(path);
         BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(file));
         writer.write(content);
