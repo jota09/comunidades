@@ -55,6 +55,7 @@ public class ArticuloDAO implements GestionDAO {
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
                 art.setEstado(estado);
                 art.setPrecio(rS.getDouble("precio"));
+                art.setVisibilidad(rS.getShort("visibilidad"));
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
