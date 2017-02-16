@@ -15,6 +15,19 @@ public class Menu {
     public Menu() {
     }
 
+    public Menu(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public Menu(int codigo, int codigopadre, String nombre, String url, short activo, List<Menu> listaMenu) {
+        this.codigo = codigo;
+        this.codigopadre = codigopadre;
+        this.nombre = nombre;
+        this.url = url;
+        this.activo = activo;
+        this.listaMenu = listaMenu;
+    }
+    
     public int getCodigo() {
         return this.codigo;
     }

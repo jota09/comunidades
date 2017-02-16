@@ -20,7 +20,33 @@ public class MenuDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Menu menu = (Menu) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select codigo_padre,nombre,url from menu where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, menu.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                menu.setCodigoPadre(rS.getInt(1));
+                menu.setNombre(rS.getString(2));
+                menu.setUrl(rS.getString(3));
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return menu;
     }
 
     @Override
@@ -94,7 +120,25 @@ public class MenuDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Menu menu = (Menu) object;
+        Connection con = null;
+        int update = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "UPDATE menu set nombre=? where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, menu.getNombre());
+            pS.setInt(2, menu.getCodigo());
+            update = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return update;
     }
 
     @Override

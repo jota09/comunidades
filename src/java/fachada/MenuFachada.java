@@ -23,7 +23,8 @@ public class MenuFachada implements GestionFachada {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO menDAO = new MenuDAO();
+        return menDAO.getObject(object);
     }
 
     @Override
@@ -34,7 +35,8 @@ public class MenuFachada implements GestionFachada {
 
     @Override
     public int updateObject(Object obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO menDAO = new MenuDAO();
+        return menDAO.updateObject(obj);
     }
 
     @Override
