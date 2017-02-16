@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class Multimedia  implements Serializable{
 
-    private long codigo;
-    private int articulocodigo;
+    private long codigo;    
+    private Articulo articulocodigo;
     private int tipomultimediacodigo;
     private short activo;
     private short destacada;
@@ -17,14 +17,15 @@ public class Multimedia  implements Serializable{
         this.codigo = codigo;
     }
 
-    public Multimedia(int codigo, int articulocodigo, int tipomultimediacodigo, short activo, short destacada) {
+    public Multimedia(long codigo, Articulo articulocodigo, int tipomultimediacodigo, short activo, short destacada) {
         this.codigo = codigo;
         this.articulocodigo = articulocodigo;
         this.tipomultimediacodigo = tipomultimediacodigo;
         this.activo = activo;
         this.destacada = destacada;
     }
-    
+
+        
     public long getCodigo() {
         return this.codigo;
     }
@@ -33,14 +34,14 @@ public class Multimedia  implements Serializable{
         this.codigo = codigo;
     }
 
-    public int getArticuloCodigo() {
-        return this.articulocodigo;
+    public Articulo getArticulocodigo() {
+        return articulocodigo;
     }
 
-    public void setArticuloCodigo(int articulocodigo) {
+    public void setArticulocodigo(Articulo articulocodigo) {
         this.articulocodigo = articulocodigo;
     }
-
+    
     public int getTipoMultimediaCodigo() {
         return this.tipomultimediacodigo;
     }
