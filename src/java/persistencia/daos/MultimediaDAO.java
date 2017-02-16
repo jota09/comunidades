@@ -9,11 +9,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
+import persistencia.entidades.Articulo;
 import persistencia.entidades.Multimedia;
 
 /**
@@ -34,7 +36,35 @@ public class MultimediaDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Articulo art = (Articulo) object;
+        ArrayList<Multimedia> listMult = new ArrayList<Multimedia>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT * FROM multimedia WHERE articulo_codigo=?";
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setInt(1, art.getTipoArticulo().getCodigo());
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Multimedia mult=new Multimedia();
+                mult.setCodigo(rS.getInt("codigo"));
+                mult.setTipoMultimediaCodigo(rS.getInt("tipo_multimedia_codigo"));
+                mult.setActivo(rS.getShort("activo"));
+                mult.setDestacada(rS.getShort("destacada"));
+                listMult.add(mult);
+            }
+            rS.close();
+            pS.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listMult;
     }
 
     @Override
@@ -60,7 +90,7 @@ public class MultimediaDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             multimedia.setCodigo(calendar.getTimeInMillis()+numeroAleatorio);
             pS.setLong(1, multimedia.getCodigo());
-            pS.setInt(2, multimedia.getArticuloCodigo());
+            pS.setInt(2, multimedia.getArticulocodigo().getCodigo());
             pS.setInt(3, multimedia.getTipoMultimediaCodigo());
             pS.setShort(4,multimedia.getDestacada());
             tamano = pS.executeUpdate();
