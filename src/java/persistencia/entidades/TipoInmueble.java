@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class TipoInmueble {
+import java.io.Serializable;
+
+public class TipoInmueble implements Serializable {
 
     private int codigo;
     private String nombre;

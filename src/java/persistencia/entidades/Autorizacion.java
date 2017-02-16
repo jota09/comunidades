@@ -1,8 +1,9 @@
 package persistencia.entidades;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Autorizacion {
+public class Autorizacion implements Serializable {
 
     private int codigo;
     private int usuariocodigo;

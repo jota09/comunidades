@@ -5,11 +5,13 @@
  */
 package persistencia.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ferney.medina
  */
-public class Estado {
+public class Estado implements Serializable {
     private int codigo;
     private String nombre;
     private String observacion;

@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class ClasificadoInteres {
+import java.io.Serializable;
+
+public class ClasificadoInteres implements Serializable {
 
     private int codigo;
     private int usuariocodigo;

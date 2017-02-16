@@ -5,11 +5,13 @@
  */
 package persistencia.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Jesus.Ramos
  */
-public class Estructura {
+public class Estructura implements Serializable {
     private int codigo;
     private String referencia;
     private String valor;

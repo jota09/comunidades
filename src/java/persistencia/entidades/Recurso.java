@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class Recurso {
+import java.io.Serializable;
+
+public class Recurso implements Serializable {
 
     private int codigo;
     private String nombre;

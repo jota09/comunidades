@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class Atributo {
+import java.io.Serializable;
+
+public class Atributo implements Serializable {
 
     private int codigo;
     private String referencia;

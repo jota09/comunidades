@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class TipoMultimedia {
+import java.io.Serializable;
+
+public class TipoMultimedia implements Serializable {
 
     private int codigo;
     private String nombre;
