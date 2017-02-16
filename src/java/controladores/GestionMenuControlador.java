@@ -61,6 +61,9 @@ public class GestionMenuControlador extends HttpServlet {
                 eliminarMenu(request, response);
                 break;
             }
+            case 5: {
+                editarmenu(request, response);
+            }
         }
     }
 
@@ -73,39 +76,51 @@ public class GestionMenuControlador extends HttpServlet {
     }
 
     private void agregarMenu(HttpServletRequest request, HttpServletResponse response) {
-        int codPadre = Integer.parseInt(request.getParameter("codPadre"));
+        String codigoMenu = request.getParameter("codigoMenu");
         String nombreMenu = request.getParameter("nombreMenu");
-        String urlMenu = request.getParameter("urlMenu");
-        String nombreVista = request.getParameter("nombreVista");
-        String onVista = request.getParameter("onVista");
-        boolean inserta = true;
-        if (!nombreMenu.isEmpty()) {
-            GestionFachada menuFachada = new MenuFachada();
-            Menu menu = new Menu();
-            menu.setCodigoPadre(codPadre);
+        GestionFachada menuFachada = new MenuFachada();
+        Menu menu = new Menu();
+        if (!codigoMenu.equals("")) {
+            menu.setCodigo(Integer.parseInt(codigoMenu));
             menu.setNombre(nombreMenu);
-            menu.setUrl(urlMenu);
-            if (onVista.equals("1")) {
-                int codVista = Integer.parseInt(request.getParameter("codVista"));
-                if (codVista != 0 && !urlMenu.isEmpty()) {
-                    GestionFachada vistaFachada = new VistaFachada();
-                    Vista vista = new Vista();
-                    vista.setCodigo(codVista);
-                    vista.setNombre(nombreVista);
-                    vista.setUrl(urlMenu);
-                    vistaFachada.insertObject(vista);
-                } else {
-                    inserta = false;
-                }
+            menuFachada.updateObject(menu);
+            if (menuFachada.updateObject(menu) > 0) {
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "<strong>Se Actualizo la Opción de Menu</strong>", "success"));
+            } else {
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "<strong>No Actualizo la opción de Menu</strong>", "danger"));
             }
-            if (inserta) {
-                menuFachada.insertObject(menu);
-                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "<strong>Se Agrego la Nueva Opción</strong>", "success"));
+        } else {
+            int codPadre = Integer.parseInt(request.getParameter("codPadre"));
+            String urlMenu = request.getParameter("urlMenu");
+            String nombreVista = request.getParameter("nombreVista");
+            String onVista = request.getParameter("onVista");
+            boolean inserta = true;
+            if (!nombreMenu.isEmpty()) {
+                menu.setCodigoPadre(codPadre);
+                menu.setNombre(nombreMenu);
+                menu.setUrl(urlMenu);
+                if (onVista.equals("1")) {
+                    int codVista = Integer.parseInt(request.getParameter("codVista"));
+                    if (codVista != 0 && !urlMenu.isEmpty()) {
+                        GestionFachada vistaFachada = new VistaFachada();
+                        Vista vista = new Vista();
+                        vista.setCodigo(codVista);
+                        vista.setNombre(nombreVista);
+                        vista.setUrl(urlMenu);
+                        vistaFachada.insertObject(vista);
+                    } else {
+                        inserta = false;
+                    }
+                }
+                if (inserta) {
+                    menuFachada.insertObject(menu);
+                    request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "<strong>Se Agrego la Nueva Opción</strong>", "success"));
+                } else {
+                    request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "<strong>Datos Invalidos o Faltantes</strong>", "danger"));
+                }
             } else {
                 request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "<strong>Datos Invalidos o Faltantes</strong>", "danger"));
             }
-        } else {
-            request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "<strong>Datos Invalidos o Faltantes</strong>", "danger"));
         }
     }
 
@@ -211,5 +226,18 @@ public class GestionMenuControlador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void editarmenu(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int codigo = Integer.parseInt(request.getParameter("codigo"));
+        Menu menu = new Menu(codigo);
+        GestionFachada menuFachada = new MenuFachada();
+        menuFachada.getObject(menu);
+        JSONObject obj = new JSONObject();
+        obj.put("codigoPadre", menu.getCodigoPadre());
+        obj.put("nombre", menu.getNombre());
+        try (PrintWriter out = response.getWriter()) {
+            out.print(obj);
+        }
+    }
 
 }
