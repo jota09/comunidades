@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,6 +54,8 @@ public class AtributoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -80,6 +83,8 @@ public class AtributoDAO implements GestionDAO {
             ex.printStackTrace();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -111,6 +116,8 @@ public class AtributoDAO implements GestionDAO {
             System.out.println("Error:" + ex.getMessage());
         } catch (SQLException ex) {
             System.out.println("Error:" + ex.getMessage());
+        } catch (IOException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -139,6 +146,8 @@ public class AtributoDAO implements GestionDAO {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -164,6 +173,8 @@ public class AtributoDAO implements GestionDAO {
             System.out.println("Error:" + ex.getMessage());
         } catch (SQLException ex) {
             System.out.println("Error:" + ex.getMessage());
+        } catch (IOException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -197,6 +208,8 @@ public class AtributoDAO implements GestionDAO {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -228,6 +241,8 @@ public class AtributoDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

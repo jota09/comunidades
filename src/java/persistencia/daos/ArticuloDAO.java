@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,9 +18,10 @@ import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
+import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
-
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -58,6 +60,8 @@ public class ArticuloDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return art;
@@ -128,6 +132,8 @@ public class ArticuloDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return numfilas;
@@ -224,6 +230,8 @@ public class ArticuloDAO implements GestionDAO {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -309,41 +317,39 @@ public class ArticuloDAO implements GestionDAO {
                         for (int i = 0; i < campos.length; i++) {
                             condicionArmada += " and " + campos[i];
                         }
-                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ";
-
+                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? ) ";
+                        
                         busqueda += separarCondiciones[1].replace("/", " ") + " ";
                         System.out.println("Entro aqui con where y con order");
                     } else {
-                        
-                        busqueda = " OR ( fecha_publicacion <= NOW() ) " + separarCondiciones[1].replace("/", " ") + " ";
+                        System.out.println("Entro aqui sin where pero con order");
+                        busqueda = " OR ( fecha_publicacion <= NOW() art.tipo_articulo_codigo=?  ) " + separarCondiciones[1].replace("/", " ")  + " ";
                     }
                 } else {
                     String[] campos = articulo.getBusqueda().split(",");
                     for (int i = 0; i < campos.length; i++) {
                         condicionArmada += " and " + campos[i];
                     }
-                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ";
+                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? ) ";
                     System.out.println("Entro aqui sin where y sin order");
                 }
             } else {
-                busqueda = "OR ( fecha_publicacion <= NOW() )  ";
+                busqueda = "OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=?  ) ORDER BY FECHA_PUBLICACION DESC ";
             }
-            System.out.println(busqueda);
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
                     + "artEstado.codigo,artEstado.nombre nombreEstado"
                     + " FROM articulo art JOIN "
                     + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE (  art.usuario_codigo=? "
-                    + busqueda + ") AND art.tipo_articulo_codigo=? ORDER BY FECHA_PUBLICACION DESC "
+                    + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
+                    + busqueda + " "
                     + rango;
-            System.out.println("CONSULTA_CLASIFICADOS:"+query);
-    
+        
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, articulo.getUsuario().getCodigo());
-            pS.setInt(2, articulo.getTipoArticulo().getCodigo());
-            
+            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
+            pS.setInt(2, articulo.getUsuario().getCodigo());
+            pS.setInt(3, articulo.getTipoArticulo().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();

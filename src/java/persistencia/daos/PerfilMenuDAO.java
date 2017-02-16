@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,6 +58,8 @@ public class PerfilMenuDAO implements GestionDAO {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -94,6 +97,8 @@ public class PerfilMenuDAO implements GestionDAO {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -118,6 +123,8 @@ public class PerfilMenuDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

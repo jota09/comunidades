@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,6 +46,8 @@ public class TipoMultimediaDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TipoMultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(TipoMultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(TipoMultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

@@ -9,6 +9,7 @@ import fachada.GestionFachada;
 import fachada.MultimediaFachada;
 import fachada.TipoMultimediaFachada;
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -65,13 +66,23 @@ public class SubeArchivoControlador extends HttpServlet {
             multimediaFachada.insertObject(multimedia);
             String content = encoded[1];
             byte[] decoded = Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8));
-            String path = "c:/files/" + multimedia.getCodigo() + "." + ext;
-            generaArchivo(path, decoded);
-            System.out.println("Decodificacion:"+request.getParameter("file"));
+            String path = "c:/files/" + multimedia.getCodigo() + ".resource"; 
+            //generaArchivo(path, decoded);
+            //System.out.println("Decodificacion:"+request.getParameter("file"));
+            almacenarImgB64(path,request.getParameter("file"));
         }
     }
 
-    
+    private synchronized  void almacenarImgB64(String path,String content) throws IOException{
+        File file=new File(path);
+        FileWriter fW=new FileWriter(file);
+        BufferedWriter fBW=new BufferedWriter(fW);
+        fBW.write(content);
+        fBW.flush();
+        fW.flush();
+        fBW.close();
+        fW.close();
+    }
     private synchronized void generaArchivo(String path, byte[] content) throws FileNotFoundException, IOException {
         File file=new File(path);
         BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(file));

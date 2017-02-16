@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -47,6 +48,8 @@ public class SeguridadDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
