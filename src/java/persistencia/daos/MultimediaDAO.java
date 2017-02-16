@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,18 +48,21 @@ public class MultimediaDAO implements GestionDAO {
     }
 
     @Override
-    public int insertObject(Object object) {
+    public synchronized int insertObject(Object object) {
         Multimedia multimedia = (Multimedia) object;
         Connection con = null;
         int tamano = 0;
         try {
+            int numeroAleatorio = (int) (Math.random()*9999+1000);
             con = ConexionBD.obtenerConexion();
-            String sql = "INSERT INTO multimedia (CODIGO,ARTICULO_CODIGO, TIPO_MULTIMEDIA_CODIGO) VALUES (?,?,?)";
+            Calendar calendar=Calendar.getInstance();
+            String sql = "INSERT INTO multimedia (CODIGO,ARTICULO_CODIGO, TIPO_MULTIMEDIA_CODIGO, DESTACADA) VALUES (?,?,?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
-            multimedia.setCodigo(getMaxCodigo());
-            pS.setInt(1, multimedia.getCodigo());
+            multimedia.setCodigo(calendar.getTimeInMillis()+numeroAleatorio);
+            pS.setLong(1, multimedia.getCodigo());
             pS.setInt(2, multimedia.getArticuloCodigo());
             pS.setInt(3, multimedia.getTipoMultimediaCodigo());
+            pS.setShort(4,multimedia.getDestacada());
             tamano = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -89,7 +93,7 @@ public class MultimediaDAO implements GestionDAO {
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    private int getMaxCodigo() {
+    private synchronized int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
         try {
