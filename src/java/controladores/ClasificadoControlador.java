@@ -165,12 +165,12 @@ public class ClasificadoControlador extends HttpServlet {
                     JSONObject obj = new JSONObject();
                     if (rango[j].equals("ASC")) {
                         obj.put("campo", ordenar[0]);
-                        obj.put("nombre", ordenar[1] + " más antiguo");
+                        obj.put("nombre", ordenar[1] + " ascendete");
                         obj.put("orden", rango[j]);
                     }
                     if (rango[j].equals("DESC")) {
                         obj.put("campo", ordenar[0]);
-                        obj.put("nombre", ordenar[1] + " más reciente");
+                        obj.put("nombre", ordenar[1] + " descendente");
                         obj.put("orden", rango[j]);
                     }
                     array.add(obj);
@@ -240,9 +240,11 @@ public class ClasificadoControlador extends HttpServlet {
             estruc = (Estructura) estrucFachada.getObject(estruc);
             ref = "tipoClasificado";
             estruc.setReferencia(ref);
-            estruc = (Estructura) estrucFachada.getObject(estruc);
+            Estructura estruc2 = new Estructura(ref);
+            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
+            System.out.println(estruc2);
             Articulo art = new Articulo();
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc.getValor())));
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
             art.setUsuario(new Usuario(0));
             art.setRango(request.getParameter("limIni") + "," + estruc.getValor());
             JSONParser parser = new JSONParser();
@@ -261,6 +263,9 @@ public class ClasificadoControlador extends HttpServlet {
             }
             if (jsonBusq.get("prioridad").toString() != null && !jsonBusq.get("prioridad").toString().isEmpty()) {
                 art.setBusqueda(art.getBusqueda() + "prioridad_codigo=" + jsonBusq.get("prioridad") + ",");
+            }
+            if (jsonBusq.get("titulo").toString() != null && !jsonBusq.get("titulo").toString().isEmpty()) {
+                art.setBusqueda(art.getBusqueda() + "titulo like '" + jsonBusq.get("titulo") + "%',");
             }
             if (jsonBusq.get("precio").toString() != null && !jsonBusq.get("precio").toString().isEmpty()) {
                 String precio = jsonBusq.get("precio").toString().replace(" ", "");

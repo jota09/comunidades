@@ -314,24 +314,24 @@ public class ArticuloDAO implements GestionDAO {
                         for (int i = 0; i < campos.length; i++) {
                             condicionArmada += " and " + campos[i];
                         }
-                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ";
+                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? ) ";
                         
                         busqueda += separarCondiciones[1].replace("/", " ") + " ";
                         System.out.println("Entro aqui con where y con order");
                     } else {
                         System.out.println("Entro aqui sin where pero con order");
-                        busqueda = " OR ( fecha_publicacion <= NOW() ) " + separarCondiciones[1].replace("/", " ")  + " ";
+                        busqueda = " OR ( fecha_publicacion <= NOW() art.tipo_articulo_codigo=?  ) " + separarCondiciones[1].replace("/", " ")  + " ";
                     }
                 } else {
                     String[] campos = articulo.getBusqueda().split(",");
                     for (int i = 0; i < campos.length; i++) {
                         condicionArmada += " and " + campos[i];
                     }
-                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ";
+                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? ) ";
                     System.out.println("Entro aqui sin where y sin order");
                 }
             } else {
-                busqueda = "OR ( fecha_publicacion <= NOW() ) ORDER BY FECHA_PUBLICACION DESC ";
+                busqueda = "OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=?  ) ORDER BY FECHA_PUBLICACION DESC ";
             }
             System.out.println(busqueda);
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
@@ -347,6 +347,7 @@ public class ArticuloDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
+            pS.setInt(3, articulo.getTipoArticulo().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
