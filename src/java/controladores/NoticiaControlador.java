@@ -190,7 +190,7 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
-            obj.put("fecha_publicacion", art.getFechaPublicacion());
+            obj.put("fecha_publicacion", art.getFechaPublicacion().toString());
             obj.put("fecha_fin_publicacion", art.getFechaFinPublicacion().toString());
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());

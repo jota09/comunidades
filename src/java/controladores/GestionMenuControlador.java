@@ -79,6 +79,7 @@ public class GestionMenuControlador extends HttpServlet {
         String codigoMenu = request.getParameter("codigoMenu");
         String nombreMenu = request.getParameter("nombreMenu");
         GestionFachada menuFachada = new MenuFachada();
+        System.out.println("CODIGO_MENU:"+codigoMenu);
         Menu menu = new Menu();
         if (!codigoMenu.equals("")) {
             menu.setCodigo(Integer.parseInt(codigoMenu));

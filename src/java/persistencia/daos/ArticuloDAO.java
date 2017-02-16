@@ -17,10 +17,9 @@ import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
-import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
-import utilitarias.Utilitaria;
+
 
 /**
  *
@@ -311,12 +310,12 @@ public class ArticuloDAO implements GestionDAO {
                             condicionArmada += " and " + campos[i];
                         }
                         busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + ") ";
-                        
+
                         busqueda += separarCondiciones[1].replace("/", " ") + " ";
                         System.out.println("Entro aqui con where y con order");
                     } else {
-                        System.out.println("Entro aqui sin where pero con order");
-                        busqueda = " OR ( fecha_publicacion <= NOW() ) " + separarCondiciones[1].replace("/", " ")  + " ";
+                        
+                        busqueda = " OR ( fecha_publicacion <= NOW() ) " + separarCondiciones[1].replace("/", " ") + " ";
                     }
                 } else {
                     String[] campos = articulo.getBusqueda().split(",");
@@ -327,7 +326,7 @@ public class ArticuloDAO implements GestionDAO {
                     System.out.println("Entro aqui sin where y sin order");
                 }
             } else {
-                busqueda = "OR ( fecha_publicacion <= NOW() ) ORDER BY FECHA_PUBLICACION DESC ";
+                busqueda = "OR ( fecha_publicacion <= NOW() )  ";
             }
             System.out.println(busqueda);
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
@@ -336,13 +335,15 @@ public class ArticuloDAO implements GestionDAO {
                     + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
-                    + busqueda + " "
+                    + "WHERE (  art.usuario_codigo=? "
+                    + busqueda + ") AND art.tipo_articulo_codigo=? ORDER BY FECHA_PUBLICACION DESC "
                     + rango;
-            System.out.println(query);
+            System.out.println("CONSULTA_CLASIFICADOS:"+query);
+    
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
-            pS.setInt(2, articulo.getUsuario().getCodigo());
+            pS.setInt(1, articulo.getUsuario().getCodigo());
+            pS.setInt(2, articulo.getTipoArticulo().getCodigo());
+            
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
