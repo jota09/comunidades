@@ -135,7 +135,7 @@ public class ArticuloDAO implements GestionDAO {
     }
 
     @Override
-    public int insertObject(Object object) {
+    public synchronized int insertObject(Object object) {
         Articulo art = (Articulo) object;
         Connection con = null;
         int result = 0;
@@ -356,7 +356,7 @@ public class ArticuloDAO implements GestionDAO {
         return listArt;
     }
 
-    private int getMaxCodigo() {
+    private synchronized int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
         try {
