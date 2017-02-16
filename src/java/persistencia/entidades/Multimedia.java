@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class Multimedia {
+import java.io.Serializable;
+
+public class Multimedia  implements Serializable{
 
     private long codigo;
     private int articulocodigo;

@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class Pais {
+import java.io.Serializable;
+
+public class Pais implements Serializable {
 
     private int codigo;
     private String nombre;

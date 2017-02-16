@@ -1,8 +1,9 @@
 package persistencia.entidades;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class TipoArticulo {
+public class TipoArticulo implements Serializable {
 
     private int codigo;
     private String nombre;

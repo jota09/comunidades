@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class PerfilMenu {
+import java.io.Serializable;
+
+public class PerfilMenu implements Serializable {
 
     private int perfilcodigo;
     private int menucodigo;

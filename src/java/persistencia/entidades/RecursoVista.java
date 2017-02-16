@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class RecursoVista {
+import java.io.Serializable;
+
+public class RecursoVista implements Serializable {
 
     private int codigo;
     private Recurso recursocodigo;

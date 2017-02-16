@@ -1,8 +1,9 @@
 package persistencia.entidades;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Comunidad {
+public class Comunidad implements Serializable {
 
     private int codigo;
     private int ciudadcodigo;

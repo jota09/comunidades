@@ -1,8 +1,9 @@
 package persistencia.entidades;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Categoria {
+public class Categoria implements Serializable {
 
     private int codigo;
     private String nombre;

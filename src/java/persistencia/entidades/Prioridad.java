@@ -5,11 +5,13 @@
  */
 package persistencia.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Jesus.Ramos
  */
-public class Prioridad {
+public class Prioridad implements Serializable {
     private int codigo;
     private String nombre;
     private int valor;

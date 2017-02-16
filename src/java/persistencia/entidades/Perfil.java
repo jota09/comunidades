@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class Perfil {
+import java.io.Serializable;
+
+public class Perfil implements Serializable {
 
     private int codigo;
     private String nombre;

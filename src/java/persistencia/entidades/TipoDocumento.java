@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class TipoDocumento {
+import java.io.Serializable;
+
+public class TipoDocumento implements Serializable {
 
     private int codigo;
     private String nombre;

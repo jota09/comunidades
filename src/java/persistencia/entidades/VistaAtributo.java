@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class VistaAtributo {
+import java.io.Serializable;
+
+public class VistaAtributo implements Serializable {
 
     private int codigo;
     private String valor;

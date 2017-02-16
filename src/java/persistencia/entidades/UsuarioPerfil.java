@@ -5,11 +5,13 @@
  */
 package persistencia.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author manuel.alcala
  */
-public class UsuarioPerfil {
+public class UsuarioPerfil implements Serializable {
     private int codigo;
     private Perfil perfil;
     private Usuario usuario;

@@ -1,8 +1,9 @@
 package persistencia.entidades;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class SeguridadUsuario {
+public class SeguridadUsuario implements Serializable {
 
     private int codigo;
     private String contrasena;
