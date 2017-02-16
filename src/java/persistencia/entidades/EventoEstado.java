@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class EventoEstado {
+import java.io.Serializable;
+
+public class EventoEstado implements Serializable {
 
     private int codigo;
     private String nombre;

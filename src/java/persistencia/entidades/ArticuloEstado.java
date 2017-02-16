@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class ArticuloEstado {
+import java.io.Serializable;
+
+public class ArticuloEstado implements Serializable {
 
     private int codigo;
     private String nombre;

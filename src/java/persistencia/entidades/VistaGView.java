@@ -5,11 +5,13 @@
  */
 package persistencia.entidades;
 
+import java.io.Serializable;
+
 /**
  *
  * @author manuel.alcala
  */
-public class VistaGView {
+public class VistaGView implements Serializable {
     private int codigo;
     private String nombre;
 

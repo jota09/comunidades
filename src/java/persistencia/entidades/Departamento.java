@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class Departamento {
+import java.io.Serializable;
+
+public class Departamento implements Serializable {
 
     private int codigo;
     private int paiscodigo;

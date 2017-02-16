@@ -1,6 +1,8 @@
 package persistencia.entidades;
 
-public class Inmueble {
+import java.io.Serializable;
+
+public class Inmueble implements Serializable {
 
     private int codigo;
     private int comunidadcodigo;

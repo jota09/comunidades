@@ -1,8 +1,9 @@
 package persistencia.entidades;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class CalendarioNoHabil {
+public class CalendarioNoHabil implements Serializable {
 
     private int codigo;
     private Date dianohabil;
