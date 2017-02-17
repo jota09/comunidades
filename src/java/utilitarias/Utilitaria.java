@@ -15,7 +15,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import persistencia.conexion.ConexionBD;
+import persistencia.entidades.Articulo;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.Menu;
 
@@ -136,24 +136,39 @@ public class Utilitaria {
         DecimalFormat num = new DecimalFormat("#,###");
         return num.format(valor);
     }
-
-    public static void leerMetaData() throws ClassNotFoundException, SQLException, IOException {
-        Connection con = ConexionBD.obtenerConexion();
-        DatabaseMetaData metaDatos = con.getMetaData();
-        ResultSet rs=metaDatos.getColumns(null, "comunidades", "articulo",null);
-        /*ResultSet rs=metaDatos.getTables(null, "comunidades", null, null);
-        */while(rs.next()){
-            System.out.println(rs.getString(4));
+    
+    public static String filtros(String busqueda, String tipoDato, String campo, String naturaleza, String valor, String valor2, String condicion){
+        if(naturaleza.equals("like")){
+            busqueda += campo+" like '" + valor + "%',";
         }
-        /*ResultSet rs = metaDatos.getImportedKeys(null, "comunidades", null);
-        while (rs.next()) {
-            String fkTableName = rs.getString("PKTABLE_NAME");
-            String fkColumnName = rs.getString("FKCOLUMN_NAME");
-            int fkSequence = rs.getInt("KEY_SEQ");
-            System.out.println("getExportedKeys(): fkTableName=" + fkTableName);
-            System.out.println("getExportedKeys(): fkColumnName=" + fkColumnName);
-            System.out.println("getExportedKeys(): fkSequence=" + fkSequence);
-        }*/
+        if(naturaleza.equals("where")){
+            if(tipoDato.equals("int") || tipoDato.equals("date")){
+                if(condicion.equals("igual")){
+                    busqueda += campo+" = "+valor+",";
+                }
+                if(condicion.equals("mayor")){
+                    busqueda += campo+" > "+valor+",";
+                }
+                if(condicion.equals("menor")){
+                    busqueda += campo+" < "+valor+",";                    
+                }
+                if(condicion.equals("mayorIgual")){
+                    busqueda += campo+" >= "+valor+",";
+                }
+                if(condicion.equals("menorIgual")){
+                    busqueda += campo+" <= "+valor+",";                    
+                }
+                if(condicion.equals("rango")){
+                    busqueda += campo+" between "+valor+" and "+valor2+",";
+                }
+            }
+            if(tipoDato.equals("char")){
+                busqueda += campo+" = '"+valor+"'";
+            }
+        }
+        if(naturaleza.equals("order")){
+            busqueda += "/ORDER BY " + campo + " "+valor;
+        }
+        return busqueda;
     }
-   
 }
