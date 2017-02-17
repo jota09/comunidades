@@ -171,4 +171,39 @@ public class Utilitaria {
         }
         return busqueda;
     }
+    
+    public static String filtros(String busqueda, String tipoDato, String campo, String naturaleza, String valor, String valor2, String condicion){
+        if(naturaleza.equals("like")){
+            busqueda += campo+" like '" + valor + "%',";
+        }
+        if(naturaleza.equals("where")){
+            if(tipoDato.equals("int") || tipoDato.equals("date")){
+                if(condicion.equals("igual")){
+                    busqueda += campo+" = "+valor+",";
+                }
+                if(condicion.equals("mayor")){
+                    busqueda += campo+" > "+valor+",";
+                }
+                if(condicion.equals("menor")){
+                    busqueda += campo+" < "+valor+",";                    
+                }
+                if(condicion.equals("mayorIgual")){
+                    busqueda += campo+" >= "+valor+",";
+                }
+                if(condicion.equals("menorIgual")){
+                    busqueda += campo+" <= "+valor+",";                    
+                }
+                if(condicion.equals("rango")){
+                    busqueda += campo+" between "+valor+" and "+valor2+",";
+                }
+            }
+            if(tipoDato.equals("char")){
+                busqueda += campo+" = '"+valor+"'";
+            }
+        }
+        if(naturaleza.equals("order")){
+            busqueda += "/ORDER BY " + campo + " "+valor;
+        }
+        return busqueda;
+    }
 }
