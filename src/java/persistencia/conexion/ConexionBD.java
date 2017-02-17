@@ -17,9 +17,6 @@ import utilitarias.LecturaConfig;
  * @author ferney.medina
  */
 public class ConexionBD {
-
-
-
     public static Connection obtenerConexion() throws ClassNotFoundException, SQLException, IOException {
         Class.forName("com.mysql.jdbc.Driver");
         Connection con = DriverManager.getConnection(LecturaConfig.getValue("url"), LecturaConfig.getValue("user"), LecturaConfig.getValue("pass"));

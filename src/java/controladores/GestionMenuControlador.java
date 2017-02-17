@@ -164,7 +164,7 @@ public class GestionMenuControlador extends HttpServlet {
                         + "  <div class=\"panel panel-primary\">"
                         + "    <div class=\"panel-heading\">"
                         + "      <h4 class=\"panel-title\">"
-                        + "        <a data-toggle=\"collapse\" href=\"#collapse" + m.getCodigo() + "\"><strong>" + m.getNombre() + "</a>"
+                        + "        <a data-toggle=\"collapse\" href=\"#collapse" + m.getCodigo() + "\"><strong style='font-size:10px'>" + m.getNombre() + "</a>"
                         + "</strong><div class='pull-right'><span class='badge sp ' onclick=\"agregarMenu(" + m.getCodigo() + ")\" ><span class='glyphicon glyphicon-plus '></span></span>"
                         + "<span class='badge sp' onclick=\"editarMenu(" + m.getCodigo() + ")\" ><span class='glyphicon glyphicon-pencil '></span></span>"
                         + "<span class='badge sp' onclick=\"eliminarMenu(" + m.getCodigo() + ")\" ><span class='glyphicon glyphicon-trash '></span></span>"
@@ -180,7 +180,7 @@ public class GestionMenuControlador extends HttpServlet {
                         + "  </div>"
                         + "</div>";
             } else {
-                html += "<div  class=\"list-group-item\"><strong>" + m.getNombre() + "</strong><div class='pull-right'><span class='badge sp success' onclick=\"agregarMenu(" + m.getCodigo() + ")\" ><span class='glyphicon glyphicon-plus  '></span></span>"
+                html += "<div  class=\"list-group-item\"><strong style='font-size:10px'>" + m.getNombre() + "</strong><div class='pull-right'><span class='badge sp success' onclick=\"agregarMenu(" + m.getCodigo() + ")\" ><span class='glyphicon glyphicon-plus  '></span></span>"
                         + "<span class='badge sp' onclick=\"editarMenu(" + m.getCodigo() + ")\" ><span class='glyphicon glyphicon-pencil info '></span></span>"
                         + "<span class='badge sp' onclick=\"eliminarMenu(" + m.getCodigo() + ")\" ><span class='glyphicon glyphicon-trash  danger'></span></span>"
                         + "</div></div><br/>";
