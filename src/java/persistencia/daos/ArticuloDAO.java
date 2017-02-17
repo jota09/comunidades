@@ -21,7 +21,6 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
-import utilitarias.Utilitaria;
 
 /**
  *

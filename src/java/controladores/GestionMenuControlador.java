@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package controladores;
-
 import fachada.GestionFachada;
 import fachada.MenuFachada;
 import fachada.VistaFachada;
@@ -23,14 +22,12 @@ import persistencia.entidades.Menu;
 import persistencia.entidades.Vista;
 import persistencia.entidades.VistaGView;
 import utilitarias.Utilitaria;
-
 /**
  *
  * @author manuel.alcala
  */
 @WebServlet(urlPatterns = {"/GestionMenuControlador"})
 public class GestionMenuControlador extends HttpServlet {
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -66,7 +63,6 @@ public class GestionMenuControlador extends HttpServlet {
             }
         }
     }
-
     private void eliminarMenu(HttpServletRequest request, HttpServletResponse response) {
         GestionFachada menuFachada = new MenuFachada();
         Menu menu = new Menu();
@@ -74,12 +70,10 @@ public class GestionMenuControlador extends HttpServlet {
         menuFachada.deleteObject(menu);
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "<strong>Se Elimino la Opción</strong>", "success"));
     }
-
     private void agregarMenu(HttpServletRequest request, HttpServletResponse response) {
         String codigoMenu = request.getParameter("codigoMenu");
         String nombreMenu = request.getParameter("nombreMenu");
         GestionFachada menuFachada = new MenuFachada();
-        System.out.println("CODIGO_MENU:"+codigoMenu);
         Menu menu = new Menu();
         if (!codigoMenu.equals("")) {
             menu.setCodigo(Integer.parseInt(codigoMenu));
@@ -124,7 +118,6 @@ public class GestionMenuControlador extends HttpServlet {
             }
         }
     }
-
     private void getVistasGview(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada vistasFachada = new VistaGViewFachada();
         List<VistaGView> vistas = vistasFachada.getListObject();
@@ -146,7 +139,6 @@ public class GestionMenuControlador extends HttpServlet {
             out.print(array);
         }
     }
-
     private void getMenus(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada menuFachada = new MenuFachada();
         List<Menu> menus = menuFachada.getListObject();
@@ -155,7 +147,6 @@ public class GestionMenuControlador extends HttpServlet {
             out.print(html);
         }
     }
-
     private String construyeMenu(List<Menu> menus) {
         String html = "";
         for (Menu m : menus) {
@@ -188,7 +179,6 @@ public class GestionMenuControlador extends HttpServlet {
         }
         return html;
     }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -227,7 +217,6 @@ public class GestionMenuControlador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
     private void editarmenu(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int codigo = Integer.parseInt(request.getParameter("codigo"));
         Menu menu = new Menu(codigo);
@@ -240,5 +229,4 @@ public class GestionMenuControlador extends HttpServlet {
             out.print(obj);
         }
     }
-
 }
