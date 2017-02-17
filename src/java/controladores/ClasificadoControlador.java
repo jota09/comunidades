@@ -241,7 +241,6 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
             ref = "tipoClasificado";
-            estruc.setReferencia(ref);
             Estructura estruc2 = new Estructura(ref);
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             Articulo art = new Articulo();
