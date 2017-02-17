@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,6 +40,8 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
@@ -90,6 +93,8 @@ public class VistaAtributoDAO implements GestionDAO {
             ex.printStackTrace();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -124,6 +129,8 @@ public class VistaAtributoDAO implements GestionDAO {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -148,6 +155,8 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
@@ -195,6 +204,8 @@ public class VistaAtributoDAO implements GestionDAO {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -238,6 +249,8 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

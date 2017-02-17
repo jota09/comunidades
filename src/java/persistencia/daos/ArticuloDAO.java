@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -60,6 +61,8 @@ public class ArticuloDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return art;
@@ -130,6 +133,8 @@ public class ArticuloDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return numfilas;
@@ -225,6 +230,8 @@ public class ArticuloDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -339,7 +346,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) " + naturalezaSesion + " "
                     + busqueda + " "
                     + rango;
-            System.out.println(query);
+        
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
