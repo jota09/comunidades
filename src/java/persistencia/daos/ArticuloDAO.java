@@ -35,12 +35,9 @@ public class ArticuloDAO implements GestionDAO {
         try {
             Connection con = null;
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM articulo WHERE codigo=? "
-                    + "and art.tipo_articulo_codigo=? and comunidad_codigo=?";            
+            String query = "SELECT * FROM articulo WHERE codigo=? ";            
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getCodigo());
-            pS.setInt(2, art.getTipoArticulo().getCodigo());
-            pS.setInt(3, art.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 Usuario usr = new Usuario();
@@ -328,7 +325,7 @@ public class ArticuloDAO implements GestionDAO {
 
                         busqueda += separarCondiciones[1].replace("/", " ") + " ";
                     } else {
-                        busqueda = " OR ( fecha_publicacion <= NOW() art.tipo_articulo_codigo=?  ) " + separarCondiciones[1].replace("/", " ") + " ";
+                        busqueda = " OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=?  ) " + separarCondiciones[1].replace("/", " ") + " ";
                     }
                 } else {
                     String[] campos = articulo.getBusqueda().split(",");
