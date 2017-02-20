@@ -11,7 +11,9 @@ import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MultimediaFachada;
 import fachada.TipoArticuloFachada;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -36,6 +38,7 @@ import org.json.simple.JSONObject;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Multimedia;
 import persistencia.entidades.Prioridad;
+import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 //Prueba de que ya sincronizo el proyecto con alejandro
 //Prueba de que ya sincronizo el proyecto con manuel
@@ -202,18 +205,28 @@ public class NoticiaControlador extends HttpServlet {
             art = (Articulo) artFachada.getObject(art);
             MultimediaFachada multFachada=new MultimediaFachada();
             List<Multimedia> listMult=multFachada.getListObject(art);
-            
+            JSONArray jsArray=new JSONArray();
+            for(Multimedia mult:listMult)
+            { 
+                JSONObject obj1 = new JSONObject();                
+                String name=String.valueOf(mult.getCodigo());
+                obj1.put("name",name);
+                obj1.put("ext",mult.getExtension());
+                jsArray.add(obj1);
+            }
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
-            obj.put("fecha_publicacion", art.getFechaPublicacion().toString());
-            obj.put("fecha_fin_publicacion", art.getFechaFinPublicacion().toString());
+            obj.put("fecha_publicacion", ((art.getFechaPublicacion()==null?"":art.getFechaPublicacion().toString())));
+            obj.put("fecha_fin_publicacion", ((art.getFechaFinPublicacion()==null?"":art.getFechaFinPublicacion().toString())));
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
             obj.put("visibilidad",art.getVisibilidad());
+            obj.put("Imagenes", jsArray);
+            obj.put("Directorio",LecturaConfig.getValue("rutaVisualiza")+art.getCodigo()+"\\");
             out.print(obj);
         }
     }

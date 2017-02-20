@@ -33,7 +33,8 @@ public class MultimediaFachada implements GestionFachada {
 
     @Override
     public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO multimediaDAO = new MultimediaDAO();
+        return multimediaDAO.getListObject(object);
     }
 
     @Override
@@ -48,7 +49,8 @@ public class MultimediaFachada implements GestionFachada {
 
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO multimediaDAO = new MultimediaDAO();
+        multimediaDAO.deleteObject(object);
     }
 
     @Override
