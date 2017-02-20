@@ -60,12 +60,16 @@ public class UsuarioPerfilDAO implements GestionDAO {
                 perfil.setComunidad(comunidad);
                 perfiles.add(perfil);
             }
+            rS.close();
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            ConexionBD.cerrarConexion(con);
         }
         return perfiles;
     }

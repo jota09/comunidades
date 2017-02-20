@@ -39,7 +39,6 @@ public class TipoMultimediaDAO implements GestionDAO {
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 tipo.setCodigo(rS.getInt(1));
-                System.out.println("TIPOOOO MULTIMEDIA:" + tipo.getCodigo());
             }
             rS.close();
             pS.close();
@@ -50,11 +49,7 @@ public class TipoMultimediaDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(TipoMultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(TipoMultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tipo;
     }

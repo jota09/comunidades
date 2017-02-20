@@ -52,11 +52,7 @@ public class SeguridadDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return resultado;
     }

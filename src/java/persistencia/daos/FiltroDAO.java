@@ -62,11 +62,7 @@ public class FiltroDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(FiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(FiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return filtros;
     }

@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,7 +39,7 @@ public class UsuarioDAO implements GestionDAO {
             pS.setString(1, user.getUserName());
             pS.setString(2, user.getCorreo());
             pS.setInt(3, user.getCodigoDocumento());
-            pS.setString(4, ((user.getListaSeguridad()!=null)?user.getListaSeguridad().getContrasena():null));
+            pS.setString(4, ((user.getListaSeguridad() != null) ? user.getListaSeguridad().getContrasena() : null));
             pS.setInt(5, user.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
@@ -52,14 +53,14 @@ public class UsuarioDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return user;
     }
@@ -96,14 +97,14 @@ public class UsuarioDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listUsuario;
     }

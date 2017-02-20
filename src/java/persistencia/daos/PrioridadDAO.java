@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ import persistencia.entidades.Prioridad;
  *
  * @author Jesus.Ramos
  */
-public class PrioridadDAO implements GestionDAO{
+public class PrioridadDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
@@ -31,40 +32,36 @@ public class PrioridadDAO implements GestionDAO{
     public List getListObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List getListObject() {
-        ArrayList<Prioridad> listPrioridad=new ArrayList<Prioridad>();                
-        Connection con=null;
-        try
-        {
-            con=ConexionBD.obtenerConexion();
-            String query="SELECT * FROM prioridad WHERE activo=1";
-            PreparedStatement pS=con.prepareStatement(query);
-            ResultSet rS=pS.executeQuery();            
-            while(rS.next()){
-                Prioridad prio=new Prioridad(rS.getInt("codigo"), rS.getString("nombre"), rS.getInt("valor"), rS.getShort("activo"));
+        ArrayList<Prioridad> listPrioridad = new ArrayList<Prioridad>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT * FROM prioridad WHERE activo=1";
+            PreparedStatement pS = con.prepareStatement(query);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Prioridad prio = new Prioridad(rS.getInt("codigo"), rS.getString("nombre"), rS.getInt("valor"), rS.getShort("activo"));
                 prio.setCodigo(rS.getInt("codigo"));
                 prio.setNombre(rS.getString("nombre"));
                 listPrioridad.add(prio);
             }
             rS.close();
             pS.close();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally{
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PrioridadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(PrioridadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
         }
         return listPrioridad;
-    }   
-    
+    }
+
     @Override
     public int updateObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -74,7 +71,8 @@ public class PrioridadDAO implements GestionDAO{
     public int insertObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        @Override
+
+    @Override
     public int getCount(Object obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -93,5 +91,5 @@ public class PrioridadDAO implements GestionDAO{
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

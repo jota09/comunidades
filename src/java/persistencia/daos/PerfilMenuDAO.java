@@ -61,11 +61,7 @@ public class PerfilMenuDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return menus;
     }
@@ -100,11 +96,7 @@ public class PerfilMenuDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return insert;
     }
@@ -127,11 +119,7 @@ public class PerfilMenuDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
 
     }

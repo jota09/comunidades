@@ -41,6 +41,8 @@ public class EstructuraDAO implements GestionDAO {
                 estruc.setValor(rS.getString(3));
                 estruc.setDescripcion(rS.getString(4));
             }
+            rS.close();
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -48,11 +50,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return estruc;
     }
@@ -84,11 +82,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listEstructura;
     }
@@ -114,11 +108,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                System.out.println("Error:" + ex.getMessage());
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -144,11 +134,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                System.out.println("Error:" + ex.getMessage());
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -174,11 +160,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -201,11 +183,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
     }
 
@@ -235,11 +213,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listEstructura;
     }
@@ -267,11 +241,7 @@ public class EstructuraDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listEstructura;
     }

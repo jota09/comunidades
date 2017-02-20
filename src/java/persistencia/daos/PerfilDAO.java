@@ -43,11 +43,7 @@ public class PerfilDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return perfil;
     }
@@ -78,7 +74,7 @@ public class PerfilDAO implements GestionDAO {
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Perfil perfil = new Perfil();
-                Comunidad comunidad=new Comunidad();
+                Comunidad comunidad = new Comunidad();
                 perfil.setCodigo(rS.getInt(1));
                 perfil.setNombre(rS.getString(2));
                 comunidad.setCodigo(rS.getInt(3));
@@ -95,11 +91,7 @@ public class PerfilDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(PerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(PerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return perfiles;
     }

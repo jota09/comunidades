@@ -20,7 +20,7 @@ import persistencia.entidades.TipoArticulo;
  *
  * @author ferney.medina
  */
-public class TipoArticuloDAO implements GestionDAO{
+public class TipoArticuloDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
@@ -29,26 +29,29 @@ public class TipoArticuloDAO implements GestionDAO{
 
     @Override
     public Object getObject(Object object) {
-        TipoArticulo tpArt=(TipoArticulo)object;
+        TipoArticulo tpArt = (TipoArticulo) object;
         Connection con = null;
-        try {            
+        try {
             con = ConexionBD.obtenerConexion();
             String query = "SELECT * FROM tipo_articulo WHERE nombre=?";
-            PreparedStatement pS=con.prepareStatement(query);
+            PreparedStatement pS = con.prepareStatement(query);
             pS.setString(1, tpArt.getNombre());
-            ResultSet rS=pS.executeQuery();
-            if(rS.next())
-            {
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
                 tpArt.setCodigo(rS.getInt("codigo"));
             }
+            rS.close();
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TipoArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(TipoArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(TipoArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            ConexionBD.cerrarConexion(con);
         }
-        return tpArt;                
+        return tpArt;
     }
 
     @Override
@@ -85,5 +88,5 @@ public class TipoArticuloDAO implements GestionDAO{
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }
