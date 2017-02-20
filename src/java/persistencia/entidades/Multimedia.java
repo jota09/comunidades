@@ -9,6 +9,7 @@ public class Multimedia  implements Serializable{
     private int tipomultimediacodigo;
     private short activo;
     private short destacada;
+    private String extension;
 
     public Multimedia() {
     }
@@ -17,14 +18,22 @@ public class Multimedia  implements Serializable{
         this.codigo = codigo;
     }
 
-    public Multimedia(long codigo, Articulo articulocodigo, int tipomultimediacodigo, short activo, short destacada) {
+    public Multimedia(long codigo, Articulo articulocodigo, int tipomultimediacodigo, short activo, short destacada, String extension) {
         this.codigo = codigo;
         this.articulocodigo = articulocodigo;
         this.tipomultimediacodigo = tipomultimediacodigo;
         this.activo = activo;
         this.destacada = destacada;
+        this.extension = extension;
     }
 
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
         
     public long getCodigo() {
         return this.codigo;

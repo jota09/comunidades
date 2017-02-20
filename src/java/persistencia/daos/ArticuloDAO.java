@@ -113,8 +113,8 @@ public class ArticuloDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "UPDATE articulo SET usuario_codigo=?, titulo=?, descripcion=?,"
                     + "fecha_publicacion=?, precio=?,fecha_fin_publicacion=?, prioridad_codigo=?,"
-                    + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=? "
-                    + " WHERE codigo=?";
+                    + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=?,visibilidad=? "
+                    + " WHERE codigo=? and comunidad_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, art.getUsuario().getCodigo());
             pS.setString(2, art.getTitulo());
@@ -126,7 +126,9 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(8, art.getEstado().getCodigo());
             pS.setInt(9, art.getTipoArticulo().getCodigo());
             pS.setInt(10, art.getCategoria().getCodigo());
-            pS.setInt(11, art.getCodigo());
+            pS.setShort(11, art.getVisibilidad());
+            pS.setInt(12, art.getCodigo());            
+            pS.setInt(13, art.getComunidad().getCodigo());            
             numfilas = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {

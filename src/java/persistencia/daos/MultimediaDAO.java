@@ -42,16 +42,18 @@ public class MultimediaDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM multimedia WHERE articulo_codigo=?";
+            String query = "SELECT mult.*,tpMult.extension FROM multimedia mult "
+                    + "INNER JOIN tipo_multimedia tpMult ON mult.tipo_multimedia_codigo=tpMult.codigo WHERE mult.articulo_codigo=?";
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, art.getTipoArticulo().getCodigo());
-            ResultSet rS = pS.executeQuery();
+            pS.setInt(1, art.getCodigo());
+            ResultSet rS = pS.executeQuery();            
             while (rS.next()) {
                 Multimedia mult=new Multimedia();
-                mult.setCodigo(rS.getInt("codigo"));
+                mult.setCodigo(rS.getLong("codigo"));
                 mult.setTipoMultimediaCodigo(rS.getInt("tipo_multimedia_codigo"));
                 mult.setActivo(rS.getShort("activo"));
                 mult.setDestacada(rS.getShort("destacada"));
+                mult.setExtension(rS.getString("extension"));
                 listMult.add(mult);
             }
             rS.close();
@@ -114,7 +116,23 @@ public class MultimediaDAO implements GestionDAO {
 
     @Override
     public void deleteObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Multimedia mult = (Multimedia) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "DELETE FROM multimedia WHERE codigo=? AND articulo_codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setLong(1, mult.getCodigo());
+            pS.setInt(2, mult.getArticulocodigo().getCodigo());
+            pS.execute();
+            System.out.println("query delete:"+sql);
+            System.out.println("codigo multimedia:"+mult.getCodigo());
+            System.out.println("codigo articulo:"+mult.getArticulocodigo().getCodigo());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override

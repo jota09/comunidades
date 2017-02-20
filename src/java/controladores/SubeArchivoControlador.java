@@ -27,6 +27,7 @@ import persistencia.daos.MultimediaDAO;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.Multimedia;
 import persistencia.entidades.TipoMultimedia;
+import utilitarias.LecturaConfig;
 
 /**
  *
@@ -64,13 +65,16 @@ public class SubeArchivoControlador extends HttpServlet {
             multimedia.setTipoMultimediaCodigo(tipoMultimedia.getCodigo());
             multimedia.setArticulocodigo(new Articulo(Integer.parseInt(id)));            
             multimedia.setDestacada(destacada);
+            multimediaFachada.deleteObject(multimedia);
             multimediaFachada.insertObject(multimedia);
             String content = encoded[1];
             byte[] decoded = Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8));
-            String path = "c:/files/" + multimedia.getCodigo() + "." + ext;
-            //generaArchivo(path, decoded);
-            generarArchivoBase64(path,request.getParameter("file"));
-            System.out.println("Decodificacion:"+request.getParameter("file"));
+            //String path = "c:/files/" + multimedia.getCodigo() + ".txt" ;
+            String path = LecturaConfig.getValue("rutaUpload")+id+"\\";
+            String file=multimedia.getCodigo() + "." + ext;
+            generaArchivo(path,file,decoded);
+            //generarArchivoBase64(path,request.getParameter("file"));
+            //System.out.println("Decodificacion:"+request.getParameter("file"));
         }
     }
 
@@ -80,14 +84,20 @@ public class SubeArchivoControlador extends HttpServlet {
         BufferedWriter bW=new BufferedWriter(fW);
         bW.write(base64);        
         bW.flush();
-        bW.close();
         fW.flush();
+        bW.close();        
         fW.close();
     }
     
-    private synchronized void generaArchivo(String path, byte[] content) throws FileNotFoundException, IOException {
+    private synchronized void generaArchivo(String path,String archivo,byte[] content) throws FileNotFoundException, IOException {
         File file=new File(path);
-        BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(file));
+        if(!file.exists())
+        {
+            file.mkdirs();
+        }
+        String nuevaRuta=path+archivo;
+        File file2=new File(nuevaRuta);
+        BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(file2));
         writer.write(content);
         writer.flush();
         writer.close();
