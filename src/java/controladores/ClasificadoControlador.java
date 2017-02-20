@@ -23,6 +23,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -54,7 +55,6 @@ public class ClasificadoControlador extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        // System.out.println(request);
         if (request.getParameter("opc") != null) {
             int opcion = Integer.parseInt(request.getParameter("opc"));
             switch (opcion) {
@@ -140,7 +140,7 @@ public class ClasificadoControlador extends HttpServlet {
             JSONArray array = new JSONArray();
             for (int i = 1; i < rango.length; i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("rango", "$"+rango[i - 1] + " - $" + rango[i] + " ");
+                obj.put("rango", "$" + rango[i - 1] + " - $" + rango[i] + " ");
                 array.add(obj);
             }
             out.print(array);
@@ -234,18 +234,18 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
+            Usuario user = (Usuario) request.getSession().getAttribute("user");
+            user.setCodigo(0);
             EstructuraFachada estrucFachada = new EstructuraFachada();
             String ref = "clasificadoMostrarInicio";
             Estructura estruc = new Estructura(ref);
             estruc = (Estructura) estrucFachada.getObject(estruc);
             ref = "tipoClasificado";
-            estruc.setReferencia(ref);
             Estructura estruc2 = new Estructura(ref);
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            System.out.println(estruc2);
             Articulo art = new Articulo();
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            art.setUsuario(new Usuario(0));
+            art.setUsuario(user);
             art.setRango(request.getParameter("limIni") + "," + estruc.getValor());
             JSONParser parser = new JSONParser();
             JSONObject jsonBusq = null;
@@ -254,34 +254,39 @@ public class ClasificadoControlador extends HttpServlet {
             } catch (org.json.simple.parser.ParseException ex) {
                 Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println(jsonBusq.get("categoria").toString());
-            System.out.println(jsonBusq.get("prioridad").toString());
-            System.out.println(jsonBusq.get("precio").toString());
             art.setBusqueda("");
             if (jsonBusq.get("categoria").toString() != null && !jsonBusq.get("categoria").toString().isEmpty()) {
-                art.setBusqueda("cat.codigo=" + jsonBusq.get("categoria") + ",");
+                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "cat.codigo", "where", jsonBusq.get("categoria").toString(), "", "igual"));
             }
             if (jsonBusq.get("prioridad").toString() != null && !jsonBusq.get("prioridad").toString().isEmpty()) {
-                art.setBusqueda(art.getBusqueda() + "prioridad_codigo=" + jsonBusq.get("prioridad") + ",");
+                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "prioridad_codigo", "where", jsonBusq.get("prioridad").toString(), "", "igual"));
             }
             if (jsonBusq.get("titulo").toString() != null && !jsonBusq.get("titulo").toString().isEmpty()) {
-                art.setBusqueda(art.getBusqueda() + "titulo like '" + jsonBusq.get("titulo") + "%',");
+                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "char", "titulo", "like", jsonBusq.get("titulo").toString(), "", ""));
             }
             if (jsonBusq.get("precio").toString() != null && !jsonBusq.get("precio").toString().isEmpty()) {
                 String precio = jsonBusq.get("precio").toString().replace(" ", "");
                 precio = precio.replace("$", "");
-                String[] precioSplit = precio.split("-");
-                if (precioSplit.length > 1) {
-                    art.setBusqueda(art.getBusqueda() + "art.precio between " + precioSplit[0] + " AND " + precioSplit[1] + ",");
+                if (precio.indexOf("-") >= 0) {
+                    String[] precioSplit = precio.split("-");
+                    art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precioSplit[0], precioSplit[1], "rango"));
                 } else {
-                    art.setBusqueda(art.getBusqueda() + "art.precio > " + precioSplit[0] + ",");
+                    if (precio.indexOf("+") >= 0) {
+                        precio = precio.replace("+", "");
+                        art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "mayor"));
+                    } else {
+                        precio = precio.replace("-", "");
+                        art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "menor"));
+                    }
                 }
             }
             if (jsonBusq.get("ordenar").toString() != null && !jsonBusq.get("ordenar").toString().isEmpty()) {
                 String orden = jsonBusq.get("ordenar").toString();
                 String[] ordenSplit = orden.split("-");
-                art.setBusqueda(art.getBusqueda() + "/ORDER BY " + ordenSplit[0] + " "+ordenSplit[1]);
+                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "char", ordenSplit[0], "order", ordenSplit[1], "", ""));
             }
+
+            System.out.println(art.getBusqueda());
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(art);
             JSONArray array = new JSONArray();

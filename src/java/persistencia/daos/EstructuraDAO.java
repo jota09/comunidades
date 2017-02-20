@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,6 +45,8 @@ public class EstructuraDAO implements GestionDAO {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -78,6 +81,8 @@ public class EstructuraDAO implements GestionDAO {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -106,6 +111,8 @@ public class EstructuraDAO implements GestionDAO {
             System.out.println("Error:" + ex.getMessage());
         } catch (SQLException ex) {
             System.out.println("Error:" + ex.getMessage());
+        } catch (IOException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -134,6 +141,8 @@ public class EstructuraDAO implements GestionDAO {
             System.out.println("Error:" + ex.getMessage());
         } catch (SQLException ex) {
             System.out.println("Error:" + ex.getMessage());
+        } catch (IOException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -162,6 +171,8 @@ public class EstructuraDAO implements GestionDAO {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -186,6 +197,8 @@ public class EstructuraDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
@@ -219,6 +232,8 @@ public class EstructuraDAO implements GestionDAO {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -248,6 +263,8 @@ public class EstructuraDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(EstructuraDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

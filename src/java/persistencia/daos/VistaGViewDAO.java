@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -56,6 +57,8 @@ public class VistaGViewDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(VistaGViewDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(VistaGViewDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(VistaGViewDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);

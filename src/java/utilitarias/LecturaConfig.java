@@ -17,13 +17,20 @@ import java.util.Properties;
  * @author ferney.medina
  */
 public class LecturaConfig {
-    public static String getValue(String key) throws FileNotFoundException, IOException
-    {
-        File archivoConf=new File(Utilitaria.getSystemProperty("CONFIGCOMUNIDADES"));
-        //File archivoConf=new File("/configuracion.properties");
-        InputStream iS=new FileInputStream(archivoConf);
-        Properties prop=new Properties();
-        prop.load(iS);
+
+    public static String getValue(String key) {
+        Properties prop = new Properties();
+        try {
+            File archivoConf = new File("/configComunidades/configuracion.properties");
+            //File archivoConf=new File("/configuracion.properties");
+            InputStream iS = new FileInputStream(archivoConf);
+
+            prop.load(iS);
+        } catch (FileNotFoundException ex) {
+            System.out.println("No se encuentra el archivo:" + ex.getMessage());
+        } catch (IOException ex) {
+            System.out.println("Error de lectura:" + ex.getMessage());
+        }
         return prop.getProperty(key);
     }
 }

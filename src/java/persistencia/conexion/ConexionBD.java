@@ -5,25 +5,21 @@
  */
 package persistencia.conexion;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import utilitarias.LecturaConfig;
 
 /**
  *
  * @author ferney.medina
  */
 public class ConexionBD {
-
-    private final static String URL = "jdbc:mysql://98.76.54.4:3306/comunidades";
-    private final static String USER = "root";
-    private final static String PASS = "hmt123";
-
-
-    public static Connection obtenerConexion() throws ClassNotFoundException, SQLException {
+    public static Connection obtenerConexion() throws ClassNotFoundException, SQLException, IOException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection(URL, USER, PASS);
+        Connection con = DriverManager.getConnection(LecturaConfig.getValue("url"), LecturaConfig.getValue("user"), LecturaConfig.getValue("pass"));
         return con;
     }
     public static void cerrarConexion(Connection con) {

@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,6 +43,8 @@ public class VistaDAO implements GestionDAO {
             Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -75,6 +78,8 @@ public class VistaDAO implements GestionDAO {
             ex.printStackTrace();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.close();
@@ -107,6 +112,8 @@ public class VistaDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);

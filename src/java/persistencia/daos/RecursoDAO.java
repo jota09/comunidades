@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,6 +45,8 @@ public class RecursoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -76,6 +79,8 @@ public class RecursoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -104,6 +109,8 @@ public class RecursoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -128,6 +135,8 @@ public class RecursoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -151,6 +160,8 @@ public class RecursoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -174,6 +185,8 @@ public class RecursoDAO implements GestionDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
@@ -200,6 +213,8 @@ public class RecursoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -234,6 +249,8 @@ public class RecursoDAO implements GestionDAO {
             e.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
