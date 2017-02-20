@@ -103,8 +103,11 @@ public class SubeArchivoControlador extends HttpServlet {
         String path = LecturaConfig.getValue("rutaUpload") + codArticulo + "\\";
         File file = new File(path);
         File[] files = file.listFiles();
-        for (File f : files) {
-            f.delete();
+        if(files.length>0)
+        {
+            for (File f : files) {
+                f.delete();
+            }
         }
     }
 
