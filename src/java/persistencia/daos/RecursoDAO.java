@@ -189,11 +189,7 @@ public class RecursoDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -228,12 +224,12 @@ public class RecursoDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         Connection con = null;
-        String rango=String.valueOf(object).replace("'", "");
+        String rango = String.valueOf(object).replace("'", "");
         List<Recurso> recursos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            System.out.println("Rango:"+rango);
-            String sql = "select * from recurso where activo=1 limit "+rango;
+            System.out.println("Rango:" + rango);
+            String sql = "select * from recurso where activo=1 limit " + rango;
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

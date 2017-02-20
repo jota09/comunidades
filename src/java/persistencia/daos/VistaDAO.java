@@ -81,11 +81,7 @@ public class VistaDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return vistas;
     }

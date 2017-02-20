@@ -43,11 +43,7 @@ public class MenuDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return menu;
     }
@@ -78,11 +74,7 @@ public class MenuDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listaMenus;
     }
@@ -109,14 +101,14 @@ public class MenuDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MenuDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listaMenus;
     }
@@ -196,11 +188,7 @@ public class MenuDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listaMenus;
     }
@@ -229,11 +217,7 @@ public class MenuDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listaMenus;
     }

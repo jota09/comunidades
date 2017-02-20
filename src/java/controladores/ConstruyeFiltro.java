@@ -36,8 +36,8 @@ public class ConstruyeFiltro extends HttpServlet {
             throws ServletException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         response.setContentType("text/html;charset=UTF-8");
         String entidad=request.getParameter("entidad");
-        Class tabla=Class.forName(entidad+"Fachada");
-        GestionFachada filtro=(GestionFachada)tabla.newInstance();
+        int tipo=Integer.parseInt(request.getParameter("tipo"));
+
     }
 
 

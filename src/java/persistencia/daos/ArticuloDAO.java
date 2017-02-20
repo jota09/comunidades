@@ -21,6 +21,7 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 
 /**
  *
@@ -31,10 +32,11 @@ public class ArticuloDAO implements GestionDAO {
     @Override
     public Object getObject(Object object) {
         Articulo art = (Articulo) object;
+        Connection con = null;
         try {
-            Connection con = null;
+
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM articulo WHERE codigo=? ";            
+            String query = "SELECT * FROM articulo WHERE codigo=? ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getCodigo());
             ResultSet rS = pS.executeQuery();
@@ -57,12 +59,15 @@ public class ArticuloDAO implements GestionDAO {
                 art.setPrecio(rS.getDouble("precio"));
                 art.setVisibilidad(rS.getShort("visibilidad"));
             }
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
         }
         return art;
     }
@@ -95,11 +100,7 @@ public class ArticuloDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listArt;
     }
@@ -127,8 +128,8 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(9, art.getTipoArticulo().getCodigo());
             pS.setInt(10, art.getCategoria().getCodigo());
             pS.setShort(11, art.getVisibilidad());
-            pS.setInt(12, art.getCodigo());            
-            pS.setInt(13, art.getComunidad().getCodigo());            
+            pS.setInt(12, art.getCodigo());
+            pS.setInt(13, art.getComunidad().getCodigo());
             numfilas = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -137,6 +138,8 @@ public class ArticuloDAO implements GestionDAO {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
         }
         return numfilas;
     }
@@ -172,11 +175,7 @@ public class ArticuloDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return result;
     }
@@ -188,14 +187,16 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public int getCount(Object obj) {
-        int tipo = Integer.parseInt(String.valueOf(obj));
+        CondicionPaginado condicionPaginado = (CondicionPaginado) obj;
         Connection con = null;
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? ";
+            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, tipo);
+            pS.setInt(1, condicionPaginado.getTipo());
+            pS.setInt(2, condicionPaginado.getUser().getCodigo());
+            pS.setInt(3, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -208,11 +209,7 @@ public class ArticuloDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return cont;
     }
@@ -228,12 +225,15 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(1, art.getCodigo());
             pS.setInt(2, art.getTipoArticulo().getCodigo());
             pS.execute();
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
         }
     }
 
@@ -286,11 +286,7 @@ public class ArticuloDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listArt;
     }
@@ -346,7 +342,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) " + naturalezaSesion + " "
                     + busqueda + " "
                     + rango;
-        
+
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
@@ -384,11 +380,7 @@ public class ArticuloDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listArt;
     }
@@ -410,11 +402,7 @@ public class ArticuloDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return cont;
     }
