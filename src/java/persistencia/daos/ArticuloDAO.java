@@ -194,20 +194,22 @@ public class ArticuloDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
+            System.out.println("CONSULTA:SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo="+condicionPaginado.getTipo()+" and usuario_codigo="+condicionPaginado.getUser().getCodigo()+" and comunidad_codigo="+condicionPaginado.getComunidad().getCodigo());
             pS.setInt(1, condicionPaginado.getTipo());
             pS.setInt(2, condicionPaginado.getUser().getCodigo());
             pS.setInt(3, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
-                cont++;
-            } else {
-                cont++;
-            }
+            } 
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
