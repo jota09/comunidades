@@ -54,4 +54,32 @@ public class MetaDataDAO {
         return tablas;
     }
 
+    public List<String> getColumnas(MetaData metada) {
+        Connection con = null;
+        List<String> columnas = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            DatabaseMetaData databaseMetaData = con.getMetaData();
+            ResultSet rS = databaseMetaData.getColumns(null, "comunidades", metada.getTabla(), null);
+            while (rS.next()) {
+                columnas.add(rS.getString(4));
+            }
+
+            rS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return columnas;
+    }
+
 }

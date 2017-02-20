@@ -19,4 +19,8 @@ public class MetaDataFachada {
         MetaDataDAO metaDAO = new MetaDataDAO();
         return metaDAO.getTables();
     }
+     public List<String> getColumnas(MetaData metada) {
+         MetaDataDAO metaDAO = new MetaDataDAO();
+         return metaDAO.getColumnas(metada);
+     }
 }
