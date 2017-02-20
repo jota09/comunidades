@@ -11,6 +11,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -34,7 +36,7 @@ public class ConstruyePaginacion extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String obj = request.getParameter("obj");
         String tipo = request.getParameter("tipo");
-        int rango=Integer.parseInt(request.getParameter("rango"));
+        int rango = Integer.parseInt(request.getParameter("rango"));
         int codigoTipo = 0;
         try (PrintWriter out = response.getWriter()) {
             Class clase = Class.forName("fachada." + obj + "Fachada");
@@ -43,23 +45,28 @@ public class ConstruyePaginacion extends HttpServlet {
                 codigoTipo = Integer.parseInt(tipo);
             }
             int cont = 1;
-            List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(codigoTipo), rango);
+            Usuario user = (Usuario) request.getSession().getAttribute("user");
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setTipo(codigoTipo);
+            condicion.setUser(user);
+            condicion.setComunidad(user.getPerfilCodigo().getComunidad());
+            List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(condicion), rango);
             out.println("<nav aria-label='Page navigation'>");
             out.println("<ul class='pagination'>");
             String li = "<li  id='pag-" + cont + "' style=\"cursor:pointer;\" >";
             out.println(li);
-            String a = "<a onclick=\"mostrar"+obj+"('" + paginas.get(0) + "', 'pag-" + cont +"'"+((tipo!=null)?",'"+tipo+"'":"")+")\">";
+            String a = "<a onclick=\"mostrar" + obj + "('" + paginas.get(0) + "', 'pag-" + cont + "'" + ((tipo != null) ? ",'" + tipo + "'" : "") + ")\">";
             out.println(a);
             out.println("<span aria-hidden='true'>&laquo;</span>");
             out.println("</a>");
             out.println("</li>");
             for (String p : paginas) {
-                li = "<li "+((cont==1)?"class='active'":"")+" id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrar"+obj+"('" + p + "', '" + cont + "'"+((tipo!=null)?","+tipo:"")+")\" >" + cont + "</a></li>";
+                li = "<li " + ((cont == 1) ? "class='active'" : "") + " id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrar" + obj + "('" + p + "', '" + cont + "'" + ((tipo != null) ? "," + tipo : "") + ")\" >" + cont + "</a></li>";
                 out.println(li);
                 cont++;
             }
             li = "<li id='pag-" + cont + "' style='cursor:pointer;'>";
-            a = "<a onclick=\"mostrar"+obj+"('" + paginas.get(paginas.size() - 1) + "', 'pag-" + cont+"'" +((tipo!=null)?",'"+tipo+"'":"")+")\">";
+            a = "<a onclick=\"mostrar" + obj + "('" + paginas.get(paginas.size() - 1) + "', 'pag-" + cont + "'" + ((tipo != null) ? ",'" + tipo + "'" : "") + ")\">";
             out.println(li);
             out.println(a);
             out.println("<span aria-hidden=\"true\">&raquo;</span>");
