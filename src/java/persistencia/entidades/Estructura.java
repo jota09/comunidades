@@ -69,7 +69,7 @@ public class Estructura implements Serializable {
 
     @Override
     public String toString() {
-        return "Estructura{" + "codigo=" + codigo + ", referencia=" + referencia + ", direccion=" + valor + ", descripcion=" + descripcion + '}';
+        return "Estructura{" + "codigo=" + codigo + ", referencia=" + referencia + ", valor=" + valor + ", descripcion=" + descripcion + '}';
     }
-    
+        
 }
