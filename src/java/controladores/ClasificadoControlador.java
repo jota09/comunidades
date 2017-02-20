@@ -11,6 +11,7 @@ import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MultimediaFachada;
 import fachada.PrioridadFachada;
+import fachada.UsuarioFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -98,6 +99,9 @@ public class ClasificadoControlador extends HttpServlet {
                     break;
                 case 13:
                     filtrarCategorias(request, response);
+                    break;
+                case 14:
+                    recuperarClasificado(request, response);
                     break;
             }
         }
@@ -466,6 +470,32 @@ public class ClasificadoControlador extends HttpServlet {
                 jsonArray.add(jsonObj);
             }
             out.print(jsonArray);       
+        }
+    }
+    
+    private void recuperarClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
+            ArticuloFachada artFachada = new ArticuloFachada();
+            art = (Articulo) artFachada.getObject(art);
+            Usuario user = new Usuario(art.getUsuario().getCodigo());
+            UsuarioFachada userFachada = new UsuarioFachada();
+            user = (Usuario) userFachada.getObject(user);
+            art.setUsuario(user);
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", art.getCodigo());
+            obj.put("nombreUsuario", art.getUsuario().getUserName());
+            if (art.getUsuario().getCelular() != null) {
+                obj.put("telefono", art.getUsuario().getCelular());
+            } else {
+                obj.put("telefono", art.getUsuario().getTelefono());
+            }
+            obj.put("titulo", art.getTitulo());
+            obj.put("descripcion", art.getDescripcion());
+            obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
+            obj.put("descripcion", art.getDescripcion());
+            obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
+            out.print(obj);
         }
     }
 
