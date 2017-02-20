@@ -421,12 +421,14 @@ public class ClasificadoControlador extends HttpServlet {
     }
     private void borrarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
             int cod = Integer.parseInt(request.getParameter("cod").trim());
             Articulo art = new Articulo();
             art.setCodigo(cod);
-            TipoArticulo tpArt=new TipoArticulo();
-            tpArt.setCodigo(2);//Tipo articulo noticia es 2
-            art.setTipoArticulo(tpArt);
+            String ref = "tipoClasificado";
+            Estructura estruc2 = new Estructura(ref);
+            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);            
         }
