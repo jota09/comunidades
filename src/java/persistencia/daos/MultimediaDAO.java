@@ -132,6 +132,8 @@ public class MultimediaDAO implements GestionDAO {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
