@@ -47,11 +47,27 @@ public class SubeArchivoControlador extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            String id = request.getParameter("id");
+            int opcion = Integer.parseInt(request.getParameter("op"));
+            String codArticulo = request.getParameter("codArt");
+            switch (opcion) {
+                case 1:
+                    crearMultimedia(request, response, codArticulo);
+                    break;
+                case 2:
+                    borrarMultimedia(request, response, codArticulo);
+                    break;
+            }
+        }
+    }
+
+    private void crearMultimedia(HttpServletRequest request, HttpServletResponse response, String id) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
             short destacada = Short.parseShort(request.getParameter("destacada"));
-            String encoded[] = request.getParameter("file").split(",");            
+            System.out.println("imprimiendo subeArchivoFile:" + request.getParameter("file"));
+            String encoded[] = request.getParameter("file").split(",");
             String ext = (encoded[0].split(";")[0]);
             ext = ext.split("/")[1];
             ext = ((ext.equals("vnd.openxmlformats-officedocument.wordprocessingml.document")) ? "docx" : ext);
@@ -63,40 +79,52 @@ public class SubeArchivoControlador extends HttpServlet {
             tipoMultimediaFachada.getObject(tipoMultimedia);
             Multimedia multimedia = new Multimedia();
             multimedia.setTipoMultimediaCodigo(tipoMultimedia.getCodigo());
-            multimedia.setArticulocodigo(new Articulo(Integer.parseInt(id)));            
+            multimedia.setArticulocodigo(new Articulo(Integer.parseInt(id)));
             multimedia.setDestacada(destacada);
-            multimediaFachada.deleteObject(multimedia);
             multimediaFachada.insertObject(multimedia);
             String content = encoded[1];
             byte[] decoded = Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8));
             //String path = "c:/files/" + multimedia.getCodigo() + ".txt" ;
-            String path = LecturaConfig.getValue("rutaUpload")+id+"\\";
-            String file=multimedia.getCodigo() + "." + ext;
-            generaArchivo(path,file,decoded);
+            String path = LecturaConfig.getValue("rutaUpload") + id + "\\";
+            String file = multimedia.getCodigo() + "." + ext;
+            generaArchivo(path, file, decoded);
             //generarArchivoBase64(path,request.getParameter("file"));
             //System.out.println("Decodificacion:"+request.getParameter("file"));
         }
+
     }
 
-    private void generarArchivoBase64(String ruta, String base64) throws IOException
-    {
-        FileWriter fW=new FileWriter(ruta,true);
-        BufferedWriter bW=new BufferedWriter(fW);
-        bW.write(base64);        
+    private void borrarMultimedia(HttpServletRequest request, HttpServletResponse response, String codArticulo) {
+        GestionFachada tipoMultimediaFachada = new TipoMultimediaFachada();
+        GestionFachada multimediaFachada = new MultimediaFachada();
+        Multimedia multimedia = new Multimedia();
+        multimedia.setArticulocodigo(new Articulo(Integer.parseInt(codArticulo)));
+        multimediaFachada.deleteObject(multimedia);
+        String path = LecturaConfig.getValue("rutaUpload") + codArticulo + "\\";
+        File file = new File(path);
+        File[] files = file.listFiles();
+        for (File f : files) {
+            f.delete();
+        }
+    }
+
+    private void generarArchivoBase64(String ruta, String base64) throws IOException {
+        FileWriter fW = new FileWriter(ruta, true);
+        BufferedWriter bW = new BufferedWriter(fW);
+        bW.write(base64);
         bW.flush();
         fW.flush();
-        bW.close();        
+        bW.close();
         fW.close();
     }
-    
-    private synchronized void generaArchivo(String path,String archivo,byte[] content) throws FileNotFoundException, IOException {
-        File file=new File(path);
-        if(!file.exists())
-        {
+
+    private synchronized void generaArchivo(String path, String archivo, byte[] content) throws FileNotFoundException, IOException {
+        File file = new File(path);
+        if (!file.exists()) {
             file.mkdirs();
         }
-        String nuevaRuta=path+archivo;
-        File file2=new File(nuevaRuta);
+        String nuevaRuta = path + archivo;
+        File file2 = new File(nuevaRuta);
         BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(file2));
         writer.write(content);
         writer.flush();

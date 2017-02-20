@@ -1,4 +1,7 @@
 package controladores;
+
+import fachada.FiltroFachada;
+import fachada.GestionFachada;
 import fachada.MetaDataFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import persistencia.entidades.Filtro;
 import persistencia.entidades.MetaData;
 
 /**
@@ -33,9 +37,19 @@ public class GestionFiltrosControlador extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         int op = Integer.parseInt(request.getParameter("op"));
         switch (op) {
-            case 1:
+            case 1: {
                 getTables(request, response);
                 break;
+            }
+            case 2: {
+                getColumnas(request, response);
+                break;
+            }
+            case 3: {
+                getFiltrosXTabla(request, response);
+                break;
+            }
+
         }
     }
 
@@ -85,6 +99,42 @@ public class GestionFiltrosControlador extends HttpServlet {
         for (MetaData t : tablas) {
             JSONObject obj = new JSONObject();
             obj.put("tabla", t.getTabla());
+            array.add(obj);
+        }
+        try (PrintWriter out = response.getWriter()) {
+            out.print(array);
+        }
+    }
+
+    private void getFiltrosXTabla(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String entidad = request.getParameter("entidad");
+        MetaData tabla = new MetaData();
+        tabla.setTabla(entidad);
+        GestionFachada filtroFachada = new FiltroFachada();
+        List<Filtro> filtros = filtroFachada.getListObject(tabla);
+        JSONArray array = new JSONArray();
+        for (Filtro f : filtros) {
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", f.getCodigo());
+            obj.put("campo", f.getCampo());
+            obj.put("nombre", f.getNombre());
+            array.add(obj);
+        }
+        try (PrintWriter out = response.getWriter()) {
+            out.print(array);
+        }
+    }
+
+    private void getColumnas(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        MetaDataFachada metaFachada = new MetaDataFachada();
+        String entidad = request.getParameter("entidad");
+        MetaData tabla = new MetaData();
+        tabla.setTabla(entidad);
+        JSONArray array = new JSONArray();
+        List<String> columnas = metaFachada.getColumnas(tabla);
+        for (String col : columnas) {
+            JSONObject obj = new JSONObject();
+            obj.put("columna", col);
             array.add(obj);
         }
         try (PrintWriter out = response.getWriter()) {
