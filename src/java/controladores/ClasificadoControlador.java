@@ -207,9 +207,12 @@ public class ClasificadoControlador extends HttpServlet {
             int cat;
             cat = Integer.parseInt(request.getParameter("categoria"));
             ArticuloEstado artEstado = new ArticuloEstado();
-            artEstado.setCodigo(1);
-            art.setEstado(artEstado);
-            art.setPrioridad(new Prioridad(1));//La noticia no tiene prioridad pero sin embargo se le envia el 1(baja)
+            String ref2 = "articuloEstadoInicial";
+            Estructura estruc3 = new Estructura(ref2);
+            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
+            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));            
+            art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
+            art.setPrecio(Double.parseDouble(request.getParameter("precio")));
             ArticuloFachada artFach = new ArticuloFachada();
             String ref = "tipoClasificado";
             Estructura estruc2 = new Estructura(ref);
