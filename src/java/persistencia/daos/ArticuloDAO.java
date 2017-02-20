@@ -21,6 +21,7 @@ import persistencia.entidades.Categoria;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 
 /**
  *
@@ -186,14 +187,16 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public int getCount(Object obj) {
-        int tipo = Integer.parseInt(String.valueOf(obj));
+        CondicionPaginado condicionPaginado = (CondicionPaginado) obj;
         Connection con = null;
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? ";
+            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, tipo);
+            pS.setInt(1, condicionPaginado.getTipo());
+            pS.setInt(2, condicionPaginado.getUser().getCodigo());
+            pS.setInt(3, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
