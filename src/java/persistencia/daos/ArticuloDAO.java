@@ -304,7 +304,6 @@ public class ArticuloDAO implements GestionDAO {
         String condicionArmada = "";
         EstructuraDAO estrucDAO = new EstructuraDAO();
         Estructura estruc = (Estructura) estrucDAO.getObject(new Estructura("comunidadAnonima"));
-        System.out.println(estruc.getValor());
         String naturalezaSesion = (Integer.parseInt(estruc.getValor()) != articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo()) ? "AND art.COMUNIDAD_CODIGO = ?" : " AND art.VISIBILIDAD = 0 ";
         Connection con = null;
         try {
