@@ -37,6 +37,8 @@ public class VistaAtributoDAO implements GestionDAO {
             if (rS.next()) {
                 tamano = rS.getInt(1);
             }
+            rS.close();
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -44,11 +46,7 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -96,11 +94,7 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return vistaAtributos;
     }
@@ -132,11 +126,7 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -159,11 +149,7 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
     }
 
@@ -207,11 +193,7 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return vistaAtributos;
     }
@@ -253,11 +235,7 @@ public class VistaAtributoDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return vistaAtributos;
     }

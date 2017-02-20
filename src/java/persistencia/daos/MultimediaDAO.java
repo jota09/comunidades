@@ -120,16 +120,20 @@ public class MultimediaDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "DELETE FROM multimedia WHERE articulo_codigo=?";
-            PreparedStatement pS = con.prepareStatement(sql);            
-            pS.setInt(1, mult.getArticulocodigo().getCodigo());
+            String sql = "DELETE FROM multimedia WHERE codigo=? AND articulo_codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setLong(1, mult.getCodigo());
+            pS.setInt(2, mult.getArticulocodigo().getCodigo());
             pS.execute();
+            System.out.println("query delete:"+sql);
+            System.out.println("codigo multimedia:"+mult.getCodigo());
+            System.out.println("codigo articulo:"+mult.getArticulocodigo().getCodigo());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

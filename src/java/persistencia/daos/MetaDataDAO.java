@@ -45,11 +45,7 @@ public class MetaDataDAO {
         } catch (IOException ex) {
             Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tablas;
     }
@@ -73,11 +69,7 @@ public class MetaDataDAO {
         } catch (IOException ex) {
             Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(MetaDataDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return columnas;
     }

@@ -8,8 +8,9 @@ package controladores;
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
 import fachada.EstructuraFachada;
+import fachada.GestionFachada;
+import fachada.MultimediaFachada;
 import fachada.PrioridadFachada;
-import fachada.UsuarioFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -23,7 +24,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,9 +31,11 @@ import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.Estructura;
+import persistencia.entidades.Multimedia;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
+import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 
 /**
@@ -53,7 +55,7 @@ public class ClasificadoControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ParseException {
         response.setContentType("text/html;charset=UTF-8");
         if (request.getParameter("opc") != null) {
             int opcion = Integer.parseInt(request.getParameter("opc"));
@@ -80,10 +82,22 @@ public class ClasificadoControlador extends HttpServlet {
                     recuperarUltimosClasificados(request, response);
                     break;
                 case 8:
-                    recuperarClasificado(request, response);
+                    editarRegistros(request, response);
                     break;
                 case 9:
                     recuperarInicioClasificado(request, response);
+                    break;
+                case 10:
+                    tipoArticulo(request, response);
+                    break;
+                case 11:
+                    tablaRegistros(request, response);
+                    break;
+                case 12:
+                    borrarRegistros(request, response);
+                    break;
+                case 13:
+                    filtrarCategorias(request, response);
                     break;
             }
         }
@@ -180,30 +194,45 @@ public class ClasificadoControlador extends HttpServlet {
         }
     }
 
-    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            response.setContentType("text/html;charset=UTF-8");
+            String codArt = request.getParameter("codArt");
             Articulo art = new Articulo();
-            art.setTitulo(request.getParameter("tituloClasificado"));
-            art.setDescripcion(request.getParameter("cuerpoClasificado"));
-            art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
+            art.setTitulo(request.getParameter("titulo"));
+            art.setDescripcion(request.getParameter("descripcion"));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
-            art.setUsuario(usr);
-            art.setFechaPublicacion(null);
-            art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
-            art.setPrecio(Integer.parseInt(request.getParameter("precioClasificado")));
+            art.setUsuario(usr);            
+            int cat;
+            cat = Integer.parseInt(request.getParameter("categoria"));
+            ArticuloEstado artEstado = new ArticuloEstado();
+            artEstado.setCodigo(1);
+            art.setEstado(artEstado);
+            art.setPrioridad(new Prioridad(1));//La noticia no tiene prioridad pero sin embargo se le envia el 1(baja)
+            ArticuloFachada artFach = new ArticuloFachada();
+            String ref = "tipoClasificado";
+            Estructura estruc2 = new Estructura(ref);
+            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
+            Categoria categ = new Categoria();
+            categ.setCodigo(cat);
+            art.setCategoria(categ);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("finPublicacion"));
-            java.sql.Date sql = new java.sql.Date(parsed.getTime());
-            art.setFechaFinPublicacion(sql);
-            art.setEstado(new ArticuloEstado(1));
-            art.setTipoArticulo(new TipoArticulo(1));
-            art.setCategoria(new Categoria(Integer.parseInt(request.getParameter("categoria"))));
-            ArticuloFachada artFachada = new ArticuloFachada();
-            artFachada.insertObject(art);
-            out.print(1);
-        } catch (ParseException ex) {
-            Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
+            java.sql.Date date = new java.sql.Date(parsed.getTime());
+            art.setFechaFinPublicacion(date);
+            art.setComunidad(usr.getPerfilCodigo().getComunidad());
+            art.setVisibilidad(Short.parseShort(request.getParameter("visibilidad")));
+            if (codArt.equals("")) {
+                artFach.insertObject(art);
+            } else {
+                art.setCodigo(Integer.parseInt(codArt));
+                artFach.updateObject(art);
+            }
+            out.print(art.getCodigo());
         }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
     }
 
     private void recuperarUltimosClasificados(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -286,7 +315,6 @@ public class ClasificadoControlador extends HttpServlet {
                 art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "char", ordenSplit[0], "order", ordenSplit[1], "", ""));
             }
 
-            System.out.println(art.getBusqueda());
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(art);
             JSONArray array = new JSONArray();
@@ -301,29 +329,140 @@ public class ClasificadoControlador extends HttpServlet {
         }
     }
 
-    private void recuperarClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void editarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
+            int cod = Integer.parseInt(request.getParameter("cod"));
+            Articulo art = new Articulo();
+            art.setCodigo(cod);
             ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tpArt=new TipoArticulo();
+            GestionFachada estFach=new EstructuraFachada();
+            Estructura estructura=new Estructura();
+            estructura.setReferencia("tipoClasificado");
+            Estructura est=(Estructura)estFach.getObject(estructura);
+            tpArt.setCodigo(Integer.parseInt(est.getValor())); 
+            art.setTipoArticulo(tpArt);
+            Usuario usr = (Usuario) request.getSession().getAttribute("user");
+            art.setUsuario(usr); 
+            art.setComunidad(usr.getPerfilCodigo().getComunidad());
             art = (Articulo) artFachada.getObject(art);
-            Usuario user = new Usuario(art.getUsuario().getCodigo());
-            UsuarioFachada userFachada = new UsuarioFachada();
-            user = (Usuario) userFachada.getObject(user);
-            art.setUsuario(user);
+            MultimediaFachada multFachada=new MultimediaFachada();
+            List<Multimedia> listMult=multFachada.getListObject(art);
+            JSONArray jsArray=new JSONArray();
+            for(Multimedia mult:listMult)
+            { 
+                JSONObject obj1 = new JSONObject();                
+                String name=String.valueOf(mult.getCodigo());
+                obj1.put("name",name);
+                obj1.put("ext",mult.getExtension());
+                jsArray.add(obj1);
+            }
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
-            obj.put("nombreUsuario", art.getUsuario().getUserName());
-            if (art.getUsuario().getCelular() != null) {
-                obj.put("telefono", art.getUsuario().getCelular());
-            } else {
-                obj.put("telefono", art.getUsuario().getTelefono());
-            }
+            obj.put("usuario_codigo", art.getUsuario().getCodigo());
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
-            obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
-            obj.put("descripcion", art.getDescripcion());
-            obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
+            obj.put("fecha_publicacion", ((art.getFechaPublicacion()==null?"":art.getFechaPublicacion().toString())));
+            obj.put("fecha_fin_publicacion", ((art.getFechaFinPublicacion()==null?"":art.getFechaFinPublicacion().toString())));
+            obj.put("estados_codigo", art.getEstado().getCodigo());
+            obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
+            obj.put("categoria_codigo", art.getCategoria().getCodigo());
+            obj.put("visibilidad",art.getVisibilidad());
+            obj.put("Imagenes", jsArray);
+            obj.put("Directorio",LecturaConfig.getValue("rutaVisualiza")+art.getCodigo()+"\\");
             out.print(obj);
+        }
+    }
+    
+    private void tipoArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException{
+        try (PrintWriter out = response.getWriter()) {
+            GestionFachada estFach=new EstructuraFachada();
+            Estructura estructura=new Estructura();
+            estructura.setReferencia("tipoClasificado");
+            Estructura est=(Estructura)estFach.getObject(estructura);            
+            out.print(est.getValor());
+        }
+    }
+    
+    private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tipArt = new TipoArticulo();
+            System.out.println("Esto es tipoArticulo:"+request.getParameter("tipo"));
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
+            Articulo articulo=new Articulo();
+            articulo.setTipoArticulo(tipArt);
+            articulo.setRango(request.getParameter("rango"));
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            if(request.getParameter("cat")!=null)
+            {
+                if(!request.getParameter("cat").equals(""))
+                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
+            }
+            if(request.getParameter("buscar")!=null)
+            {
+                articulo.setBusqueda(request.getParameter("buscar"));
+            }
+            List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
+            JSONArray jsonArray=new JSONArray();
+            for (Articulo art : listArticulo) {
+                JSONObject jsonObj=new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo",art.getTitulo());
+                jsonObj.put("nombreUsuario",art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado",art.getCategoria().getNombre());                
+                jsonObj.put("fechafinPublicacion",art.getFechaFinPublicacion().toString());
+                jsonArray.add(jsonObj);
+            }
+            out.print(jsonArray);
+        }
+    }
+    private void borrarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            int cod = Integer.parseInt(request.getParameter("cod").trim());
+            Articulo art = new Articulo();
+            art.setCodigo(cod);
+            String ref = "tipoClasificado";
+            Estructura estruc2 = new Estructura(ref);
+            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
+            ArticuloFachada artFachada = new ArticuloFachada();
+            artFachada.deleteObject(art);            
+        }
+    }
+    
+    private void filtrarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tipArt = new TipoArticulo();
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
+            Articulo articulo=new Articulo();
+            articulo.setTipoArticulo(tipArt);
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            //articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
+            if(request.getParameter("cat")!=null)
+            {
+                if(!request.getParameter("cat").equals(""))
+                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
+            }
+            articulo.setBusqueda("%");
+            List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
+            JSONArray jsonArray=new JSONArray();
+            for (Articulo art : listArticulo) {
+                JSONObject jsonObj=new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo",art.getTitulo());
+                jsonObj.put("nombreUsuario",art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario",art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria",art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado",art.getCategoria().getNombre());
+                jsonObj.put("fechafinPublicacion",art.getFechaFinPublicacion().toString());
+                jsonArray.add(jsonObj);
+            }
+            out.print(jsonArray);       
         }
     }
 
@@ -339,7 +478,11 @@ public class ClasificadoControlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ParseException ex) {
+            Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -353,7 +496,11 @@ public class ClasificadoControlador extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ParseException ex) {
+            Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

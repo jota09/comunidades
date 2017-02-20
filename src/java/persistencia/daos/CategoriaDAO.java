@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,11 +55,7 @@ public class CategoriaDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listCategoria;
     }
@@ -82,14 +79,14 @@ public class CategoriaDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CategoriaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listaCategorias;
     }

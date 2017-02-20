@@ -48,11 +48,7 @@ public class EstadoDAO implements GestionDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listEstados;
     }

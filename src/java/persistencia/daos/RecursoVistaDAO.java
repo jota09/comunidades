@@ -46,11 +46,7 @@ public class RecursoVistaDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RecursoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -101,11 +97,7 @@ public class RecursoVistaDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return recursoVistas;
     }
@@ -127,7 +119,7 @@ public class RecursoVistaDAO implements GestionDAO {
             pS.setInt(1, recursoVista.getRecursoCodigo().getCodigo());
             pS.setInt(2, recursoVista.getVistaCodigo().getCodigo());
             tamano = pS.executeUpdate();
-
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -135,11 +127,7 @@ public class RecursoVistaDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -180,11 +168,11 @@ public class RecursoVistaDAO implements GestionDAO {
     public List getListByPagination(Object object) {
         Connection con = null;
         List<RecursoVista> recursoVistas = new ArrayList();
-        String rango=String.valueOf(object).replace("'", "");
+        String rango = String.valueOf(object).replace("'", "");
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "select r.*,v.*,rv.codigo from recurso_vista rv join recurso r on r.codigo=rv.recurso_codigo "
-                    + " join vista v on v.codigo=rv.vista_codigo order by v.nombre limit "+rango;
+                    + " join vista v on v.codigo=rv.vista_codigo order by v.nombre limit " + rango;
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
@@ -213,11 +201,7 @@ public class RecursoVistaDAO implements GestionDAO {
         } catch (IOException ex) {
             Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return recursoVistas;
     }
