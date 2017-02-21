@@ -18,6 +18,7 @@ public class Error {
     private String metodo;
     private Timestamp fecha;
     private TipoError tipoError;
+    private String descripcion;
 
     public Error() {
     }
@@ -26,12 +27,13 @@ public class Error {
         this.codigo = codigo;
     }
 
-    public Error(int codigo, String clase, String metodo, TipoError tipoError,Timestamp fecha) {
+    public Error(int codigo, String clase, String metodo, TipoError tipoError,Timestamp fecha,String descripcion) {
         this.codigo = codigo;
         this.clase = clase;
         this.metodo = metodo;
         this.tipoError = tipoError;
         this.fecha=fecha;
+        this.descripcion=descripcion;
     }
 
     public int getCodigo() {
@@ -72,6 +74,14 @@ public class Error {
 
     public void setFecha(Timestamp fecha) {
         this.fecha = fecha;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
 }

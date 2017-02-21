@@ -17,6 +17,9 @@ import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Filtro;
 import persistencia.entidades.MetaData;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
 
 /**
  *
@@ -56,11 +59,26 @@ public class FiltroDAO implements GestionDAO {
             pS.close();
 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(FiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(FiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(FiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }

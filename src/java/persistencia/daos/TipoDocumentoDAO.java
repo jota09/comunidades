@@ -6,6 +6,7 @@
 package persistencia.daos;
 
 import java.util.List;
+import persistencia.entidades.Error;
 
 /**
  *

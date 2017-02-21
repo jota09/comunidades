@@ -267,7 +267,7 @@ public class ClasificadoControlador extends HttpServlet {
     private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             Usuario user = (Usuario) request.getSession().getAttribute("user");
-            user.setCodigo(0);
+            //user.setCodigo(0);
             EstructuraFachada estrucFachada = new EstructuraFachada();
             String ref = "clasificadoMostrarInicio";
             Estructura estruc = new Estructura(ref);
@@ -391,7 +391,6 @@ public class ClasificadoControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
             TipoArticulo tipArt = new TipoArticulo();
-            System.out.println("Esto es tipoArticulo:"+request.getParameter("tipo"));
             tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
             Articulo articulo=new Articulo();
             articulo.setTipoArticulo(tipArt);

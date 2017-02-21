@@ -19,6 +19,9 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.UsuarioPerfil;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -39,18 +42,18 @@ public class UsuarioPerfilDAO implements GestionDAO {
     @Override
     public List getListObject(Object object) {
         Usuario usuario = (Usuario) object;
-        List<Perfil> perfiles=new ArrayList();
+        List<Perfil> perfiles = new ArrayList();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select  p.codigo,p.nombre,c.codigo,c.nombre,c.direccion,c.telefono from usuario_perfil up join perfil p on up.perfil_codigo=p.codigo "
                     + "join comunidad c on p.comunidad_codigo=c.codigo where up.usuario_codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1,usuario.getCodigo());
-            ResultSet rS=pS.executeQuery();
-            while(rS.next()){
-                Perfil perfil=new Perfil();
-                Comunidad comunidad=new Comunidad();
+            pS.setInt(1, usuario.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Perfil perfil = new Perfil();
+                Comunidad comunidad = new Comunidad();
                 perfil.setCodigo(rS.getInt(1));
                 perfil.setNombre(rS.getString(2));
                 comunidad.setCodigo(rS.getInt(3));
@@ -63,12 +66,27 @@ public class UsuarioPerfilDAO implements GestionDAO {
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
             ConexionBD.cerrarConexion(con);
         }
         return perfiles;
