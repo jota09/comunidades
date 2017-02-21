@@ -476,6 +476,7 @@ public class ClasificadoControlador extends HttpServlet {
             Articulo articulo = new Articulo();
             articulo.setTipoArticulo(tipArt);
             articulo.setRango(request.getParameter("rango"));
+            Usuario user = (Usuario) request.getSession().getAttribute("user");
             articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
             if (request.getParameter("cat") != null) {
                 if (!request.getParameter("cat").equals("")) {
@@ -489,6 +490,7 @@ public class ClasificadoControlador extends HttpServlet {
             JSONArray jsonArray = new JSONArray();
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
+                if(user.getCodigo() == art.getUsuario().getCodigo()){
                 jsonObj.put("codigo", art.getCodigo());
                 jsonObj.put("titulo", art.getTitulo());
                 jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
@@ -501,7 +503,7 @@ public class ClasificadoControlador extends HttpServlet {
                 } else {
                     jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
                 }
-                jsonArray.add(jsonObj);
+                jsonArray.add(jsonObj); }
             }
             out.print(jsonArray);
         }
