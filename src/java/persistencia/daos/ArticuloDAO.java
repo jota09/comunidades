@@ -200,9 +200,6 @@ public class ArticuloDAO implements GestionDAO {
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
-                cont++;
-            } else {
-                cont++;
             }
             rS.close();
             pS.close();

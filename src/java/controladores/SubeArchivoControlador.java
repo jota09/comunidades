@@ -64,7 +64,7 @@ public class SubeArchivoControlador extends HttpServlet {
     }
 
     private void crearMultimedia(HttpServletRequest request, HttpServletResponse response, String id) throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {            
             short destacada = Short.parseShort(request.getParameter("destacada"));
             System.out.println("imprimiendo subeArchivoFile:" + request.getParameter("file"));
             String encoded[] = request.getParameter("file").split(",");
