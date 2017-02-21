@@ -1,5 +1,6 @@
 package controladores;
 
+import fachada.CondicionesFiltroFachada;
 import fachada.FiltroFachada;
 import fachada.GestionFachada;
 import fachada.MetaDataFachada;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import persistencia.entidades.CondicionesFiltro;
 import persistencia.entidades.Filtro;
 import persistencia.entidades.MetaData;
 
@@ -48,6 +50,13 @@ public class GestionFiltrosControlador extends HttpServlet {
             case 3: {
                 getFiltrosXTabla(request, response);
                 break;
+            }
+            case 4: {
+                getCondicionesFiltro(request, response);
+                break;
+            }
+            case 5: {
+                getCondicionFiltro(request, response);
             }
 
         }
@@ -118,6 +127,7 @@ public class GestionFiltrosControlador extends HttpServlet {
             obj.put("codigo", f.getCodigo());
             obj.put("campo", f.getCampo());
             obj.put("nombre", f.getNombre());
+            obj.put("condicion", f.getCondicion());
             array.add(obj);
         }
         try (PrintWriter out = response.getWriter()) {
@@ -139,6 +149,31 @@ public class GestionFiltrosControlador extends HttpServlet {
         }
         try (PrintWriter out = response.getWriter()) {
             out.print(array);
+        }
+    }
+
+    private void getCondicionesFiltro(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada condicionesFachada = new CondicionesFiltroFachada();
+        List<CondicionesFiltro> condiciones = condicionesFachada.getListObject();
+        JSONArray array = new JSONArray();
+        for (CondicionesFiltro con : condiciones) {
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", con.getCodigo());
+            obj.put("condicion", con.getCondicion());
+            array.add(obj);
+        }
+        try (PrintWriter out = response.getWriter()) {
+            out.print(array);
+        }
+    }
+
+    private void getCondicionFiltro(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int codigo = Integer.parseInt(request.getParameter("codigo"));
+        GestionFachada condicionFachada = new CondicionesFiltroFachada();
+        CondicionesFiltro condiciones = new CondicionesFiltro(codigo);
+        condicionFachada.getObject(condiciones);
+        try (PrintWriter out = response.getWriter()) {
+            out.print(condiciones.getParametros());
         }
     }
 

@@ -59,6 +59,11 @@ public class Prioridad implements Serializable {
     public void setActivo(short activo) {
         this.activo = activo;
     }
+
+    @Override
+    public String toString() {
+        return "Prioridad{" + "codigo=" + codigo + ", nombre=" + nombre + ", valor=" + valor + ", activo=" + activo + '}';
+    }
     
     
     

@@ -15,14 +15,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
-import persistencia.entidades.Error;
-import persistencia.entidades.TipoError;
+import persistencia.entidades.CondicionesFiltro;
 
 /**
  *
- * @author manuel.alcala
+ * @author ALEJO
  */
-public class ErrorDAO implements GestionDAO {
+public class CondicionesFiltroDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
@@ -31,7 +30,35 @@ public class ErrorDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CondicionesFiltro condicion = (CondicionesFiltro) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select codigo,condicion,parametros from condicion_filtro where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, condicion.getCodigo());
+            ResultSet rS = pS.executeQuery();
+
+            while (rS.next()) {
+                condicion.setCondicion(rS.getString(2));
+                condicion.setParametros(rS.getInt(3));
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return condicion;
     }
 
     @Override
@@ -42,37 +69,32 @@ public class ErrorDAO implements GestionDAO {
     @Override
     public List getListObject() {
         Connection con = null;
-        List<Error> errores = new ArrayList();
+        List<CondicionesFiltro> condiciones = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select er.codigo,er.clase,er.metodo,ter.codigo,ter.tipo,ter.descripcion from error er join tipo_error ter"
-                    + " on er.tipo_error_codigo=ter.codigo order by fecha asc ";
+            String sql = "Select codigo,condicion,parametros from condicion_filtro";
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
-                Error error = new Error();
-                TipoError tipo = new TipoError();
-                error.setCodigo(rS.getInt(1));
-                error.setClase(rS.getString(2));
-                error.setMetodo(rS.getString(3));
-                tipo.setCodigo(rS.getInt(4));
-                tipo.setTipo(rS.getString(5));
-                tipo.setDescripcion(rS.getString(6));
-                error.setTipoError(tipo);
-                errores.add(error);
+                CondicionesFiltro condicionesFiltro = new CondicionesFiltro(rS.getInt(1), rS.getString(2), rS.getInt(3));
+                condiciones.add(condicionesFiltro);
             }
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            ConexionBD.cerrarConexion(con);
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(CondicionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        return errores;
+        return condiciones;
     }
 
     @Override

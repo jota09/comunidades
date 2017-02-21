@@ -10,6 +10,7 @@ public class Filtro {
     private String nombre;
     private String tabla;
     private String campo;
+    private String condicion;
 
     public Filtro() {
     }
@@ -18,11 +19,20 @@ public class Filtro {
         this.codigo = codigo;
     }
 
-    public Filtro(int codigo, String nombre, String tabla, String campo) {
+    public Filtro(int codigo, String nombre, String tabla, String campo,String condicion) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.tabla = tabla;
         this.campo = campo;
+        this.condicion=condicion;
+    }
+
+    public String getCondicion() {
+        return condicion;
+    }
+
+    public void setCondicion(String condicion) {
+        this.condicion = condicion;
     }
 
     public int getCodigo() {
