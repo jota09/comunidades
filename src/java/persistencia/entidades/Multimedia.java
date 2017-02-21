@@ -14,7 +14,7 @@ public class Multimedia  implements Serializable{
     public Multimedia() {
     }
 
-    public Multimedia(int codigo) {
+    public Multimedia(long codigo) {
         this.codigo = codigo;
     }
 

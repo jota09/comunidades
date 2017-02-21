@@ -43,5 +43,12 @@ public class Perfil implements Serializable {
     public void setComunidad(Comunidad comunidad) {
         this.comunidad = comunidad;
     }
+
+    @Override
+    public String toString() {
+        return "Perfil{" + "codigo=" + codigo + ", nombre=" + nombre + ", comunidad=" + comunidad + ", activo=" + activo + '}';
+    }
+    
+    
     
 }

@@ -35,7 +35,29 @@ public class MultimediaDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Multimedia mult = (Multimedia) object;
+        Connection con = null;
+        try {
+
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT * FROM multimedia WHERE codigo=? ";
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setLong(1, mult.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                
+            }
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return mult;
     }
 
     @Override
@@ -149,14 +171,11 @@ public class MultimediaDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "DELETE FROM multimedia WHERE codigo=? AND articulo_codigo=?";
-            PreparedStatement pS = con.prepareStatement(sql);
-            pS.setLong(1, mult.getCodigo());
-            pS.setInt(2, mult.getArticulocodigo().getCodigo());
+            String sql = "DELETE FROM multimedia WHERE articulo_codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);            
+            pS.setInt(1, mult.getArticulocodigo().getCodigo());
             pS.execute();
-            System.out.println("query delete:" + sql);
-            System.out.println("codigo multimedia:" + mult.getCodigo());
-            System.out.println("codigo articulo:" + mult.getArticulocodigo().getCodigo());
+            pS.close();
         } catch (ClassNotFoundException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());
@@ -178,6 +197,13 @@ public class MultimediaDAO implements GestionDAO {
             error.setTipoError(new TipoError(3));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
+        }
+        finally{
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

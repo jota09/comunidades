@@ -179,6 +179,7 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return codigo + " " + nombres + " " + apellidos;
+        return "Usuario{" + "codigo=" + codigo + ", codigodocumento=" + codigodocumento + ", tipodocumentocodigo=" + tipodocumentocodigo + ", perfilcodigo=" + perfilcodigo + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo + ", celular=" + celular + ", telefono=" + telefono + ", username=" + username + ", activo=" + activo + ", creacion=" + creacion + ", actualizacion=" + actualizacion + ", edad=" + edad + ", listaSeguridad=" + listaSeguridad + ", listaAutorizacion=" + listaAutorizacion + '}';
     }
+    
 }

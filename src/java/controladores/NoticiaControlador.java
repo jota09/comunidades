@@ -115,7 +115,7 @@ public class NoticiaControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
             TipoArticulo tipArt = new TipoArticulo();
-            System.out.println("Esto es tipoArticulo:"+request.getParameter("tipo"));
+            //System.out.println("Esto es tipoArticulo:"+request.getParameter("tipo"));
             tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));                                    
             Articulo articulo=new Articulo();
             articulo.setTipoArticulo(tipArt);
@@ -212,6 +212,7 @@ public class NoticiaControlador extends HttpServlet {
                 String name=String.valueOf(mult.getCodigo());
                 obj1.put("name",name);
                 obj1.put("ext",mult.getExtension());
+                obj1.put("destacada",mult.getDestacada());
                 jsArray.add(obj1);
             }
             JSONObject obj = new JSONObject();
