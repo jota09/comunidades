@@ -23,11 +23,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import persistencia.daos.MultimediaDAO;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.Multimedia;
 import persistencia.entidades.TipoMultimedia;
 import utilitarias.LecturaConfig;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -46,7 +48,7 @@ public class SubeArchivoControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException {
 
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
@@ -60,11 +62,19 @@ public class SubeArchivoControlador extends HttpServlet {
                     borrarMultimedia(request, response, codArticulo);
                     break;
             }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+
         }
     }
 
     private void crearMultimedia(HttpServletRequest request, HttpServletResponse response, String id) throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {            
+        try (PrintWriter out = response.getWriter()) {
             short destacada = Short.parseShort(request.getParameter("destacada"));
             System.out.println("imprimiendo subeArchivoFile:" + request.getParameter("file"));
             String encoded[] = request.getParameter("file").split(",");
@@ -103,8 +113,7 @@ public class SubeArchivoControlador extends HttpServlet {
         String path = LecturaConfig.getValue("rutaUpload") + codArticulo + "\\";
         File file = new File(path);
         File[] files = file.listFiles();
-        if(files.length>0)
-        {
+        if (files.length > 0) {
             for (File f : files) {
                 f.delete();
             }

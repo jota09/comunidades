@@ -17,6 +17,9 @@ import org.json.simple.JSONObject;
 import persistencia.entidades.CondicionesFiltro;
 import persistencia.entidades.Filtro;
 import persistencia.entidades.MetaData;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -35,30 +38,39 @@ public class GestionFiltrosControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        int op = Integer.parseInt(request.getParameter("op"));
-        switch (op) {
-            case 1: {
-                getTables(request, response);
-                break;
-            }
-            case 2: {
-                getColumnas(request, response);
-                break;
-            }
-            case 3: {
-                getFiltrosXTabla(request, response);
-                break;
-            }
-            case 4: {
-                getCondicionesFiltro(request, response);
-                break;
-            }
-            case 5: {
-                getCondicionFiltro(request, response);
-            }
+            throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            int op = Integer.parseInt(request.getParameter("op"));
+            switch (op) {
+                case 1: {
+                    getTables(request, response);
+                    break;
+                }
+                case 2: {
+                    getColumnas(request, response);
+                    break;
+                }
+                case 3: {
+                    getFiltrosXTabla(request, response);
+                    break;
+                }
+                case 4: {
+                    getCondicionesFiltro(request, response);
+                    break;
+                }
+                case 5: {
+                    getCondicionFiltro(request, response);
+                }
 
+            }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);;
         }
     }
 

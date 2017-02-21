@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -36,13 +38,22 @@ public class GestionErroresControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        int op = Integer.parseInt(request.getParameter("op"));
-        switch (op) {
-            case 1:
-                cargarErrores(request, response);
-                break;
+            throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            int op = Integer.parseInt(request.getParameter("op"));
+            switch (op) {
+                case 1:
+                    cargarErrores(request, response);
+                    break;
+            }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
     }
 

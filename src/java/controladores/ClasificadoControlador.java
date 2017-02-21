@@ -38,6 +38,8 @@ import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
 
 /**
  *
@@ -56,54 +58,70 @@ public class ClasificadoControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ParseException {
-        response.setContentType("text/html;charset=UTF-8");
-        if (request.getParameter("opc") != null) {
-            int opcion = Integer.parseInt(request.getParameter("opc"));
-            switch (opcion) {
-                case 1:
-                    recuperarCategorias(request, response);
-                    break;
-                case 2:
-                    recuperarPrioridad(request, response);
-                    break;
-                case 3:
-                    crearRegistros(request, response);
-                    break;
-                case 4:
-                    recuperarMostrar(request, response);
-                    break;
-                case 5:
-                    recuperarRangoPrecio(request, response);
-                    break;
-                case 6:
-                    recuperarOrdenarPor(request, response);
-                    break;
-                case 7:
-                    recuperarUltimosClasificados(request, response);
-                    break;
-                case 8:
-                    editarRegistros(request, response);
-                    break;
-                case 9:
-                    recuperarInicioClasificado(request, response);
-                    break;
-                case 10:
-                    tipoArticulo(request, response);
-                    break;
-                case 11:
-                    tablaRegistros(request, response);
-                    break;
-                case 12:
-                    borrarRegistros(request, response);
-                    break;
-                case 13:
-                    filtrarCategorias(request, response);
-                    break;
-                case 14:
-                    recuperarClasificado(request, response);
-                    break;
+            throws ServletException, IOException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            if (request.getParameter("opc") != null) {
+                int opcion = Integer.parseInt(request.getParameter("opc"));
+                switch (opcion) {
+                    case 1:
+                        recuperarCategorias(request, response);
+                        break;
+                    case 2:
+                        recuperarPrioridad(request, response);
+                        break;
+                    case 3:
+                        crearRegistros(request, response);
+                        break;
+                    case 4:
+                        recuperarMostrar(request, response);
+                        break;
+                    case 5:
+                        recuperarRangoPrecio(request, response);
+                        break;
+                    case 6:
+                        recuperarOrdenarPor(request, response);
+                        break;
+                    case 7:
+                        recuperarUltimosClasificados(request, response);
+                        break;
+                    case 8:
+                        editarRegistros(request, response);
+                        break;
+                    case 9:
+                        recuperarInicioClasificado(request, response);
+                        break;
+                    case 10:
+                        tipoArticulo(request, response);
+                        break;
+                    case 11:
+                        tablaRegistros(request, response);
+                        break;
+                    case 12:
+                        borrarRegistros(request, response);
+                        break;
+                    case 13:
+                        filtrarCategorias(request, response);
+                        break;
+                    case 14:
+                        recuperarClasificado(request, response);
+                        break;
+                }
             }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (ParseException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(4));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
     }
 
@@ -311,14 +329,12 @@ public class ClasificadoControlador extends HttpServlet {
                 if (precio.indexOf("-") >= 0) {
                     String[] precioSplit = precio.split("-");
                     art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precioSplit[0], precioSplit[1], "rango"));
+                } else if (precio.indexOf("+") >= 0) {
+                    precio = precio.replace("+", "");
+                    art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "mayor"));
                 } else {
-                    if (precio.indexOf("+") >= 0) {
-                        precio = precio.replace("+", "");
-                        art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "mayor"));
-                    } else {
-                        precio = precio.replace("-", "");
-                        art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "menor"));
-                    }
+                    precio = precio.replace("-", "");
+                    art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "menor"));
                 }
             }
             if (jsonBusq.get("ordenar").toString() != null && !jsonBusq.get("ordenar").toString().isEmpty()) {
@@ -332,7 +348,7 @@ public class ClasificadoControlador extends HttpServlet {
             JSONArray array = new JSONArray();
             String ref3 = "articuloEstadoAprobado";
             Estructura estruc3 = new Estructura(ref3);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);            
+            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
             for (Articulo art2 : listArticulo) {
                 if (art2.getFechaPublicacion() != null && art2.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
                     JSONObject obj = new JSONObject();
@@ -518,11 +534,9 @@ public class ClasificadoControlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+
             processRequest(request, response);
-        } catch (ParseException ex) {
-            Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
 
     /**
@@ -536,11 +550,7 @@ public class ClasificadoControlador extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
             processRequest(request, response);
-        } catch (ParseException ex) {
-            Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
