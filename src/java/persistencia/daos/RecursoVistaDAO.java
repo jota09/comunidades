@@ -12,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Recurso;
 import persistencia.entidades.RecursoVista;
@@ -213,11 +211,7 @@ public class RecursoVistaDAO implements GestionDAO {
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(RecursoVistaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+              ConexionBD.cerrarConexion(con);
         }
 
     }

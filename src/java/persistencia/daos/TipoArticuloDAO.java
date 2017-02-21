@@ -11,8 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Error;

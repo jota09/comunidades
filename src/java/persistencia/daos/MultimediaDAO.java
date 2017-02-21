@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.Multimedia;
@@ -49,11 +47,26 @@ public class MultimediaDAO implements GestionDAO {
             }
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -199,11 +212,7 @@ public class MultimediaDAO implements GestionDAO {
             Utilitaria.escribeError(error);
         }
         finally{
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
     }
 
@@ -253,11 +262,7 @@ public class MultimediaDAO implements GestionDAO {
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return cont;
     }
