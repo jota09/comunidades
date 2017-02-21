@@ -12,12 +12,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Atributo;
 import persistencia.entidades.Vista;
 import persistencia.entidades.VistaAtributo;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -40,11 +41,26 @@ public class VistaAtributoDAO implements GestionDAO {
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -88,11 +104,26 @@ public class VistaAtributoDAO implements GestionDAO {
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -120,11 +151,26 @@ public class VistaAtributoDAO implements GestionDAO {
             tamano = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -143,11 +189,26 @@ public class VistaAtributoDAO implements GestionDAO {
             pS.execute();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -187,11 +248,26 @@ public class VistaAtributoDAO implements GestionDAO {
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -229,11 +305,26 @@ public class VistaAtributoDAO implements GestionDAO {
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByPagination");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByPagination");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByPagination");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }

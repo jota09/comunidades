@@ -13,7 +13,7 @@ public class TipoError {
 
     private int codigo;
     private String tipo;
-    private String descripcion;
+
 
     public TipoError() {
     }
@@ -22,10 +22,10 @@ public class TipoError {
         this.codigo = codigo;
     }
 
-    public TipoError(int codigo, String tipo, String descripcion) {
+    public TipoError(int codigo, String tipo) {
         this.codigo = codigo;
         this.tipo = tipo;
-        this.descripcion = descripcion;
+
     }
 
     public int getCodigo() {
@@ -44,12 +44,5 @@ public class TipoError {
         this.tipo = tipo;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
 }

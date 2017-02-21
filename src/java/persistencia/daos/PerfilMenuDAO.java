@@ -12,12 +12,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Menu;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.PerfilMenu;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
 
 /**
  *
@@ -55,11 +56,26 @@ public class PerfilMenuDAO implements GestionDAO {
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -90,11 +106,26 @@ public class PerfilMenuDAO implements GestionDAO {
             insert = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -113,11 +144,26 @@ public class PerfilMenuDAO implements GestionDAO {
             pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(PerfilMenuDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }

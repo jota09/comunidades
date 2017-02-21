@@ -39,7 +39,7 @@ public class GeneradorView extends HttpServlet {
         if (view == null) {
             view = request.getParameter("view");
         }
-        if(view!=null && !view.equals("validacomunidad.html")){
+        if (view != null && !view.equals("validacomunidad.html")) {
             session.removeAttribute("view");
         }
         try (PrintWriter out = response.getWriter()) {
@@ -85,7 +85,7 @@ public class GeneradorView extends HttpServlet {
                 Usuario user = (Usuario) session.getAttribute("user");
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(user.getPerfilCodigo());
-                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));     
+                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
                 //pagina =pagina.replace("<@logo@>","<img style='width:40px;height:40px' alt='Brand' class='img-circle' src='"+LecturaConfig.getValue("rutaImg")+"logo/"+user.getPerfilCodigo().getComunidad().getCodigo()+".png'");
             } else {
                 Perfil pf = new Perfil();
@@ -127,7 +127,7 @@ public class GeneradorView extends HttpServlet {
             }
             processRequest(request, response);
         } else {
-            if (request.getParameter("view") == null && request.getSession().getAttribute("view")==null) {
+            if (request.getParameter("view") == null && request.getSession().getAttribute("view") == null) {
                 request.getSession().setAttribute("view", "menuprincipal.html");
             }
             processRequest(request, response);

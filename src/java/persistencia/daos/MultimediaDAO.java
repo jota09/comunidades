@@ -13,11 +13,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.Multimedia;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
 
 /**
  *
@@ -46,11 +47,26 @@ public class MultimediaDAO implements GestionDAO {
             }
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -68,9 +84,9 @@ public class MultimediaDAO implements GestionDAO {
                     + "INNER JOIN tipo_multimedia tpMult ON mult.tipo_multimedia_codigo=tpMult.codigo WHERE mult.articulo_codigo=?";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getCodigo());
-            ResultSet rS = pS.executeQuery();            
+            ResultSet rS = pS.executeQuery();
             while (rS.next()) {
-                Multimedia mult=new Multimedia();
+                Multimedia mult = new Multimedia();
                 mult.setCodigo(rS.getLong("codigo"));
                 mult.setTipoMultimediaCodigo(rS.getInt("tipo_multimedia_codigo"));
                 mult.setActivo(rS.getShort("activo"));
@@ -80,14 +96,29 @@ public class MultimediaDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return listMult;
     }
@@ -108,30 +139,41 @@ public class MultimediaDAO implements GestionDAO {
         Connection con = null;
         int tamano = 0;
         try {
-            int numeroAleatorio = (int) (Math.random()*9999+1000);
+            int numeroAleatorio = (int) (Math.random() * 9999 + 1000);
             con = ConexionBD.obtenerConexion();
-            Calendar calendar=Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance();
             String sql = "INSERT INTO multimedia (CODIGO,ARTICULO_CODIGO, TIPO_MULTIMEDIA_CODIGO, DESTACADA) VALUES (?,?,?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
-            multimedia.setCodigo(calendar.getTimeInMillis()+numeroAleatorio);
+            multimedia.setCodigo(calendar.getTimeInMillis() + numeroAleatorio);
             pS.setLong(1, multimedia.getCodigo());
             pS.setInt(2, multimedia.getArticulocodigo().getCodigo());
             pS.setInt(3, multimedia.getTipoMultimediaCodigo());
-            pS.setShort(4,multimedia.getDestacada());
+            pS.setShort(4, multimedia.getDestacada());
             tamano = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return tamano;
     }
@@ -148,18 +190,29 @@ public class MultimediaDAO implements GestionDAO {
             pS.execute();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
         finally{
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(MultimediaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
     }
 
@@ -172,6 +225,7 @@ public class MultimediaDAO implements GestionDAO {
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
     private synchronized int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
@@ -181,19 +235,34 @@ public class MultimediaDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
-                int max=rS.getInt(1);
-                cont = ((max>0)?max:cont);
+                int max = rS.getInt(1);
+                cont = ((max > 0) ? max : cont);
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
-            try {
-                con.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ConexionBD.cerrarConexion(con);
         }
         return cont;
     }

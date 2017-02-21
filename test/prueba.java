@@ -1,17 +1,6 @@
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import persistencia.daos.GestionDAO;
-import persistencia.daos.MenuDAO;
-import persistencia.daos.MetaDataDAO;
-import persistencia.daos.UsuarioDAO;
-import persistencia.entidades.MetaData;
-import persistencia.entidades.Usuario;
+import org.eclipse.jdt.internal.compiler.ast.ThisReference;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
 import utilitarias.Utilitaria;
 
 /*
@@ -29,13 +18,16 @@ public class prueba {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        MetaDataDAO metaDAO=new MetaDataDAO();
-        List<MetaData> tablas=metaDAO.getTables();
-        for(MetaData mt:tablas){
-        System.out.println("Tabla:"+mt.getTabla());
-            for(String s:mt.getColumna()){
-                System.out.println("Columna:"+s);
-            }
+        int i=0;
+        try{
+         i=10/0;
+        }catch(ArithmeticException ex){
+            Error error=new Error();
+            error.setClase("Prueba");
+            error.setMetodo("Main");
+            error.setDescripcion("error de prueba");
+            error.setTipoError(new TipoError(1));
+            Utilitaria.escribeError(error);
         }
         
     }

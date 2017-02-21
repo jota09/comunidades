@@ -23,7 +23,7 @@ public class Estructura implements Serializable {
 
     public Estructura() {
     }
-
+    
     public Estructura(int codigo, String referencia, String valor, String descripcion) {
         this.codigo = codigo;
         this.referencia = referencia;
