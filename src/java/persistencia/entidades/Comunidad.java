@@ -98,4 +98,11 @@ public class Comunidad implements Serializable {
     public void setCreacion(Timestamp creacion) {
         this.creacion = creacion;
     }
+
+    @Override
+    public String toString() {
+        return "Comunidad{" + "codigo=" + codigo + ", ciudadcodigo=" + ciudadcodigo + ", departamentocodigo=" + departamentocodigo + ", paiscodigo=" + paiscodigo + ", nombre=" + nombre + ", direccion=" + direccion + ", telefono=" + telefono + ", activo=" + activo + ", eliminado=" + eliminado + ", creacion=" + creacion + '}';
+    }
+    
+    
 }

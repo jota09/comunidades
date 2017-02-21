@@ -82,12 +82,13 @@ public class ArticuloDAO implements GestionDAO {
 
             String query = "SELECT CODIGO, TITULO "
                     + "FROM comunidades.articulo "
-                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? "
+                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             pS.setInt(2, art.getEstado().getCodigo());
+            pS.setInt(3, art.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
@@ -319,21 +320,21 @@ public class ArticuloDAO implements GestionDAO {
                         for (int i = 0; i < campos.length; i++) {
                             condicionArmada += " and " + campos[i];
                         }
-                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? ) ";
+                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? "+ naturalezaSesion +"  ) ";
 
                         busqueda += separarCondiciones[1].replace("/", " ") + " ";
                     } else {
-                        busqueda = " OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=?  ) " + separarCondiciones[1].replace("/", " ") + " ";
+                        busqueda = " OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=? "+naturalezaSesion+" ) " + separarCondiciones[1].replace("/", " ") + " ";
                     }
                 } else {
                     String[] campos = articulo.getBusqueda().split(",");
                     for (int i = 0; i < campos.length; i++) {
                         condicionArmada += " and " + campos[i];
                     }
-                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? ) ";
+                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? "+naturalezaSesion+" ) ";
                 }
             } else {
-                busqueda = "OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=?  ) ORDER BY FECHA_PUBLICACION DESC ";
+                busqueda = "OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=? "+naturalezaSesion+" ) ORDER BY FECHA_PUBLICACION DESC ";
             }
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
                     + "artEstado.codigo,artEstado.nombre nombreEstado"
@@ -341,7 +342,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) " + naturalezaSesion + " "
+                    + "WHERE (art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
                     + busqueda + " "
                     + rango;
 
@@ -349,11 +350,12 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
             if (Integer.parseInt(estruc.getValor()) != articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo()) {
-                pS.setInt(3, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
-                pS.setInt(4, articulo.getTipoArticulo().getCodigo());
+                pS.setInt(3, articulo.getTipoArticulo().getCodigo());
+                pS.setInt(4, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             } else {
                 pS.setInt(3, articulo.getTipoArticulo().getCodigo());
             }
+            System.out.println(query);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
