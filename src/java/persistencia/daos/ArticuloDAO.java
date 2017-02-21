@@ -12,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
@@ -22,6 +20,9 @@ import persistencia.entidades.Estructura;
 import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
+import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
 
 /**
  *
@@ -61,11 +62,26 @@ public class ArticuloDAO implements GestionDAO {
             }
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -99,8 +115,27 @@ public class ArticuloDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -146,11 +181,26 @@ public class ArticuloDAO implements GestionDAO {
             pS.close();
             }
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -185,8 +235,27 @@ public class ArticuloDAO implements GestionDAO {
                 result = pS.executeUpdate();
                 pS.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -207,22 +276,37 @@ public class ArticuloDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
-            System.out.println("CONSULTA:SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo="+condicionPaginado.getTipo()+" and usuario_codigo="+condicionPaginado.getUser().getCodigo()+" and comunidad_codigo="+condicionPaginado.getComunidad().getCodigo());
+            System.out.println("CONSULTA:SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=" + condicionPaginado.getTipo() + " and usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo());
             pS.setInt(1, condicionPaginado.getTipo());
             pS.setInt(2, condicionPaginado.getUser().getCodigo());
             pS.setInt(3, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
-            } 
+            }
             rS.close();
             pS.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -242,11 +326,26 @@ public class ArticuloDAO implements GestionDAO {
             pS.execute();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("deleteObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -298,8 +397,27 @@ public class ArticuloDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -357,7 +475,6 @@ public class ArticuloDAO implements GestionDAO {
                     + "WHERE ((art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
                     + busqueda + " "
                     + rango;
-            System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
@@ -394,8 +511,27 @@ public class ArticuloDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByPagination");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByPagination");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByPagination");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
@@ -416,8 +552,27 @@ public class ArticuloDAO implements GestionDAO {
             }
             rS.close();
             pS.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         } finally {
             ConexionBD.cerrarConexion(con);
         }

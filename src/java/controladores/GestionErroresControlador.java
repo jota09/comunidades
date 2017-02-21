@@ -5,24 +5,28 @@
  */
 package controladores;
 
-import java.io.File;
-import java.io.FileInputStream;
+import fachada.ErrorFachada;
+import fachada.GestionFachada;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import javax.servlet.ServletContext;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 /**
  *
- * @author ferney.medina
+ * @author manuel.alcala
  */
-@WebServlet(name = "BajarArchivo", urlPatterns = {"/BajarArchivo"})
-public class BajarArchivo extends HttpServlet {
+@WebServlet(name = "GestionErroresControlador", urlPatterns = {"/GestionErroresControlador"})
+public class GestionErroresControlador extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,50 +38,42 @@ public class BajarArchivo extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+            throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            int op = Integer.parseInt(request.getParameter("op"));
+            switch (op) {
+                case 1:
+                    cargarErrores(request, response);
+                    break;
+            }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        }
+    }
+
+    private void cargarErrores(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada errorFachada = new ErrorFachada();
+        System.out.println("ErrorFachada");
+        List<Error> errores = errorFachada.getListObject();
+        JSONArray array = new JSONArray();
+        for (Error e : errores) {
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", e.getCodigo());
+            obj.put("clase", e.getClase());
+            obj.put("metodo", e.getMetodo());
+            obj.put("fecha", e.getFecha().toString());
+            obj.put("error", e.getTipoError().getTipo());
+            obj.put("descripcion", e.getDescripcion());
+            array.add(obj);
+        }
         try (PrintWriter out = response.getWriter()) {
-            // reads input file from an absolute path
-            String filePath = "E:/Test/Download/MYPIC.JPG";
-            File downloadFile = new File(filePath);
-            FileInputStream inStream = new FileInputStream(downloadFile);
-
-            // if you want to use a relative path to context root:
-            String relativePath = getServletContext().getRealPath("");
-            System.out.println("relativePath = " + relativePath);
-
-            // obtains ServletContext
-            ServletContext context = getServletContext();
-
-            // gets MIME type of the file
-            String mimeType = context.getMimeType(filePath);
-            if (mimeType == null) {
-                // set to binary type if MIME mapping not found
-                mimeType = "application/octet-stream";
-            }
-            System.out.println("MIME type: " + mimeType);
-
-            // modifies response
-            response.setContentType(mimeType);
-            response.setContentLength((int) downloadFile.length());
-
-            // forces download
-            String headerKey = "Content-Disposition";
-            String headerValue = String.format("attachment; filename=\"%s\"", downloadFile.getName());
-            response.setHeader(headerKey, headerValue);
-
-            // obtains response's output stream
-            OutputStream outStream = response.getOutputStream();
-
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-
-            while ((bytesRead = inStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, bytesRead);
-            }
-
-            inStream.close();
-            outStream.close();
+            out.print(array);
         }
     }
 

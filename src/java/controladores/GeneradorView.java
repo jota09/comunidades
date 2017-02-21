@@ -12,6 +12,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,19 +29,21 @@ import persistencia.entidades.Usuario;
 import persistencia.entidades.Vista;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
 
 @WebServlet(urlPatterns = {"/"})
 public class GeneradorView extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         String view = (String) session.getAttribute("view");//getAttribute("view");
         if (view == null) {
             view = request.getParameter("view");
         }
-        if(view!=null && !view.equals("validacomunidad.html")){
+        if (view != null && !view.equals("validacomunidad.html")) {
             session.removeAttribute("view");
         }
         try (PrintWriter out = response.getWriter()) {
@@ -85,7 +89,7 @@ public class GeneradorView extends HttpServlet {
                 Usuario user = (Usuario) session.getAttribute("user");
                 MenuFachada menFac = new MenuFachada();
                 List<Menu> menus = menFac.getListObject(user.getPerfilCodigo());
-                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));     
+                pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
                 //pagina =pagina.replace("<@logo@>","<img style='width:40px;height:40px' alt='Brand' class='img-circle' src='"+LecturaConfig.getValue("rutaImg")+"logo/"+user.getPerfilCodigo().getComunidad().getCodigo()+".png'");
             } else {
                 Perfil pf = new Perfil();
@@ -113,6 +117,13 @@ public class GeneradorView extends HttpServlet {
                 pagina = pagina.replace("<@rangoPagina@>", html);
             }
             out.print(pagina);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
     }
 
@@ -127,7 +138,7 @@ public class GeneradorView extends HttpServlet {
             }
             processRequest(request, response);
         } else {
-            if (request.getParameter("view") == null && request.getSession().getAttribute("view")==null) {
+            if (request.getParameter("view") == null && request.getSession().getAttribute("view") == null) {
                 request.getSession().setAttribute("view", "menuprincipal.html");
             }
             processRequest(request, response);

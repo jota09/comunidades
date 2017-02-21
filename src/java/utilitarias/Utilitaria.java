@@ -5,12 +5,18 @@
  */
 package utilitarias;
 
+import fachada.ErrorFachada;
+import fachada.EstructuraFachada;
+import fachada.GestionFachada;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.Menu;
+import persistencia.entidades.Error;
+import persistencia.entidades.Estructura;
 
 /**
  *
@@ -129,41 +135,60 @@ public class Utilitaria {
         DecimalFormat num = new DecimalFormat("#,###");
         return num.format(valor);
     }
-    
-    public static String filtros(String busqueda, String tipoDato, String campo, String naturaleza, String valor, String valor2, String condicion){
-        if(naturaleza.equals("like")){
-            busqueda += campo+" like '" + valor + "%',";
+
+    public static String filtros(String busqueda, String tipoDato, String campo, String naturaleza, String valor, String valor2, String condicion) {
+        if (naturaleza.equals("like")) {
+            busqueda += campo + " like '" + valor + "%',";
         }
-        if(naturaleza.equals("where")){
-            if(tipoDato.equals("int") || tipoDato.equals("date")){
-                if(condicion.equals("igual")){
-                    busqueda += campo+" = "+valor+",";
+        if (naturaleza.equals("where")) {
+            if (tipoDato.equals("int") || tipoDato.equals("date")) {
+                if (condicion.equals("igual")) {
+                    busqueda += campo + " = " + valor + ",";
                 }
-                if(condicion.equals("mayor")){
-                    busqueda += campo+" > "+valor+",";
+                if (condicion.equals("mayor")) {
+                    busqueda += campo + " > " + valor + ",";
                 }
-                if(condicion.equals("menor")){
-                    busqueda += campo+" < "+valor+",";                    
+                if (condicion.equals("menor")) {
+                    busqueda += campo + " < " + valor + ",";
                 }
-                if(condicion.equals("mayorIgual")){
-                    busqueda += campo+" >= "+valor+",";
+                if (condicion.equals("mayorIgual")) {
+                    busqueda += campo + " >= " + valor + ",";
                 }
-                if(condicion.equals("menorIgual")){
-                    busqueda += campo+" <= "+valor+",";                    
+                if (condicion.equals("menorIgual")) {
+                    busqueda += campo + " <= " + valor + ",";
                 }
-                if(condicion.equals("rango")){
-                    busqueda += campo+" between "+valor+" and "+valor2+",";
+                if (condicion.equals("rango")) {
+                    busqueda += campo + " between " + valor + " and " + valor2 + ",";
                 }
             }
-            if(tipoDato.equals("char")){
-                busqueda += campo+" = '"+valor+"'";
+            if (tipoDato.equals("char")) {
+                busqueda += campo + " = '" + valor + "'";
             }
         }
-        if(naturaleza.equals("order")){
-            busqueda += "/ORDER BY " + campo + " "+valor;
+        if (naturaleza.equals("order")) {
+            busqueda += "/ORDER BY " + campo + " " + valor;
         }
         return busqueda;
     }
-    
+
+    public static void escribeError(Error error) {
+        Calendar calendar = Calendar.getInstance();
+        GestionFachada errorFachada = new ErrorFachada();
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        errorFachada.insertObject(error);
+        String fecha = calendar.getTime().toString();
+        String mensaje = "Fecha:" + fecha + " Tipo_Error:" + error.getTipoError().getCodigo()
+                + " Descripcion:" + error.getDescripcion() + " Clase:" + error.getClase() + " Metodo:" + error.getMetodo();
+        String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
+        int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
+        String correo = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
+        String usuario = ((Estructura) estructuraFachada.getObject(new Estructura("usuarioMailSoporte"))).getValor();
+        String password = ((Estructura) estructuraFachada.getObject(new Estructura("passCorreoSoporte"))).getValor();
+        String serverSSL = ((Estructura) estructuraFachada.getObject(new Estructura("sslSMTP"))).getValor();
+        String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
+        String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
+        ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
+        envioMail.sendEmail(mensaje, "Error " + fecha, correo);
+    }
 
 }

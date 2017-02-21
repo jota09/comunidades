@@ -27,7 +27,8 @@ public class ErrorFachada implements GestionFachada {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO errorDAO = new ErrorDAO();
+        return errorDAO.insertObject(object);
     }
 
     @Override

@@ -20,9 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Atributo;
+import persistencia.entidades.TipoError;
 import persistencia.entidades.Vista;
 import persistencia.entidades.VistaAtributo;
 import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
 
 /**
  *
@@ -40,55 +42,63 @@ public class AtributoControlador extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        int op = Integer.parseInt(request.getParameter("op"));
-        switch (op) {
-            case 1: {
-                getAtributos(request, response);
-                break;
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            int op = Integer.parseInt(request.getParameter("op"));
+            switch (op) {
+                case 1: {
+                    getAtributos(request, response);
+                    break;
+                }
+                case 2: {
+                    getVistaAtributo(request, response);
+                    break;
+                }
+                case 3: {
+                    getVistas(request, response);
+                    break;
+                }
+                case 4: {
+                    insertarAtributo(request, response);
+                    break;
+                }
+                case 5: {
+                    eliminarAtributo(request, response);
+                    break;
+                }
+                case 6: {
+                    asociarAtributoVista(request, response);
+                    break;
+                }
+                case 7: {
+                    elimiarVistaAtributo(request, response);
+                    break;
+                }
+                case 8: {
+                    getAtributosConCondicion(request, response);
+                    break;
+                }
+                case 9: {
+                    getAtributoVistaConCondicion(request, response);
+                    break;
+                }
+                case 10: {
+                    getAtributoConPaginacion(request, response);
+                    break;
+                }
+                case 11: {
+                    getVistaAtributoConPaginacion(request, response);
+                    break;
+                }
             }
-            case 2: {
-                getVistaAtributo(request, response);
-                break;
-            }
-            case 3: {
-                getVistas(request, response);
-                break;
-            }
-            case 4: {
-                insertarAtributo(request, response);
-                break;
-            }
-            case 5: {
-                eliminarAtributo(request, response);
-                break;
-            }
-            case 6: {
-                asociarAtributoVista(request, response);
-                break;
-            }
-            case 7: {
-                elimiarVistaAtributo(request, response);
-                break;
-            }
-            case 8: {
-                getAtributosConCondicion(request, response);
-                break;
-            }
-            case 9: {
-                getAtributoVistaConCondicion(request, response);
-                break;
-            }
-            case 10: {
-                getAtributoConPaginacion(request, response);
-                break;
-            }
-            case 11: {
-                getVistaAtributoConPaginacion(request, response);
-                break;
-            }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
 
     }

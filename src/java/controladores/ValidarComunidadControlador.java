@@ -20,6 +20,9 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.Usuario;
 import utilitarias.LecturaConfig;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -38,18 +41,27 @@ public class ValidarComunidadControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        int op = Integer.parseInt(request.getParameter("op"));
-        switch (op) {
-            case 1: {
-                getPerfiles(request, response);
-                break;
+            throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            int op = Integer.parseInt(request.getParameter("op"));
+            switch (op) {
+                case 1: {
+                    getPerfiles(request, response);
+                    break;
+                }
+                case 2: {
+                    redirigirAComunidad(request, response);
+                    break;
+                }
             }
-            case 2: {
-                redirigirAComunidad(request, response);
-                break;
-            }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
     }
 
@@ -85,7 +97,7 @@ public class ValidarComunidadControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             out.print(array);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
