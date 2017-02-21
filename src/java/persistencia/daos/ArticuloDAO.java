@@ -366,14 +366,17 @@ public class ArticuloDAO implements GestionDAO {
                     + "    WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=?"
                     + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
-                    + "    OR art.descripcion LIKE ?) and art.COMUNIDAD_CODIGO = ?";
+                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_publicacion LIKE ?) and art.COMUNIDAD_CODIGO = ?";
             System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
-            pS.setString(3, articulo.getBusqueda() + "%");
-            pS.setString(4, articulo.getBusqueda() + "%");
-            pS.setInt(5, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
+            pS.setString(3, "%" + articulo.getBusqueda() + "%");
+            pS.setString(4, "%" + articulo.getBusqueda() + "%");
+            pS.setString(5, "%" + articulo.getBusqueda() + "%");
+            pS.setString(6, "%" + articulo.getBusqueda() + "%");
+            pS.setString(7, "%" + articulo.getBusqueda() + "%");
+            pS.setInt(8, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();

@@ -494,7 +494,7 @@ public class ClasificadoControlador extends HttpServlet {
                 jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
                 jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
                 jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado", art.getEstado().getNombre());
                 jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
                 if (art.getFechaPublicacion() == null) {
                     jsonObj.put("fechaPublicacion", 0);
@@ -538,7 +538,7 @@ public class ClasificadoControlador extends HttpServlet {
                     jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
                     jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
                     jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                    jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                    jsonObj.put("nombreEstado", art.getEstado().getNombre());
                     jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
                     jsonArray.add(jsonObj);
                 }
@@ -686,7 +686,7 @@ public class ClasificadoControlador extends HttpServlet {
                 jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
                 jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
                 jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado", art.getEstado().getNombre());
                 jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
                 if (art.getFechaPublicacion() == null) {
                     jsonObj.put("fechaPublicacion", 0);
@@ -724,7 +724,7 @@ public class ClasificadoControlador extends HttpServlet {
                     jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
                     jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
                     jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                    jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                    jsonObj.put("nombreEstado", art.getEstado().getNombre());
                     jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
                     if (art.getFechaPublicacion() == null) {
                         jsonObj.put("fechaPublicacion", 0);
