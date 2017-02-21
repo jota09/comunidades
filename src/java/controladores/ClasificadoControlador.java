@@ -115,6 +115,15 @@ public class ClasificadoControlador extends HttpServlet {
                     case 17:
                         devolverArticulo(request, response);
                         break;
+                    case 18:
+                        buscarRegistros(request, response);
+                        break;
+                    case 19:
+                        filtrarCategoriasAdmin(request, response);
+                        break;
+                    case 20:
+                        buscarRegistrosAdmin(request, response);
+                        break;
                 }
             }
         } catch (IOException ex) {
@@ -487,7 +496,11 @@ public class ClasificadoControlador extends HttpServlet {
                 jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
                 jsonObj.put("nombreEstado", art.getCategoria().getNombre());
                 jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
-                jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                if (art.getFechaPublicacion() == null) {
+                    jsonObj.put("fechaPublicacion", 0);
+                } else {
+                    jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                }
                 jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
@@ -574,7 +587,54 @@ public class ClasificadoControlador extends HttpServlet {
                 jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
                 jsonObj.put("nombreEstado", art.getCategoria().getNombre());
                 jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                if (art.getFechaPublicacion() == null) {
+                    jsonObj.put("fechaPublicacion", 0);
+                } else {
+                    jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                }
                 jsonArray.add(jsonObj);
+            }
+            out.print(jsonArray);
+        }
+    }
+
+    private void filtrarCategoriasAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            ArticuloFachada artFachada = new ArticuloFachada();
+            GestionFachada estFach = new EstructuraFachada();
+            TipoArticulo tipArt = new TipoArticulo();
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
+            Articulo articulo = new Articulo();
+            articulo.setTipoArticulo(tipArt);
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            if (request.getParameter("cat") != null) {
+                if (!request.getParameter("cat").equals("")) {
+                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
+                }
+            }
+            articulo.setBusqueda("%");
+            List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
+            JSONArray jsonArray = new JSONArray();
+            String ref3 = "articuloEstadoInicial";
+            Estructura estruc3 = new Estructura(ref3);
+            estruc3 = (Estructura) estFach.getObject(estruc3);
+            for (Articulo art : listArticulo) {
+                if (art.getFechaPublicacion() == null && art.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
+                    JSONObject jsonObj = new JSONObject();
+                    jsonObj.put("codigo", art.getCodigo());
+                    jsonObj.put("titulo", art.getTitulo());
+                    jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
+                    jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
+                    jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
+                    jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                    jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                    if (art.getFechaPublicacion() == null) {
+                        jsonObj.put("fechaPublicacion", 0);
+                    } else {
+                        jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                    }
+                    jsonArray.add(jsonObj);
+                }
             }
             out.print(jsonArray);
         }
@@ -603,6 +663,78 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("descripcion", art.getDescripcion());
             obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
             out.print(obj);
+        }
+    }
+
+    private void buscarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tipArt = new TipoArticulo();
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
+            Articulo articulo = new Articulo();
+            articulo.setTipoArticulo(tipArt);
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            if (request.getParameter("buscar") != null) {
+                articulo.setBusqueda(request.getParameter("buscar"));
+            }
+            List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
+            JSONArray jsonArray = new JSONArray();
+            for (Articulo art : listArticulo) {
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo", art.getTitulo());
+                jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                if (art.getFechaPublicacion() == null) {
+                    jsonObj.put("fechaPublicacion", 0);
+                } else {
+                    jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                }
+                jsonArray.add(jsonObj);
+            }
+            out.print(jsonArray);
+        }
+    }
+
+    private void buscarRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            ArticuloFachada artFachada = new ArticuloFachada();
+            GestionFachada estFach = new EstructuraFachada();
+            TipoArticulo tipArt = new TipoArticulo();
+            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
+            Articulo articulo = new Articulo();
+            articulo.setTipoArticulo(tipArt);
+            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            if (request.getParameter("buscar") != null) {
+                articulo.setBusqueda(request.getParameter("buscar"));
+            }
+            List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
+            JSONArray jsonArray = new JSONArray();
+            String ref3 = "articuloEstadoInicial";
+            Estructura estruc3 = new Estructura(ref3);
+            estruc3 = (Estructura) estFach.getObject(estruc3);
+            for (Articulo art : listArticulo) {
+                if (art.getFechaPublicacion() == null && art.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
+                    JSONObject jsonObj = new JSONObject();
+                    jsonObj.put("codigo", art.getCodigo());
+                    jsonObj.put("titulo", art.getTitulo());
+                    jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
+                    jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
+                    jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
+                    jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                    jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                    if (art.getFechaPublicacion() == null) {
+                        jsonObj.put("fechaPublicacion", 0);
+                    } else {
+                        jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                    }
+                    jsonArray.add(jsonObj);
+                }
+            }
+            out.print(jsonArray);
         }
     }
 

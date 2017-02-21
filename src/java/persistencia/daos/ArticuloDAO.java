@@ -276,7 +276,6 @@ public class ArticuloDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
-            System.out.println("CONSULTA:SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=" + condicionPaginado.getTipo() + " and usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo());
             pS.setInt(1, condicionPaginado.getTipo());
             pS.setInt(2, condicionPaginado.getUser().getCodigo());
             pS.setInt(3, condicionPaginado.getComunidad().getCodigo());
@@ -367,12 +366,14 @@ public class ArticuloDAO implements GestionDAO {
                     + "    WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=?"
                     + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
-                    + "    OR art.descripcion LIKE ?)";
+                    + "    OR art.descripcion LIKE ?) and art.COMUNIDAD_CODIGO = ?";
+            System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
             pS.setString(3, articulo.getBusqueda() + "%");
             pS.setString(4, articulo.getBusqueda() + "%");
+            pS.setInt(5, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
@@ -484,8 +485,6 @@ public class ArticuloDAO implements GestionDAO {
             } else {
                 pS.setInt(3, articulo.getTipoArticulo().getCodigo());
             }
-            System.out.println(query);
-            System.out.println(articulo.getTipoArticulo().getCodigo()+" "+articulo.getUsuario().getCodigo()+" "+articulo.getTipoArticulo().getCodigo()+" "+articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
