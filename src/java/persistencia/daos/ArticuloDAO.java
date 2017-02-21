@@ -94,6 +94,7 @@ public class ArticuloDAO implements GestionDAO {
                 Articulo art2 = new Articulo();
                 art2.setCodigo(rS.getInt("CODIGO"));
                 art2.setTitulo(rS.getString("TITULO"));
+                art2.setFechaPublicacion(rS.getDate("FECHA_PUBLICACION"));
                 listArt.add(art2);
             }
             rS.close();
@@ -113,6 +114,7 @@ public class ArticuloDAO implements GestionDAO {
         int numfilas = 0;
         try {
             con = ConexionBD.obtenerConexion();
+            if(art.getTitulo()!=null){
             String sql = "UPDATE articulo SET usuario_codigo=?, titulo=?, descripcion=?,"
                     + "fecha_publicacion=?, precio=?,fecha_fin_publicacion=?, prioridad_codigo=?,"
                     + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=?,visibilidad=? "
@@ -133,6 +135,16 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(13, art.getComunidad().getCodigo());
             numfilas = pS.executeUpdate();
             pS.close();
+            }
+            else{
+                String sql = "UPDATE articulo SET fecha_publicacion=CURDATE(), estados_codigo=?"
+                    + " WHERE codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, art.getEstado().getCodigo());
+            pS.setInt(2, art.getCodigo());
+            numfilas = pS.executeUpdate();
+            pS.close();
+            }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ArticuloDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
