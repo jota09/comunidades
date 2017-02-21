@@ -7,20 +7,32 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
+import utilitarias.Utilitaria;
 
 @WebServlet(name = "CerrarSesion", urlPatterns = {"/CerrarSesion"})
 public class CerrarSesion extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession sesion = request.getSession();//el constructor con false permite que no vuelva a crear el obj session
-        if (sesion.getAttribute("user") != null) {
-            sesion.removeAttribute("user");
+            throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            HttpSession sesion = request.getSession();//el constructor con false permite que no vuelva a crear el obj session
+            if (sesion.getAttribute("user") != null) {
+                sesion.removeAttribute("user");
+            }
+            sesion.invalidate();
+            //request.getServletContext().getRequestDispatcher("menuprincipal.jsp").forward(request, response);//redirige con los valores de request y response y mantiene la url
+            response.sendRedirect("/Comunidades");//redirige totalmente a la pagina
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
-        sesion.invalidate();
-        //request.getServletContext().getRequestDispatcher("menuprincipal.jsp").forward(request, response);//redirige con los valores de request y response y mantiene la url
-        response.sendRedirect("/Comunidades");//redirige totalmente a la pagina
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -19,6 +19,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Estructura;
 import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
 
 /**
  *
@@ -37,29 +39,38 @@ public class EstructuraControlador extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        int op = Integer.parseInt(request.getParameter("op"));
-        switch (op) {
-            case 1: {
-                getListEstructura(request, response);
-                break;
+            throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            int op = Integer.parseInt(request.getParameter("op"));
+            switch (op) {
+                case 1: {
+                    getListEstructura(request, response);
+                    break;
+                }
+                case 2: {
+                    insertarParametro(request, response);
+                    break;
+                }
+                case 3: {
+                    getParametro(request, response);
+                    break;
+                }
+                case 4: {
+                    eliminarParametro(request, response);
+                    break;
+                }
+                case 5:
+                    buscarPorCondicion(request, response);
+                    break;
             }
-            case 2: {
-                insertarParametro(request, response);
-                break;
-            }
-            case 3: {
-                getParametro(request, response);
-                break;
-            }
-            case 4: {
-                eliminarParametro(request, response);
-                break;
-            }
-            case 5:
-                buscarPorCondicion(request, response);
-                break;
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
 
     }

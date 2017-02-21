@@ -15,8 +15,6 @@ import java.io.PrintWriter;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.BadPaddingException;
@@ -35,6 +33,8 @@ import persistencia.entidades.Usuario;
 import utilitarias.Cifrar;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
 
 /**
  *
@@ -53,84 +53,116 @@ public class Inicio extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            try {
-                String clave = LecturaConfig.getValue("key");
-                //out.println("esto es clave2:"+clave);
-                String cifrado = Cifrar.setEncryp(clave, request.getParameter("password"));
-                String username = request.getParameter("username");
-                Usuario usr = new Usuario();
-                int op = validadorCampos(username);
-                switch (op) {
-                    case 1:
-                        usr.setCodigoDocumento(Integer.parseInt(username));
-                        break;
-                    case 2:
-                        usr.setCorreo(username);
-                        break;
-                    case 3:
-                        usr.setUserName(username);
-                        break;
-                }
-                SeguridadUsuario sgUsr = new SeguridadUsuario();
-                sgUsr.setContrasena(cifrado);
-                sgUsr.setIpUltimaSesion(request.getRemoteAddr());
-                usr.setListaSeguridad(sgUsr);
-                SeguridadFachada sgdadFach = new SeguridadFachada();
-                sgdadFach.updateObject(sgUsr);
-                
-                UsuarioFachada usrFachada = new UsuarioFachada();
-                usr = (Usuario) usrFachada.getObject(usr);
-                //out.println("nombre:"+usr.getNombres());
-                if (usr.getNombres() != null) {
-                    HttpSession sesion = request.getSession(true);
-                    
-                    GestionFachada estructuraFachada = new EstructuraFachada();
-                    GestionFachada usuarioPerfilFachada = new UsuarioPerfilFachada();
-                    List<Perfil> perfiles = usuarioPerfilFachada.getListObject(usr);
-                    if (perfiles.size() == 1) {
-                        usr.setPerfilCodigo(perfiles.get(0));
-                        request.getSession().setAttribute("view", "menuprincipal.html");
-                    }else{
-                        request.getSession().setAttribute("perfiles",perfiles);
-                        request.getSession().setAttribute("view", "validacomunidad.html");
-                    }
-                    sesion.setAttribute("user", usr);
-                    Estructura estructura = new Estructura();
-                    estructura.setReferencia("tiempoSesion");
-                    estructuraFachada.getObject(estructura);
-                    sesion.setMaxInactiveInterval(Integer.parseInt(estructura.getValor()));
-                    response.sendRedirect("/Comunidades");
-                    //crear sesion, validar perfil y redireccionar a menu
-                } else {
-                    HttpSession sesion = request.getSession();
-                    if (op == 1) {
-                        sesion.setAttribute("message", Utilitaria.createAlert("Error", "Documento no Valido", "danger"));
-                        response.sendRedirect("/Comunidades");
-                    } else if (op == 2) {
-                        sesion.setAttribute("message", Utilitaria.createAlert("Error", "Correo no Valido", "danger"));
-                        response.sendRedirect("/Comunidades");
-                    } else if (op == 3) {
-                        sesion.setAttribute("message", Utilitaria.createAlert("Error", "Usuario no Valido", "danger"));
-                        response.sendRedirect("/Comunidades");
-                    }
-                }
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NoSuchPaddingException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvalidKeyException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalBlockSizeException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (BadPaddingException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+
+            String clave = LecturaConfig.getValue("key");
+            //out.println("esto es clave2:"+clave);
+            String cifrado = Cifrar.setEncryp(clave, request.getParameter("password"));
+            String username = request.getParameter("username");
+            Usuario usr = new Usuario();
+            int op = validadorCampos(username);
+            switch (op) {
+                case 1:
+                    usr.setCodigoDocumento(Integer.parseInt(username));
+                    break;
+                case 2:
+                    usr.setCorreo(username);
+                    break;
+                case 3:
+                    usr.setUserName(username);
+                    break;
             }
+            SeguridadUsuario sgUsr = new SeguridadUsuario();
+            sgUsr.setContrasena(cifrado);
+            sgUsr.setIpUltimaSesion(request.getRemoteAddr());
+            usr.setListaSeguridad(sgUsr);
+            SeguridadFachada sgdadFach = new SeguridadFachada();
+            sgdadFach.updateObject(sgUsr);
+
+            UsuarioFachada usrFachada = new UsuarioFachada();
+            usr = (Usuario) usrFachada.getObject(usr);
+            //out.println("nombre:"+usr.getNombres());
+            if (usr.getNombres() != null) {
+                HttpSession sesion = request.getSession(true);
+
+                GestionFachada estructuraFachada = new EstructuraFachada();
+                GestionFachada usuarioPerfilFachada = new UsuarioPerfilFachada();
+                List<Perfil> perfiles = usuarioPerfilFachada.getListObject(usr);
+                if (perfiles.size() == 1) {
+                    usr.setPerfilCodigo(perfiles.get(0));
+                    request.getSession().setAttribute("view", "menuprincipal.html");
+                } else {
+                    request.getSession().setAttribute("perfiles", perfiles);
+                    request.getSession().setAttribute("view", "validacomunidad.html");
+                }
+                sesion.setAttribute("user", usr);
+                Estructura estructura = new Estructura();
+                estructura.setReferencia("tiempoSesion");
+                estructuraFachada.getObject(estructura);
+                sesion.setMaxInactiveInterval(Integer.parseInt(estructura.getValor()));
+                response.sendRedirect("/Comunidades");
+                //crear sesion, validar perfil y redireccionar a menu
+            } else {
+                HttpSession sesion = request.getSession();
+                if (op == 1) {
+                    sesion.setAttribute("message", Utilitaria.createAlert("Error", "Documento no Valido", "danger"));
+                    response.sendRedirect("/Comunidades");
+                } else if (op == 2) {
+                    sesion.setAttribute("message", Utilitaria.createAlert("Error", "Correo no Valido", "danger"));
+                    response.sendRedirect("/Comunidades");
+                } else if (op == 3) {
+                    sesion.setAttribute("message", Utilitaria.createAlert("Error", "Usuario no Valido", "danger"));
+                    response.sendRedirect("/Comunidades");
+                }
+            }
+        } catch (NoSuchAlgorithmException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(7));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (NoSuchPaddingException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(8));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (InvalidKeyException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(9));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IllegalBlockSizeException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(10));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (BadPaddingException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(11));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
+
     }
-    
+
     public int validadorCampos(String campo) {
         int validador = 0;
         Pattern pat = Pattern.compile("^\\d+$");

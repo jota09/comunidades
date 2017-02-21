@@ -23,6 +23,8 @@ import persistencia.entidades.Menu;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.PerfilMenu;
 import utilitarias.Utilitaria;
+import persistencia.entidades.Error;
+import persistencia.entidades.TipoError;
 
 /**
  *
@@ -32,26 +34,35 @@ import utilitarias.Utilitaria;
 public class GestionPermisosControlador extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        int op = Integer.parseInt(request.getParameter("op"));
-        switch (op) {
-            case 1: {
-                getPerfiles(request, response);
-                break;
+            throws ServletException {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            int op = Integer.parseInt(request.getParameter("op"));
+            switch (op) {
+                case 1: {
+                    getPerfiles(request, response);
+                    break;
+                }
+                case 2: {
+                    getPermisos(request, response);
+                    break;
+                }
+                case 3: {
+                    validaPermisos(request, response);
+                    break;
+                }
+                case 4: {
+                    cambiarPermisos(request, response);
+                    break;
+                }
             }
-            case 2: {
-                getPermisos(request, response);
-                break;
-            }
-            case 3: {
-                validaPermisos(request, response);
-                break;
-            }
-            case 4: {
-                cambiarPermisos(request, response);
-                break;
-            }
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
     }
 
@@ -101,7 +112,7 @@ public class GestionPermisosControlador extends HttpServlet {
             JSONObject perfil = new JSONObject();
             perfil.put("codigo", p.getCodigo());
             perfil.put("nombre", p.getNombre());
-            perfil.put("nombreComunidad",p.getComunidad().getNombre());
+            perfil.put("nombreComunidad", p.getComunidad().getNombre());
             arrayPerfil.add(perfil);
         }
         try (PrintWriter out = response.getWriter()) {
