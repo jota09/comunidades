@@ -330,12 +330,17 @@ public class ClasificadoControlador extends HttpServlet {
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(art);
             JSONArray array = new JSONArray();
+            String ref3 = "articuloEstadoAprobado";
+            Estructura estruc3 = new Estructura(ref3);
+            estruc3 = (Estructura) estrucFachada.getObject(estruc3);            
             for (Articulo art2 : listArticulo) {
-                JSONObject obj = new JSONObject();
-                obj.put("codigo", art2.getCodigo());
-                obj.put("titulo", art2.getTitulo());
-                obj.put("precio", Utilitaria.conversionNatural(art2.getPrecio()));
-                array.add(obj);
+                if (art2.getFechaPublicacion() != null && art2.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("codigo", art2.getCodigo());
+                    obj.put("titulo", art2.getTitulo());
+                    obj.put("precio", Utilitaria.conversionNatural(art2.getPrecio()));
+                    array.add(obj);
+                }
             }
             out.print(array);
         }
