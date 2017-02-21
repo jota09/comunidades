@@ -110,6 +110,7 @@ public class ArticuloDAO implements GestionDAO {
                 Articulo art2 = new Articulo();
                 art2.setCodigo(rS.getInt("CODIGO"));
                 art2.setTitulo(rS.getString("TITULO"));
+                art2.setFechaPublicacion(rS.getDate("FECHA_PUBLICACION"));
                 listArt.add(art2);
             }
             rS.close();
@@ -148,6 +149,7 @@ public class ArticuloDAO implements GestionDAO {
         int numfilas = 0;
         try {
             con = ConexionBD.obtenerConexion();
+            if(art.getTitulo()!=null){
             String sql = "UPDATE articulo SET usuario_codigo=?, titulo=?, descripcion=?,"
                     + "fecha_publicacion=?, precio=?,fecha_fin_publicacion=?, prioridad_codigo=?,"
                     + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=?,visibilidad=? "
@@ -168,6 +170,16 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(13, art.getComunidad().getCodigo());
             numfilas = pS.executeUpdate();
             pS.close();
+            }
+            else{
+                String sql = "UPDATE articulo SET fecha_publicacion=CURDATE(), estados_codigo=?"
+                    + " WHERE codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, art.getEstado().getCodigo());
+            pS.setInt(2, art.getCodigo());
+            numfilas = pS.executeUpdate();
+            pS.close();
+            }
         } catch (ClassNotFoundException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());
@@ -264,7 +276,6 @@ public class ArticuloDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
-            System.out.println("CONSULTA:SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=" + condicionPaginado.getTipo() + " and usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo());
             pS.setInt(1, condicionPaginado.getTipo());
             pS.setInt(2, condicionPaginado.getUser().getCodigo());
             pS.setInt(3, condicionPaginado.getComunidad().getCodigo());
@@ -355,12 +366,17 @@ public class ArticuloDAO implements GestionDAO {
                     + "    WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=?"
                     + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
-                    + "    OR art.descripcion LIKE ?)";
+                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_publicacion LIKE ?) and art.COMUNIDAD_CODIGO = ?";
+            System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
-            pS.setString(3, articulo.getBusqueda() + "%");
-            pS.setString(4, articulo.getBusqueda() + "%");
+            pS.setString(3, "%" + articulo.getBusqueda() + "%");
+            pS.setString(4, "%" + articulo.getBusqueda() + "%");
+            pS.setString(5, "%" + articulo.getBusqueda() + "%");
+            pS.setString(6, "%" + articulo.getBusqueda() + "%");
+            pS.setString(7, "%" + articulo.getBusqueda() + "%");
+            pS.setInt(8, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
@@ -438,21 +454,21 @@ public class ArticuloDAO implements GestionDAO {
                         for (int i = 0; i < campos.length; i++) {
                             condicionArmada += " and " + campos[i];
                         }
-                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? )) "+ naturalezaSesion;
+                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? AND art.usuario_codigo=? )) "+ naturalezaSesion;
 
                         busqueda += separarCondiciones[1].replace("/", " ") + " ";
                     } else {
-                        busqueda = " OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=?  )) "+naturalezaSesion+" " + separarCondiciones[1].replace("/", " ") + " ";
+                        busqueda = " OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=? AND art.usuario_codigo=? )) "+naturalezaSesion+" " + separarCondiciones[1].replace("/", " ") + " ";
                     }
                 } else {
                     String[] campos = articulo.getBusqueda().split(",");
                     for (int i = 0; i < campos.length; i++) {
                         condicionArmada += " and " + campos[i];
                     }
-                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=?  )) "+naturalezaSesion;
+                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? AND art.usuario_codigo=? )) "+naturalezaSesion;
                 }
             } else {
-                busqueda = "OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=? )) "+naturalezaSesion+" ORDER BY FECHA_PUBLICACION DESC ";
+                busqueda = "OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=? AND art.usuario_codigo=?)) "+naturalezaSesion+" ORDER BY FECHA_PUBLICACION DESC ";
             }
             String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
                     + "artEstado.codigo,artEstado.nombre nombreEstado"
@@ -460,20 +476,21 @@ public class ArticuloDAO implements GestionDAO {
                     + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE ((art.tipo_articulo_codigo=? AND art.usuario_codigo=?) "
+                    + "WHERE ((art.tipo_articulo_codigo=?) "
                     + busqueda + " "
                     + rango;
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
-            pS.setInt(2, articulo.getUsuario().getCodigo());
             if (Integer.parseInt(estruc.getValor()) != articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo()) {
-                pS.setInt(3, articulo.getTipoArticulo().getCodigo());
+                pS.setInt(2, articulo.getTipoArticulo().getCodigo());
+                pS.setInt(3, articulo.getUsuario().getCodigo());
                 pS.setInt(4, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             } else {
+                pS.setInt(2, articulo.getUsuario().getCodigo());
                 pS.setInt(3, articulo.getTipoArticulo().getCodigo());
             }
             System.out.println(query);
-            System.out.println(articulo.getTipoArticulo().getCodigo()+" "+articulo.getUsuario().getCodigo()+" "+articulo.getTipoArticulo().getCodigo()+" "+articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
+            System.out.println(articulo.getTipoArticulo().getCodigo()+ " "+ articulo.getUsuario().getCodigo() + " "+articulo.getTipoArticulo().getCodigo()+ " "+articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
