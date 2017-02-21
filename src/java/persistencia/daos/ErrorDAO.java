@@ -46,7 +46,7 @@ public class ErrorDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select er.codigo,er.clase,er.metodo,er.fecha,ter.codigo,ter.tipo,er.descripcion from error er join tipo_error ter"
-                    + " on er.tipo_error_codigo=ter.codigo order by fecha asc ";
+                    + " on er.tipo_error_codigo=ter.codigo order by fecha desc ";
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

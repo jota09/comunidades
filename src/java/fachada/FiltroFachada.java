@@ -28,12 +28,14 @@ public class FiltroFachada implements GestionFachada {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO filtroDAO = new FiltroDAO();
+        return filtroDAO.insertObject(object);
     }
 
     @Override
     public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO filtroDAO = new FiltroDAO();
+        return filtroDAO.getListObject(object);
     }
 
     @Override
