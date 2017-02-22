@@ -6,14 +6,14 @@
 package fachada;
 
 import java.util.List;
-import persistencia.daos.FiltroDAO;
 import persistencia.daos.GestionDAO;
+import persistencia.daos.OpcionesFiltroDAO;
 
 /**
  *
  * @author manuel.alcala
  */
-public class FiltroFachada implements GestionFachada {
+public class OpcionesFiltroFachada implements GestionFachada {
 
     @Override
     public int getCount(Object object) {
@@ -22,20 +22,18 @@ public class FiltroFachada implements GestionFachada {
 
     @Override
     public Object getObject(Object object) {
-        GestionDAO filtroDAO = new FiltroDAO();
-        return filtroDAO.getListObject(object);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int insertObject(Object object) {
-        GestionDAO filtroDAO = new FiltroDAO();
-        return filtroDAO.insertObject(object);
+        GestionDAO opcionesDAO=new OpcionesFiltroDAO();
+        return opcionesDAO.insertObject(object);
     }
 
     @Override
     public List getListObject(Object object) {
-        GestionDAO filtroDAO = new FiltroDAO();
-        return filtroDAO.getListObject(object);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -62,5 +60,5 @@ public class FiltroFachada implements GestionFachada {
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
 }

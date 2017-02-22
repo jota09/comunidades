@@ -4,9 +4,12 @@ import fachada.CondicionesFiltroFachada;
 import fachada.FiltroFachada;
 import fachada.GestionFachada;
 import fachada.MetaDataFachada;
+import fachada.OpcionesFiltroFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,10 +17,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import persistencia.entidades.CondicionesFiltro;
 import persistencia.entidades.Filtro;
 import persistencia.entidades.MetaData;
 import persistencia.entidades.Error;
+import persistencia.entidades.OpcionesFiltro;
 import persistencia.entidades.TipoError;
 import utilitarias.Utilitaria;
 
@@ -61,6 +68,11 @@ public class GestionFiltrosControlador extends HttpServlet {
                 }
                 case 5: {
                     getCondicionFiltro(request, response);
+                    break;
+                }
+                case 6: {
+                    guardarFiltro(request, response);
+                    break;
                 }
 
             }
@@ -71,6 +83,8 @@ public class GestionFiltrosControlador extends HttpServlet {
             error.setTipoError(new TipoError(3));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);;
+        } catch (ParseException ex) {
+            Logger.getLogger(GestionFiltrosControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -186,6 +200,32 @@ public class GestionFiltrosControlador extends HttpServlet {
         condicionFachada.getObject(condiciones);
         try (PrintWriter out = response.getWriter()) {
             out.print(condiciones.getParametros());
+        }
+    }
+
+    private void guardarFiltro(HttpServletRequest request, HttpServletResponse response) throws ParseException {
+
+        JSONParser parser = new JSONParser();
+        GestionFachada filtroFachada = new FiltroFachada();
+        GestionFachada opcionesFachada = new OpcionesFiltroFachada();
+        JSONArray array = (JSONArray) parser.parse(request.getParameter("opciones"));
+        String nombre = request.getParameter("nombre");
+        String condicion = request.getParameter("condicion");
+        String campo = request.getParameter("campo");
+        String entidad = request.getParameter("entidad");
+        Filtro filtro = new Filtro();
+        filtro.setTabla(entidad);
+        filtro.setCondicionFiltro(new CondicionesFiltro(Integer.parseInt(condicion)));
+        filtro.setCampo(campo);
+        filtro.setNombre(nombre);
+        filtroFachada.insertObject(filtro);
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject obj = (JSONObject) (array.get(i));
+            OpcionesFiltro opciones=new OpcionesFiltro();
+            opciones.setNombre(obj.get("nombre").toString());
+            opciones.setValor(obj.get("valor").toString());
+            opciones.setFiltro(filtro);
+            opcionesFachada.insertObject(opciones);
         }
     }
 

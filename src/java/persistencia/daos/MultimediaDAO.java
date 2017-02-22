@@ -226,7 +226,7 @@ public class MultimediaDAO implements GestionDAO {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private synchronized int getMaxCodigo() {
+    private  int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
         try {
