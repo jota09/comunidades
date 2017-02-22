@@ -96,12 +96,14 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
 
-            String query = "SELECT CODIGO, TITULO "
+            String query = "SELECT CODIGO, TITULO, FECHA_PUBLICACION "
                     + "FROM comunidades.articulo "
                     + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
+            System.out.println(query);
+            System.out.println(art);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             pS.setInt(2, art.getEstado().getCodigo());
             pS.setInt(3, art.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
@@ -111,6 +113,7 @@ public class ArticuloDAO implements GestionDAO {
                 art2.setCodigo(rS.getInt("CODIGO"));
                 art2.setTitulo(rS.getString("TITULO"));
                 art2.setFechaPublicacion(rS.getDate("FECHA_PUBLICACION"));
+                System.out.println(art2);
                 listArt.add(art2);
             }
             rS.close();
@@ -489,8 +492,6 @@ public class ArticuloDAO implements GestionDAO {
                 pS.setInt(2, articulo.getUsuario().getCodigo());
                 pS.setInt(3, articulo.getTipoArticulo().getCodigo());
             }
-            System.out.println(query);
-            System.out.println(articulo.getTipoArticulo().getCodigo()+ " "+ articulo.getUsuario().getCodigo() + " "+articulo.getTipoArticulo().getCodigo()+ " "+articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();

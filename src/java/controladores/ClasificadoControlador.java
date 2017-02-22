@@ -330,15 +330,16 @@ public class ClasificadoControlador extends HttpServlet {
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(user);
             ArticuloFachada artFachada = new ArticuloFachada();
+            System.out.println("Entro a recuperar clasificados");
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
-                if (art2.getFechaPublicacion() != null && art2.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
+                System.out.println(art2);
                     JSONObject obj = new JSONObject();
                     obj.put("codigo", art2.getCodigo());
                     obj.put("nombre", art2.getTitulo());
                     array.add(obj);
-                }
+                
             }
             out.print(array);
         }
