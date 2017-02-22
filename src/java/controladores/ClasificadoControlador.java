@@ -271,6 +271,7 @@ public class ClasificadoControlador extends HttpServlet {
                 artFach.insertObject(art);
             } else {
                 art.setCodigo(Integer.parseInt(codArt));
+                System.out.println("Edito el registro");
                 artFach.updateObject(art);
             }
             out.print(art.getCodigo());
@@ -296,16 +297,16 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void devolverArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
-            EstructuraFachada estrucFachada = new EstructuraFachada();
+            GestionFachada estructuraFachada = new EstructuraFachada();
             response.setContentType("text/html;charset=UTF-8");
             Articulo art = new Articulo();
-            art.setCodigo(Integer.parseInt(request.getParameter("codArt")));
-            String ref2 = "articuloDevuelto";
-            Estructura estruc3 = new Estructura(ref2);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
+            art.setCodigo(Integer.parseInt(request.getParameter("cod")));
+            art.setObservacionesAdmon(request.getParameter("obs"));
+            art.setEstado(new ArticuloEstado((Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("articuloDevuelto"))).getValor()))));
             ArticuloFachada artFach = new ArticuloFachada();
             out.print(artFach.updateObject(art));
+            art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
+            Utilitaria.enviarMailArticulo(art,request.getParameter("obs"),request.getParameter("tit"));
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se envio a correción el clasificado", "success"));
     }
@@ -330,16 +331,14 @@ public class ClasificadoControlador extends HttpServlet {
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(user);
             ArticuloFachada artFachada = new ArticuloFachada();
-            System.out.println("Entro a recuperar clasificados");
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
-                System.out.println(art2);
-                    JSONObject obj = new JSONObject();
-                    obj.put("codigo", art2.getCodigo());
-                    obj.put("nombre", art2.getTitulo());
-                    array.add(obj);
-                
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", art2.getCodigo());
+                obj.put("nombre", art2.getTitulo());
+                array.add(obj);
+
             }
             out.print(array);
         }
@@ -451,6 +450,8 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("fecha_fin_publicacion", ((art.getFechaFinPublicacion() == null ? "" : art.getFechaFinPublicacion().toString())));
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
+            obj.put("precio",art.getPrecio());
+            obj.put("prioridad",art.getPrioridad().getValor());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
             obj.put("visibilidad", art.getVisibilidad());
             obj.put("Imagenes", jsArray);
@@ -472,6 +473,7 @@ public class ClasificadoControlador extends HttpServlet {
     private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
+            GestionFachada estFach = new EstructuraFachada();
             TipoArticulo tipArt = new TipoArticulo();
             tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
             Articulo articulo = new Articulo();
@@ -488,23 +490,31 @@ public class ClasificadoControlador extends HttpServlet {
                 articulo.setBusqueda(request.getParameter("buscar"));
             }
             List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
+            String ref = "articuloEstadoAprobado";
+            Estructura estruc = new Estructura(ref);
+            estruc = (Estructura) estFach.getObject(estruc);
+            String ref2 = "articuloEstadoInicial";
+            Estructura estruc2 = new Estructura(ref2);
+            estruc2 = (Estructura) estFach.getObject(estruc2);
             JSONArray jsonArray = new JSONArray();
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
-                if(user.getCodigo() == art.getUsuario().getCodigo()){
-                jsonObj.put("codigo", art.getCodigo());
-                jsonObj.put("titulo", art.getTitulo());
-                jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
-                jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
-                jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                jsonObj.put("nombreEstado", art.getEstado().getNombre());
-                jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
-                if (art.getFechaPublicacion() == null) {
-                    jsonObj.put("fechaPublicacion", 0);
-                } else {
-                    jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                if (user.getCodigo() == art.getUsuario().getCodigo()) {
+                    jsonObj.put("codigo", art.getCodigo());
+                    jsonObj.put("titulo", art.getTitulo());
+                    jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
+                    jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
+                    jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
+                    jsonObj.put("nombreEstado", art.getEstado().getNombre());
+                    jsonObj.put("codigoEstado", art.getEstado().getCodigo());
+                    jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                    if (art.getEstado().getCodigo() == Integer.parseInt(estruc.getValor()) || art.getEstado().getCodigo() == Integer.parseInt(estruc2.getValor())) {
+                        jsonObj.put("fechaPublicacion", 0);
+                    } else {
+                        jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                    }
+                    jsonArray.add(jsonObj);
                 }
-                jsonArray.add(jsonObj); }
             }
             out.print(jsonArray);
         }

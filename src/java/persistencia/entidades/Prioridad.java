@@ -21,6 +21,15 @@ public class Prioridad implements Serializable {
         this.codigo = codigo;
     }    
 
+    public Prioridad() {
+    }
+
+    public Prioridad(int codigo, String nombre, int valor) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.valor = valor;
+    }
+
     public Prioridad(int codigo, String nombre, int valor, short activo) {
         this.codigo = codigo;
         this.nombre = nombre;
