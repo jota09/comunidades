@@ -5,6 +5,8 @@
  */
 package controladores;
 
+import fachada.FiltroFachada;
+import fachada.GestionFachada;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,6 +40,7 @@ public class ConstruyeFiltro extends HttpServlet {
             String entidad = request.getParameter("entidad");
             int tipo = Integer.parseInt(request.getParameter("tipo"));
             response.getWriter();
+            GestionFachada filtroFachada=new FiltroFachada();
         } catch (IOException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());

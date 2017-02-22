@@ -107,9 +107,10 @@ public class FiltroDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "Insert into filtro(codigo,nombre,tabla,campo,condicion_filtro_codigo) values(?,?,?,?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, getMaxCodigo());
+            filtro.setCodigo(getMaxCodigo());
+            pS.setInt(1, filtro.getCodigo());
             pS.setString(2, filtro.getNombre());
-            pS.setString(3, filtro.getCondicion());
+            pS.setString(3, filtro.getTabla());
             pS.setString(4, filtro.getCampo());
             pS.setInt(5, filtro.getCondicionFiltro().getCodigo());
             tam = pS.executeUpdate();
