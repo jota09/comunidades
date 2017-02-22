@@ -8,21 +8,18 @@ package persistencia.daos;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
-import persistencia.entidades.Error;
-import persistencia.entidades.TipoError;
+import persistencia.entidades.OpcionesFiltro;
 
 /**
  *
  * @author manuel.alcala
  */
-public class ErrorDAO implements GestionDAO {
+public class OpcionesFiltroDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
@@ -41,39 +38,7 @@ public class ErrorDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        Connection con = null;
-        List<Error> errores = new ArrayList();
-        try {
-            con = ConexionBD.obtenerConexion();
-            String sql = "Select er.codigo,er.clase,er.metodo,er.fecha,ter.codigo,ter.tipo,er.descripcion from error er join tipo_error ter"
-                    + " on er.tipo_error_codigo=ter.codigo order by fecha desc ";
-            PreparedStatement pS = con.prepareStatement(sql);
-            ResultSet rS = pS.executeQuery();
-            while (rS.next()) {
-                Error error = new Error();
-                TipoError tipo = new TipoError();
-                error.setCodigo(rS.getInt(1));
-                error.setClase(rS.getString(2));
-                error.setMetodo(rS.getString(3));
-                error.setFecha(rS.getTimestamp(4));
-                tipo.setCodigo(rS.getInt(5));
-                tipo.setTipo(rS.getString(6));
-                error.setDescripcion(rS.getString(7));
-                error.setTipoError(tipo);
-                errores.add(error);
-            }
-            rS.close();
-            pS.close();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            ConexionBD.cerrarConexion(con);
-        }
-        return errores;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -83,27 +48,24 @@ public class ErrorDAO implements GestionDAO {
 
     @Override
     public int insertObject(Object object) {
-        Error error = (Error) object;
         Connection con = null;
+        OpcionesFiltro opcionFiltro = (OpcionesFiltro) object;
         int tam = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Insert into error(clase,metodo,descripcion,tipo_error_codigo) values(?,?,?,?) ";
+            String sql = "Insert into opciones_filtro(nombre,valor,filtro_codigo) values(?,?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setString(1, error.getClase());
-            pS.setString(2, error.getMetodo());
-            pS.setString(3, error.getDescripcion());
-            pS.setInt(4, error.getTipoError().getCodigo());
+            pS.setString(1, opcionFiltro.getNombre());
+            pS.setString(2, opcionFiltro.getValor());
+            pS.setInt(3, opcionFiltro.getFiltro().getCodigo());
             tam = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OpcionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OpcionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(ErrorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            ConexionBD.cerrarConexion(con);
+            Logger.getLogger(OpcionesFiltroDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tam;
     }
