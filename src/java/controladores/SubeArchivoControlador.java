@@ -69,7 +69,6 @@ public class SubeArchivoControlador extends HttpServlet {
             error.setTipoError(new TipoError(3));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
-
         }
     }
 
