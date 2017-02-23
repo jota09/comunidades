@@ -306,7 +306,7 @@ public class ClasificadoControlador extends HttpServlet {
             ArticuloFachada artFach = new ArticuloFachada();
             out.print(artFach.updateObject(art));
             art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
-            Utilitaria.enviarMailArticulo(art,request.getParameter("obs"),request.getParameter("tit"));
+            Utilitaria.enviarMailArticuloDevuelto(art,request.getParameter("obs"),request.getParameter("tit"));
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se envio a correción el clasificado", "success"));
     }
@@ -571,7 +571,9 @@ public class ClasificadoControlador extends HttpServlet {
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
             ArticuloFachada artFachada = new ArticuloFachada();
+            Articulo art2 = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("cod").trim())));
             artFachada.deleteObject(art);
+            Utilitaria.enviarMailArticuloEliminado(art2,request.getParameter("descrip"),request.getParameter("tit"));
         }
     }
 
