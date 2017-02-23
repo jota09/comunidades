@@ -22,7 +22,8 @@ public class MultimediaFachada implements GestionFachada {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO multimediaDAO = new MultimediaDAO();
+        return multimediaDAO.getObject(object);
     }
 
     @Override
