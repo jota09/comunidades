@@ -19,6 +19,7 @@ import persistencia.entidades.Multimedia;
 import persistencia.entidades.TipoError;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
+import persistencia.entidades.TipoMultimedia;
 
 /**
  *
@@ -38,14 +39,20 @@ public class MultimediaDAO implements GestionDAO {
         try {
 
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM multimedia WHERE codigo=? ";
+            String query = "SELECT * FROM multimedia AS m INNER JOIN tipo_multimedia AS tm ON m.tipo_multimedia_codigo = tm.codigo WHERE m.articulo_codigo=? AND m.destacada = ? AND m.activo = 1";
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setLong(1, mult.getCodigo());
+            pS.setInt(1, mult.getArticulocodigo().getCodigo());
+            pS.setShort(2, mult.getDestacada());
+            System.out.println("Entro aqui");
             ResultSet rS = pS.executeQuery();
-            if (rS.next()) {
-                
+            while(rS.next()){
+                System.out.println(rS.getLong("m.codigo")+"."+rS.getString("tm.extension"));
+                mult.setCodigo(rS.getLong("m.codigo"));
+                mult.setExtension(rS.getString("tm.extension"));
             }
+//            System.out.println(mult);
             pS.close();
+            rS.close();
         } catch (ClassNotFoundException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());

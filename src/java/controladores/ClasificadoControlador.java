@@ -306,7 +306,7 @@ public class ClasificadoControlador extends HttpServlet {
             ArticuloFachada artFach = new ArticuloFachada();
             out.print(artFach.updateObject(art));
             art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
-            Utilitaria.enviarMailArticuloDevuelto(art,request.getParameter("obs"),request.getParameter("tit"));
+            Utilitaria.enviarMailArticuloDevuelto(art, request.getParameter("obs"), request.getParameter("tit"));
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se envio a correción el clasificado", "success"));
     }
@@ -396,6 +396,7 @@ public class ClasificadoControlador extends HttpServlet {
             }
 
             ArticuloFachada artFachada = new ArticuloFachada();
+            MultimediaFachada multFachada = new MultimediaFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(art);
             JSONArray array = new JSONArray();
             String ref3 = "articuloEstadoAprobado";
@@ -405,6 +406,16 @@ public class ClasificadoControlador extends HttpServlet {
                 if (art2.getFechaPublicacion() != null && art2.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
                     JSONObject obj = new JSONObject();
                     obj.put("codigo", art2.getCodigo());
+                    Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
+                    mult.setDestacada(Short.parseShort("1"));
+                    mult = (Multimedia) multFachada.getObject(mult);
+                    if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
+                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\"+ art2.getCodigo() +"\\" + mult.getCodigo()+ "." + mult.getExtension();
+                        obj.put("imgDestacada", path);
+                    } else {
+                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
+                        obj.put("imgDestacada", path);
+                    }
                     obj.put("titulo", art2.getTitulo());
                     obj.put("precio", Utilitaria.conversionNatural(art2.getPrecio()));
                     array.add(obj);
@@ -450,8 +461,8 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("fecha_fin_publicacion", ((art.getFechaFinPublicacion() == null ? "" : art.getFechaFinPublicacion().toString())));
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
-            obj.put("precio",art.getPrecio());
-            obj.put("prioridad",art.getPrioridad().getValor());
+            obj.put("precio", art.getPrecio());
+            obj.put("prioridad", art.getPrioridad().getValor());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
             obj.put("visibilidad", art.getVisibilidad());
             obj.put("Imagenes", jsArray);
@@ -573,7 +584,7 @@ public class ClasificadoControlador extends HttpServlet {
             ArticuloFachada artFachada = new ArticuloFachada();
             Articulo art2 = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("cod").trim())));
             artFachada.deleteObject(art);
-            Utilitaria.enviarMailArticuloEliminado(art2,request.getParameter("descrip"),request.getParameter("tit"));
+            Utilitaria.enviarMailArticuloEliminado(art2, request.getParameter("descrip"), request.getParameter("tit"));
         }
     }
 

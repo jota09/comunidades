@@ -27,6 +27,10 @@ public class Multimedia  implements Serializable{
         this.extension = extension;
     }
 
+    public Multimedia(Articulo articulocodigo) {
+        this.articulocodigo = articulocodigo;
+    }
+
     public String getExtension() {
         return extension;
     }
@@ -73,6 +77,11 @@ public class Multimedia  implements Serializable{
 
     public void setDestacada(short destacada) {
         this.destacada = destacada;
+    }
+
+    @Override
+    public String toString() {
+        return "Multimedia{" + "codigo=" + codigo + ", articulocodigo=" + articulocodigo + ", tipomultimediacodigo=" + tipomultimediacodigo + ", activo=" + activo + ", destacada=" + destacada + ", extension=" + extension + '}';
     }
     
 }
