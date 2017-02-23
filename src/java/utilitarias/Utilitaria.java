@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import persistencia.entidades.Articulo;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.Menu;
 import persistencia.entidades.Error;
@@ -198,6 +198,46 @@ public class Utilitaria {
         envioMail.sendEmail(mensaje, "Error " + fecha, correo);
     }
 
+    public static void enviarMailArticuloDevuelto(Object obj, String obs, String tit) {
+        Articulo art = (Articulo) obj;
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        String titulo = ((Estructura) estructuraFachada.getObject(new Estructura("tituloAdminDevolucion"))).getValor();
+        String cuerpo = ((Estructura) estructuraFachada.getObject(new Estructura("cuerpoAdminDevolucion"))).getValor();
+        String firma = ((Estructura) estructuraFachada.getObject(new Estructura("firmaAdminDevolucion"))).getValor();
+        String mensaje = titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + " " + "\n\n " + cuerpo + "\n" + obs
+                + "\n\n" + firma;
+        String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
+        int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
+        String correo = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
+        String usuario = ((Estructura) estructuraFachada.getObject(new Estructura("usuarioMailSoporte"))).getValor();
+        String password = ((Estructura) estructuraFachada.getObject(new Estructura("passCorreoSoporte"))).getValor();
+        String serverSSL = ((Estructura) estructuraFachada.getObject(new Estructura("sslSMTP"))).getValor();
+        String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
+        String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
+        ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
+        envioMail.sendEmail(mensaje, "Correciones del clasificado " + tit, art.getUsuario().getCorreo());
+    }
+
+    public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) {
+        Articulo art = (Articulo) obj;
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        String titulo = ((Estructura) estructuraFachada.getObject(new Estructura("tituloAdminEliminacion"))).getValor();
+        String cuerpo = ((Estructura) estructuraFachada.getObject(new Estructura("cuerpoAdminEliminacion"))).getValor();
+        String firma = ((Estructura) estructuraFachada.getObject(new Estructura("firmaAdminEliminacion"))).getValor();
+        String mensaje = titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + " " + "\n"
+                + "\n " + cuerpo + "\n " + obs + "\n" + firma;
+        String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
+        int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
+        String correo = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
+        String usuario = ((Estructura) estructuraFachada.getObject(new Estructura("usuarioMailSoporte"))).getValor();
+        String password = ((Estructura) estructuraFachada.getObject(new Estructura("passCorreoSoporte"))).getValor();
+        String serverSSL = ((Estructura) estructuraFachada.getObject(new Estructura("sslSMTP"))).getValor();
+        String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
+        String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
+        ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
+        envioMail.sendEmail(mensaje, "Eliminación clasificado " + tit, art.getUsuario().getCorreo());
+    }
+
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {
         JSONParser parser = new JSONParser();
         String condicion = "";
@@ -206,9 +246,10 @@ public class Utilitaria {
         for (int i = 0; i < array.size(); i++) {
             OpcionesFiltro opcion = new OpcionesFiltro(Integer.parseInt(array.get(i).toString()));
             opcionesFachada.getObject(opcion);
-            condicion += opcion.getFiltro().getCampo() +" "+ opcion.getFiltro().getCondicionFiltro().getCondicion().replace("?", opcion.getValor()) + ((i + 1 < array.size()) ? " and " : "");
+            condicion += opcion.getFiltro().getCampo() + " " + opcion.getFiltro().getCondicionFiltro().getCondicion().replace("?", opcion.getValor()) + ((i + 1 < array.size()) ? " and " : "");
         }
-        System.out.println("Condicion:" + condicion);
+        //System.out.println("Condicion:" + condicion);
         return condicion;
     }
+
 }

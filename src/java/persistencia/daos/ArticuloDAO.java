@@ -22,6 +22,7 @@ import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
+import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoError;
 import utilitarias.VisibilidadArticulo;
 
@@ -38,29 +39,29 @@ public class ArticuloDAO implements GestionDAO {
         try {
 
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM articulo WHERE codigo=? ";
+            String query = "SELECT * FROM articulo AS art JOIN usuario AS u ON art.USUARIO_CODIGO = u.CODIGO JOIN prioridad AS p ON p.CODIGO = art.PRIORIDAD_CODIGO  WHERE art.codigo=?";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 Usuario usr = new Usuario();
-                TipoArticulo tpArt = new TipoArticulo();
-                tpArt.setCodigo(rS.getInt("tipo_articulo_codigo"));
-                usr.setCodigo(rS.getInt("usuario_codigo"));
-                Categoria cat = new Categoria();
-                ArticuloEstado estado = new ArticuloEstado(rS.getInt("estados_codigo"));
+                usr.setCodigo(rS.getInt("art.usuario_codigo"));
+                usr.setNombres(rS.getString("u.nombres"));
+                usr.setApellidos(rS.getString("u.apellidos"));
+                usr.setCorreo(rS.getString("u.correo"));
                 art.setUsuario(usr);
-                cat.setCodigo(rS.getInt("categoria_codigo"));
-                art.setCategoria(cat);
-                art.setTipoArticulo(tpArt);
-                art.setTitulo(rS.getString("titulo"));
-                art.setDescripcion(rS.getString("descripcion"));
-                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setEstado(estado);
-                art.setPrecio(rS.getDouble("precio"));
+                art.setCategoria(new Categoria(rS.getInt("art.categoria_codigo")));
+                art.setTipoArticulo(new TipoArticulo(rS.getInt("art.tipo_articulo_codigo")));
+                art.setTitulo(rS.getString("art.titulo"));
+                art.setDescripcion(rS.getString("art.descripcion"));
+                art.setFechaPublicacion(rS.getDate("art.fecha_publicacion"));
+                art.setFechaFinPublicacion(rS.getDate("art.fecha_fin_publicacion"));
+                art.setEstado(new ArticuloEstado(rS.getInt("art.estados_codigo")));
+                art.setPrecio(rS.getDouble("art.precio"));
+                art.setPrioridad(new Prioridad(rS.getInt("p.codigo"), rS.getString("p.nombre"), rS.getInt("p.valor")));
                 VisibilidadArticulo visibilidad = new VisibilidadArticulo(rS.getShort("visibilidad"));
                 art.setVisibilidad(visibilidad);
+
             }
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -97,9 +98,7 @@ public class ArticuloDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-
             String query = "SELECT CODIGO, TITULO,FECHA_PUBLICACION "
-                    + "FROM comunidades.articulo "
                     + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
@@ -178,6 +177,7 @@ public class ArticuloDAO implements GestionDAO {
                 PreparedStatement pS = con.prepareStatement(sql);
                 pS.setInt(1, art.getEstado().getCodigo());
                 pS.setInt(2, art.getCodigo());
+
                 numfilas = pS.executeUpdate();
                 pS.close();
             }
@@ -368,7 +368,6 @@ public class ArticuloDAO implements GestionDAO {
                     + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
                     + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_publicacion LIKE ?) and art.COMUNIDAD_CODIGO = ?";
-            System.out.println(query);
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setInt(2, articulo.getUsuario().getCodigo());
@@ -436,6 +435,7 @@ public class ArticuloDAO implements GestionDAO {
         List<Articulo> articulos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
+
             String sql = "SELECT art.codigo,art.titulo,art.descripcion,art.fecha_publicacion,"
                     + "         art.fecha_fin_publicacion,cat.codigo,cat.nombre,artEstado.codigo,"
                     + "         artEstado.nombre,art.precio,usr.codigo,usr.nombres,usr.apellidos  "
@@ -443,11 +443,11 @@ public class ArticuloDAO implements GestionDAO {
                     + "         JOIN categoria cat ON art.categoria_codigo=cat.codigo "
                     + "         JOIN articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
                     + "         JOIN usuario usr ON  art.usuario_codigo=usr.codigo"
-                    + "    WHERE "+((art.getEstado()!=null)?"estados_codigo="+art.getEstado().getCodigo()+" and ":"")+" "
+                    + "    WHERE " + ((art.getEstado() != null) ? "estados_codigo=" + art.getEstado().getCodigo() + " and " : "") + " "
                     + "         tipo_articulo_codigo=? " + ((art.getComunidad() != null) ? "and comunidad_codigo=" + art.getComunidad().getCodigo() : "")
-                    +           ((art.getVisibilidad() != null) ? " and visibilidad=" + art.getVisibilidad().getVisibilidad() + " "
-                    + "         and " : "") + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
-                            + art.getBusqueda() : "") +((art.getUsuario()!=null)?" and usuario_codigo="+art.getUsuario().getCodigo():"")+ " Limit " + art.getRango();
+                    + ((art.getVisibilidad() != null) ? " and visibilidad=" + art.getVisibilidad().getVisibilidad() + " "
+                            + "         and " : "") + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
+                            + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and usuario_codigo=" + art.getUsuario().getCodigo() : "") + " Limit " + art.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             System.out.println("QUERYYYY:" + pS);
@@ -475,7 +475,7 @@ public class ArticuloDAO implements GestionDAO {
                 articulo.setUsuario(usr);
                 articulos.add(articulo);
             }
-            System.out.println("Articulos Size:"+articulos.size());
+            System.out.println("Articulos Size:" + articulos.size());
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
