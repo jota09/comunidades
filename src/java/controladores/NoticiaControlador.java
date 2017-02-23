@@ -89,6 +89,7 @@ public class NoticiaControlador extends HttpServlet {
                     case 9:
                         tipoArticulo(request, response);
                         break;
+                    default:break;
                 }
             } else {
                 System.out.println("La opcion es nula por favor verificar");
@@ -123,8 +124,8 @@ public class NoticiaControlador extends HttpServlet {
     private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
-            TipoArticulo tipArt = new TipoArticulo();
-            //System.out.println("Esto es tipoArticulo:"+request.getParameter("tipo"));
+            GestionFachada estFach = new EstructuraFachada();
+            TipoArticulo tipArt = new TipoArticulo();            
             tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
             Articulo articulo = new Articulo();
             articulo.setTipoArticulo(tipArt);
@@ -139,6 +140,12 @@ public class NoticiaControlador extends HttpServlet {
                 articulo.setBusqueda(request.getParameter("buscar"));
             }
             List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
+            String ref = "articuloEstadoAprobado";
+            Estructura estruc = new Estructura(ref);
+            estruc = (Estructura) estFach.getObject(estruc);
+            String ref2 = "articuloEstadoInicial";
+            Estructura estruc2 = new Estructura(ref2);
+            estruc2 = (Estructura) estFach.getObject(estruc2);
             JSONArray jsonArray = new JSONArray();
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
@@ -148,7 +155,13 @@ public class NoticiaControlador extends HttpServlet {
                 jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
                 jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
                 jsonObj.put("nombreEstado", art.getEstado().getNombre());
+                jsonObj.put("codigoEstado", art.getEstado().getCodigo());
                 jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                if (art.getEstado().getCodigo() == Integer.parseInt(estruc.getValor()) || art.getEstado().getCodigo() == Integer.parseInt(estruc2.getValor())) {
+                    jsonObj.put("fechaPublicacion", 0);
+                } else {
+                    jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
+                }
                 jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
