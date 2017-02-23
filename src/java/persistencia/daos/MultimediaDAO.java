@@ -43,14 +43,11 @@ public class MultimediaDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, mult.getArticulocodigo().getCodigo());
             pS.setShort(2, mult.getDestacada());
-            System.out.println("Entro aqui");
             ResultSet rS = pS.executeQuery();
             while(rS.next()){
-                System.out.println(rS.getLong("m.codigo")+"."+rS.getString("tm.extension"));
                 mult.setCodigo(rS.getLong("m.codigo"));
                 mult.setExtension(rS.getString("tm.extension"));
             }
-//            System.out.println(mult);
             pS.close();
             rS.close();
         } catch (ClassNotFoundException ex) {
