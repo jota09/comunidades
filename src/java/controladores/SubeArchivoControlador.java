@@ -59,7 +59,7 @@ public class SubeArchivoControlador extends HttpServlet {
                     crearMultimedia(request, response, codArticulo);
                     break;
                 case 2:
-                    borrarMultimedia(request, response, codArticulo);
+                    borrarMultimedia(request, response, codArticulo.trim());
                     break;
             }
         } catch (IOException ex) {
@@ -69,14 +69,13 @@ public class SubeArchivoControlador extends HttpServlet {
             error.setTipoError(new TipoError(3));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
-
         }
     }
 
     private void crearMultimedia(HttpServletRequest request, HttpServletResponse response, String id) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             short destacada = Short.parseShort(request.getParameter("destacada"));
-            System.out.println("imprimiendo subeArchivoFile:" + request.getParameter("file"));
+            //System.out.println("imprimiendo subeArchivoFile:" + request.getParameter("file"));
             String encoded[] = request.getParameter("file").split(",");
             String ext = (encoded[0].split(";")[0]);
             ext = ext.split("/")[1];
