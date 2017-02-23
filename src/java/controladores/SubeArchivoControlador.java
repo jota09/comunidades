@@ -59,7 +59,7 @@ public class SubeArchivoControlador extends HttpServlet {
                     crearMultimedia(request, response, codArticulo);
                     break;
                 case 2:
-                    borrarMultimedia(request, response, codArticulo);
+                    borrarMultimedia(request, response, codArticulo.trim());
                     break;
             }
         } catch (IOException ex) {
