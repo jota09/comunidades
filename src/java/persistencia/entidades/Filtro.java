@@ -12,6 +12,7 @@ public class Filtro {
     private String campo;
     private String condicion;
     private CondicionesFiltro condicionFiltro;
+    private Vista vista;
 
     public Filtro() {
     }
@@ -20,13 +21,14 @@ public class Filtro {
         this.codigo = codigo;
     }
 
-    public Filtro(int codigo, String nombre, String tabla, String campo, String condicion, CondicionesFiltro condicionesFiltro) {
+    public Filtro(int codigo, String nombre, String tabla, String campo, String condicion, CondicionesFiltro condicionesFiltro, Vista vista) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.tabla = tabla;
         this.campo = campo;
         this.condicion = condicion;
         this.condicionFiltro = condicionesFiltro;
+        this.vista = vista;
     }
 
     public String getCondicion() {
@@ -75,6 +77,14 @@ public class Filtro {
 
     public void setCondicionFiltro(CondicionesFiltro condicionFiltro) {
         this.condicionFiltro = condicionFiltro;
+    }
+
+    public Vista getVista() {
+        return vista;
+    }
+
+    public void setVista(Vista vista) {
+        this.vista = vista;
     }
 
 }

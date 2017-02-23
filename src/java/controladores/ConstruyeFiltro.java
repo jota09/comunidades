@@ -7,14 +7,22 @@ package controladores;
 
 import fachada.FiltroFachada;
 import fachada.GestionFachada;
+import fachada.OpcionesFiltroFachada;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import persistencia.entidades.Error;
+import persistencia.entidades.Filtro;
+import persistencia.entidades.OpcionesFiltro;
 import persistencia.entidades.TipoError;
+import persistencia.entidades.Vista;
 import utilitarias.Utilitaria;
 
 /**
@@ -37,10 +45,30 @@ public class ConstruyeFiltro extends HttpServlet {
             throws ServletException, IOException {
         try {
             response.setContentType("text/html;charset=UTF-8");
-            String entidad = request.getParameter("entidad");
-            int tipo = Integer.parseInt(request.getParameter("tipo"));
-            response.getWriter();
-            GestionFachada filtroFachada=new FiltroFachada();
+            String vi = request.getParameter("vista");
+            GestionFachada filtroFachada = new FiltroFachada();
+            GestionFachada opcionesFachada = new OpcionesFiltroFachada();
+            Vista vista=new Vista(Integer.parseInt(vi));
+            JSONArray arrayFiltros = new JSONArray();
+            List<Filtro> filtros = filtroFachada.getListByCondition(vista);
+            for (Filtro f : filtros) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", f.getCodigo());
+                obj.put("nombre", f.getNombre());
+                obj.put("condicion", f.getCondicionFiltro().getCodigo());
+                JSONArray arrayOpciones = new JSONArray();
+                List<OpcionesFiltro> opciones = opcionesFachada.getListObject(f);
+                for (OpcionesFiltro o : opciones) {
+                    JSONObject op = new JSONObject();
+                    op.put("codigo", o.getCodigo());
+                    op.put("nombre", o.getNombre());
+                    arrayOpciones.add(op);
+                }
+                obj.put("opciones", arrayOpciones);
+                arrayFiltros.add(obj);
+            }
+            PrintWriter out = response.getWriter();
+            out.print(arrayFiltros);
         } catch (IOException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());

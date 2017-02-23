@@ -23,6 +23,7 @@ import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.VisibilidadArticulo;
 
 /**
  *
@@ -58,7 +59,8 @@ public class ArticuloDAO implements GestionDAO {
                 art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
                 art.setEstado(estado);
                 art.setPrecio(rS.getDouble("precio"));
-                art.setVisibilidad(rS.getShort("visibilidad"));
+                VisibilidadArticulo visibilidad = new VisibilidadArticulo(rS.getShort("visibilidad"));
+                art.setVisibilidad(visibilidad);
             }
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -96,7 +98,7 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
 
-            String query = "SELECT CODIGO, TITULO "
+            String query = "SELECT CODIGO, TITULO,FECHA_PUBLICACION "
                     + "FROM comunidades.articulo "
                     + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
@@ -149,36 +151,35 @@ public class ArticuloDAO implements GestionDAO {
         int numfilas = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            if(art.getTitulo()!=null){
-            String sql = "UPDATE articulo SET usuario_codigo=?, titulo=?, descripcion=?,"
-                    + "fecha_publicacion=?, precio=?,fecha_fin_publicacion=?, prioridad_codigo=?,"
-                    + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=?,visibilidad=? "
-                    + " WHERE codigo=? and comunidad_codigo=? ";
-            PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, art.getUsuario().getCodigo());
-            pS.setString(2, art.getTitulo());
-            pS.setString(3, art.getDescripcion());
-            pS.setDate(4, art.getFechaPublicacion());
-            pS.setDouble(5, art.getPrecio());
-            pS.setDate(6, art.getFechaFinPublicacion());
-            pS.setInt(7, art.getPrioridad().getCodigo());
-            pS.setInt(8, art.getEstado().getCodigo());
-            pS.setInt(9, art.getTipoArticulo().getCodigo());
-            pS.setInt(10, art.getCategoria().getCodigo());
-            pS.setShort(11, art.getVisibilidad());
-            pS.setInt(12, art.getCodigo());
-            pS.setInt(13, art.getComunidad().getCodigo());
-            numfilas = pS.executeUpdate();
-            pS.close();
-            }
-            else{
+            if (art.getTitulo() != null) {
+                String sql = "UPDATE articulo SET usuario_codigo=?, titulo=?, descripcion=?,"
+                        + "fecha_publicacion=?, precio=?,fecha_fin_publicacion=?, prioridad_codigo=?,"
+                        + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=?,visibilidad=? "
+                        + " WHERE codigo=? and comunidad_codigo=? ";
+                PreparedStatement pS = con.prepareStatement(sql);
+                pS.setInt(1, art.getUsuario().getCodigo());
+                pS.setString(2, art.getTitulo());
+                pS.setString(3, art.getDescripcion());
+                pS.setDate(4, art.getFechaPublicacion());
+                pS.setDouble(5, art.getPrecio());
+                pS.setDate(6, art.getFechaFinPublicacion());
+                pS.setInt(7, art.getPrioridad().getCodigo());
+                pS.setInt(8, art.getEstado().getCodigo());
+                pS.setInt(9, art.getTipoArticulo().getCodigo());
+                pS.setInt(10, art.getCategoria().getCodigo());
+                pS.setShort(11, (short) art.getVisibilidad().getVisibilidad());
+                pS.setInt(12, art.getCodigo());
+                pS.setInt(13, art.getComunidad().getCodigo());
+                numfilas = pS.executeUpdate();
+                pS.close();
+            } else {
                 String sql = "UPDATE articulo SET fecha_publicacion=CURDATE(), estados_codigo=?"
-                    + " WHERE codigo=?";
-            PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, art.getEstado().getCodigo());
-            pS.setInt(2, art.getCodigo());
-            numfilas = pS.executeUpdate();
-            pS.close();
+                        + " WHERE codigo=?";
+                PreparedStatement pS = con.prepareStatement(sql);
+                pS.setInt(1, art.getEstado().getCodigo());
+                pS.setInt(2, art.getCodigo());
+                numfilas = pS.executeUpdate();
+                pS.close();
             }
         } catch (ClassNotFoundException ex) {
             Error error = new Error();
@@ -231,7 +232,7 @@ public class ArticuloDAO implements GestionDAO {
                 pS.setInt(9, art.getTipoArticulo().getCodigo());
                 pS.setInt(10, art.getCategoria().getCodigo());
                 pS.setInt(11, art.getComunidad().getCodigo());
-                pS.setShort(12, art.getVisibilidad());
+                pS.setShort(12, (short) art.getVisibilidad().getVisibilidad());
                 result = pS.executeUpdate();
                 pS.close();
             }
@@ -430,90 +431,51 @@ public class ArticuloDAO implements GestionDAO {
 
     @Override
     public List getListByPagination(Object object) {
-        Articulo articulo = (Articulo) object;
-        ArrayList<Articulo> listArt = new ArrayList<Articulo>();
-        String rango = "";
-        String busqueda = "";
-        String condicionArmada = "";
-        EstructuraDAO estrucDAO = new EstructuraDAO();
-        Estructura estruc = (Estructura) estrucDAO.getObject(new Estructura("comunidadAnonima"));
-        String naturalezaSesion = (Integer.parseInt(estruc.getValor()) != articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo()) ? "AND art.COMUNIDAD_CODIGO = ?" : " AND art.VISIBILIDAD = 0 ";
         Connection con = null;
+        Articulo art = (Articulo) object;
+        List<Articulo> articulos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            if (!articulo.getRango().isEmpty()) {
-                rango = "LIMIT " + articulo.getRango();
-            } else {
-                rango = "";
-            }
-            if (articulo.getBusqueda() != null && !articulo.getBusqueda().isEmpty()) {
-                if (articulo.getBusqueda().indexOf("/") >= 0) {
-                    String[] separarCondiciones = articulo.getBusqueda().split("/");
-                    if (separarCondiciones.length > 1 && !separarCondiciones[0].equals("")) {
-                        String[] campos = separarCondiciones[0].split(",");
-                        for (int i = 0; i < campos.length; i++) {
-                            condicionArmada += " and " + campos[i];
-                        }
-                        busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? AND art.usuario_codigo=? )) "+ naturalezaSesion;
-
-                        busqueda += separarCondiciones[1].replace("/", " ") + " ";
-                    } else {
-                        busqueda = " OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=? AND art.usuario_codigo=? )) "+naturalezaSesion+" " + separarCondiciones[1].replace("/", " ") + " ";
-                    }
-                } else {
-                    String[] campos = articulo.getBusqueda().split(",");
-                    for (int i = 0; i < campos.length; i++) {
-                        condicionArmada += " and " + campos[i];
-                    }
-                    busqueda = "OR ( fecha_publicacion <= NOW() " + condicionArmada + " AND art.tipo_articulo_codigo=? AND art.usuario_codigo=? )) "+naturalezaSesion;
-                }
-            } else {
-                busqueda = "OR ( fecha_publicacion <= NOW() AND art.tipo_articulo_codigo=? AND art.usuario_codigo=?)) "+naturalezaSesion+" ORDER BY FECHA_PUBLICACION DESC ";
-            }
-            String query = "SELECT art.*,usr.codigo,usr.nombres,usr.apellidos,cat.*,"
-                    + "artEstado.codigo,artEstado.nombre nombreEstado"
-                    + " FROM articulo art JOIN "
-                    + "usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
-                    + "categoria cat ON art.categoria_codigo=cat.codigo JOIN "
-                    + "articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "WHERE ((art.tipo_articulo_codigo=?) "
-                    + busqueda + " "
-                    + rango;
-            PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, articulo.getTipoArticulo().getCodigo());
-            if (Integer.parseInt(estruc.getValor()) != articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo()) {
-                pS.setInt(2, articulo.getTipoArticulo().getCodigo());
-                pS.setInt(3, articulo.getUsuario().getCodigo());
-                pS.setInt(4, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
-            } else {
-                pS.setInt(2, articulo.getUsuario().getCodigo());
-                pS.setInt(3, articulo.getTipoArticulo().getCodigo());
-            }
-            System.out.println(query);
-            System.out.println(articulo.getTipoArticulo().getCodigo()+ " "+ articulo.getUsuario().getCodigo() + " "+articulo.getTipoArticulo().getCodigo()+ " "+articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
+            String sql = "SELECT art.codigo,art.titulo,art.descripcion,art.fecha_publicacion,"
+                    + "         art.fecha_fin_publicacion,cat.codigo,cat.nombre,artEstado.codigo,"
+                    + "         artEstado.nombre,art.precio,usr.codigo,usr.nombres,usr.apellidos  "
+                    + "   FROM articulo art "
+                    + "         JOIN categoria cat ON art.categoria_codigo=cat.codigo "
+                    + "         JOIN articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
+                    + "         JOIN usuario usr ON  art.usuario_codigo=usr.codigo"
+                    + "    WHERE "+((art.getEstado()!=null)?"estados_codigo="+art.getEstado().getCodigo()+" and ":"")+" "
+                    + "         tipo_articulo_codigo=? " + ((art.getComunidad() != null) ? "and comunidad_codigo=" + art.getComunidad().getCodigo() : "")
+                    +           ((art.getVisibilidad() != null) ? " and visibilidad=" + art.getVisibilidad().getVisibilidad() + " "
+                    + "         and " : "") + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
+                            + art.getBusqueda() : "") +((art.getUsuario()!=null)?" and usuario_codigo="+art.getUsuario().getCodigo():"")+ " Limit " + art.getRango();
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, art.getTipoArticulo().getCodigo());
+            System.out.println("QUERYYYY:" + pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
-                Articulo art = new Articulo();
+                Articulo articulo = new Articulo();
                 Categoria cat = new Categoria();
-                ArticuloEstado estado = new ArticuloEstado(rS.getInt("estados_codigo"));
-                estado.setNombre(rS.getString("nombreEstado"));
                 Usuario usr = new Usuario();
-                art.setCodigo(rS.getInt("codigo"));
-                usr.setCodigo(rS.getInt("usuario_codigo"));
-                usr.setNombres(rS.getString("nombres"));
-                usr.setApellidos(rS.getString("apellidos"));
-                art.setUsuario(usr);
-                cat.setCodigo(rS.getInt("codigo"));
-                cat.setNombre(rS.getString("nombre"));
-                art.setCategoria(cat);
-                art.setTitulo(rS.getString("titulo"));
-                art.setDescripcion(rS.getString("descripcion"));
-                art.setFechaPublicacion(rS.getDate("fecha_publicacion"));
-                art.setFechaFinPublicacion(rS.getDate("fecha_fin_publicacion"));
-                art.setPrecio(rS.getInt("precio"));
-                art.setEstado(estado);
-                listArt.add(art);
+                ArticuloEstado estado = new ArticuloEstado();
+                articulo.setCodigo(rS.getInt(1));
+                articulo.setTitulo(rS.getString(2));
+                articulo.setDescripcion(rS.getString(3));
+                articulo.setFechaPublicacion(rS.getDate(4));
+                articulo.setFechaFinPublicacion(rS.getDate(5));
+                cat.setCodigo(rS.getInt(6));
+                cat.setNombre(rS.getString(7));
+                estado.setCodigo(rS.getInt(8));
+                estado.setNombre(rS.getString(9));
+                articulo.setPrecio(rS.getDouble(10));
+                usr.setCodigo(rS.getInt(11));
+                usr.setNombres(rS.getString(12));
+                usr.setApellidos(rS.getString(13));
+                articulo.setCategoria(cat);
+                articulo.setEstado(estado);
+                articulo.setUsuario(usr);
+                articulos.add(articulo);
             }
+            System.out.println("Articulos Size:"+articulos.size());
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -540,7 +502,7 @@ public class ArticuloDAO implements GestionDAO {
         } finally {
             ConexionBD.cerrarConexion(con);
         }
-        return listArt;
+        return articulos;
     }
 
     private synchronized int getMaxCodigo() {

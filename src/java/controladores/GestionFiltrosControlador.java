@@ -5,6 +5,7 @@ import fachada.FiltroFachada;
 import fachada.GestionFachada;
 import fachada.MetaDataFachada;
 import fachada.OpcionesFiltroFachada;
+import fachada.VistaFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -26,6 +27,7 @@ import persistencia.entidades.MetaData;
 import persistencia.entidades.Error;
 import persistencia.entidades.OpcionesFiltro;
 import persistencia.entidades.TipoError;
+import persistencia.entidades.Vista;
 import utilitarias.Utilitaria;
 
 /**
@@ -72,6 +74,10 @@ public class GestionFiltrosControlador extends HttpServlet {
                 }
                 case 6: {
                     guardarFiltro(request, response);
+                    break;
+                }
+                case 7: {
+                    getVistas(request, response);
                     break;
                 }
 
@@ -143,8 +149,10 @@ public class GestionFiltrosControlador extends HttpServlet {
 
     private void getFiltrosXTabla(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String entidad = request.getParameter("entidad");
+        String vista = request.getParameter("vista");
         MetaData tabla = new MetaData();
         tabla.setTabla(entidad);
+        tabla.setCodVista(Integer.parseInt(vista));
         GestionFachada filtroFachada = new FiltroFachada();
         List<Filtro> filtros = filtroFachada.getListObject(tabla);
         JSONArray array = new JSONArray();
@@ -209,11 +217,13 @@ public class GestionFiltrosControlador extends HttpServlet {
         GestionFachada filtroFachada = new FiltroFachada();
         GestionFachada opcionesFachada = new OpcionesFiltroFachada();
         JSONArray array = (JSONArray) parser.parse(request.getParameter("opciones"));
+        Vista vista=new Vista(Integer.parseInt(request.getParameter("vista")));
         String nombre = request.getParameter("nombre");
         String condicion = request.getParameter("condicion");
         String campo = request.getParameter("campo");
         String entidad = request.getParameter("entidad");
         Filtro filtro = new Filtro();
+        filtro.setVista(vista);
         filtro.setTabla(entidad);
         filtro.setCondicionFiltro(new CondicionesFiltro(Integer.parseInt(condicion)));
         filtro.setCampo(campo);
@@ -221,12 +231,26 @@ public class GestionFiltrosControlador extends HttpServlet {
         filtroFachada.insertObject(filtro);
         for (int i = 0; i < array.size(); i++) {
             JSONObject obj = (JSONObject) (array.get(i));
-            OpcionesFiltro opciones=new OpcionesFiltro();
+            OpcionesFiltro opciones = new OpcionesFiltro();
             opciones.setNombre(obj.get("nombre").toString());
             opciones.setValor(obj.get("valor").toString());
             opciones.setFiltro(filtro);
             opcionesFachada.insertObject(opciones);
         }
+    }
+
+    private void getVistas(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada vistasFachada = new VistaFachada();
+        PrintWriter out = response.getWriter();
+        JSONArray array = new JSONArray();
+        List<Vista> vistas = vistasFachada.getListObject();
+        for (Vista v : vistas) {
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", v.getCodigo());
+            obj.put("nombre", v.getUrl());
+            array.add(obj);
+        }
+        out.print(array);
     }
 
 }
