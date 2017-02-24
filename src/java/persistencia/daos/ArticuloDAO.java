@@ -56,6 +56,7 @@ public class ArticuloDAO implements GestionDAO {
                 art.setDescripcion(rS.getString("art.descripcion"));
                 art.setFechaPublicacion(rS.getDate("art.fecha_publicacion"));
                 art.setFechaFinPublicacion(rS.getDate("art.fecha_fin_publicacion"));
+                art.setObservacionesAdmon(rS.getString("art.observaciones_admon"));
                 art.setEstado(new ArticuloEstado(rS.getInt("art.estados_codigo")));
                 art.setPrecio(rS.getDouble("art.precio"));
                 art.setPrioridad(new Prioridad(rS.getInt("p.codigo"), rS.getString("p.nombre"), rS.getInt("p.valor")));
