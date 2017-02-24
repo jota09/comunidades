@@ -94,7 +94,7 @@ public class SubeArchivoControlador extends HttpServlet {
             String content = encoded[1];
             byte[] decoded = Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8));
             //String path = "c:/files/" + multimedia.getCodigo() + ".txt" ;
-            String path = LecturaConfig.getValue("rutaUpload") + id + "\\";
+            String path = LecturaConfig.getValue("rutaUpload") + id + File.separator;
             String file = multimedia.getCodigo() + "." + ext;
             generaArchivo(path, file, decoded);
             //generarArchivoBase64(path,request.getParameter("file"));
@@ -109,14 +109,8 @@ public class SubeArchivoControlador extends HttpServlet {
         Multimedia multimedia = new Multimedia();
         multimedia.setArticulocodigo(new Articulo(Integer.parseInt(codArticulo)));
         multimediaFachada.deleteObject(multimedia);
-        String path = LecturaConfig.getValue("rutaUpload") + codArticulo + "\\";
-        File file = new File(path);
-        File[] files = file.listFiles();
-        if (files.length > 0) {
-            for (File f : files) {
-                f.delete();
-            }
-        }
+        String path = LecturaConfig.getValue("rutaUpload") + codArticulo + File.separator;
+        Utilitaria.borrarArchivos(path, false);        
     }
 
     private void generarArchivoBase64(String ruta, String base64) throws IOException {

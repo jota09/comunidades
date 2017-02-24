@@ -11,6 +11,7 @@ import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MultimediaFachada;
 import fachada.UsuarioFachada;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -281,7 +282,7 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
-            obj.put("visibilidad", art.getVisibilidad());
+            obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
             obj.put("Imagenes", jsArray);
             obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "/");
             out.print(obj);
@@ -294,10 +295,13 @@ public class NoticiaControlador extends HttpServlet {
             Articulo art = new Articulo();
             art.setCodigo(cod);
             TipoArticulo tpArt = new TipoArticulo();
-            tpArt.setCodigo(2);//Tipo articulo noticia es 2
+            Estructura est=new Estructura();
+            est.setReferencia("tipoNoticia");
+            tpArt.setCodigo(Integer.parseInt(est.getReferencia()));//Tipo articulo noticia es 2
             art.setTipoArticulo(tpArt);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);
+            Utilitaria.borrarArchivos(LecturaConfig.getValue("rutaUpload"+art.getCodigo()), true);
         }
     }
 
@@ -553,7 +557,7 @@ public class NoticiaControlador extends HttpServlet {
                     mult.setDestacada(Short.parseShort("1"));
                     mult = (Multimedia) multFachada.getObject(mult);
                     if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
-                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
+                        String path = LecturaConfig.getValue("rutaVisualiza") + File.separator + art2.getCodigo() +File.separator+ mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
                     } 
                     obj.put("titulo", art2.getTitulo());
