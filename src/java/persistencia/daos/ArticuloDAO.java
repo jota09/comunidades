@@ -99,6 +99,7 @@ public class ArticuloDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String query = "SELECT CODIGO, TITULO,FECHA_PUBLICACION "
+                    + "FROM articulo "
                     + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
