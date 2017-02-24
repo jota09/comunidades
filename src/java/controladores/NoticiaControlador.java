@@ -166,7 +166,9 @@ public class NoticiaControlador extends HttpServlet {
             Articulo articulo = new Articulo();
             articulo.setTipoArticulo(tipArt);
             articulo.setRango(request.getParameter("rango"));
-            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            Usuario user=(Usuario) request.getSession().getAttribute("user");
+            articulo.setUsuario(user);
+            articulo.setComunidad(user.getPerfilCodigo().getComunidad());
             if (request.getParameter("cat") != null) {
                 if (!request.getParameter("cat").equals("")) {
                     articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
