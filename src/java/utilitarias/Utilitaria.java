@@ -10,6 +10,7 @@ import fachada.EstructuraFachada;
 import fachada.FiltroFachada;
 import fachada.GestionFachada;
 import fachada.OpcionesFiltroFachada;
+import java.io.File;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -271,6 +272,20 @@ public class Utilitaria {
         }
         //System.out.println("Condicion:" + condicion);
         return condicion;
+    }
+    
+    public  static void borrarArchivos(String path,boolean borrarDir) {        
+        File file = new File(path);
+        File[] files = file.listFiles();
+        if (files.length > 0) {
+            for (File f : files) {
+                f.delete();
+            }
+        }
+        if(borrarDir)
+        {
+            file.delete();
+        }
     }
 
 }
