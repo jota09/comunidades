@@ -670,6 +670,17 @@ public class ClasificadoControlador extends HttpServlet {
             UsuarioFachada userFachada = new UsuarioFachada();
             user = (Usuario) userFachada.getObject(user);
             art.setUsuario(user);
+            MultimediaFachada multFachada = new MultimediaFachada();
+            List<Multimedia> listMult = multFachada.getListObject(art);
+            JSONArray jsArray = new JSONArray();
+            String pathOrigen = LecturaConfig.getValue("rutaVisualiza") + "\\" + art.getCodigo();
+            for (Multimedia mult : listMult) {
+                JSONObject obj1 = new JSONObject();
+                obj1.put("ruta", pathOrigen+"\\" + mult.getCodigo() + "." + mult.getExtension() );
+                obj1.put("destacada", mult.getDestacada());
+                System.out.println(obj1.toString());
+                jsArray.add(obj1);
+            }
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
             obj.put("nombreUsuario", art.getUsuario().getUserName());
@@ -683,6 +694,7 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
             obj.put("descripcion", art.getDescripcion());
             obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
+            obj.put("imagenes", jsArray);
             out.print(obj);
         }
     }
