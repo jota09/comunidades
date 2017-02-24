@@ -98,7 +98,7 @@ public class ArticuloDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT CODIGO, TITULO,FECHA_PUBLICACION "
+            String query = "SELECT CODIGO, TITULO,FECHA_PUBLICACION FROM articulo "
                     + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
@@ -106,6 +106,7 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             pS.setInt(2, art.getEstado().getCodigo());
             pS.setInt(3, art.getComunidad().getCodigo());
+            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
