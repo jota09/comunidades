@@ -34,7 +34,7 @@ public class ServicioDeEnvioMail {
         properties.put("mail.smtp.ssl.enable", ssl);
 
         session = Session.getDefaultInstance(properties);
-        session.setDebug(true);
+        //session.setDebug(true);
     }
 
     public void sendEmail(String mensaje, String sujeto, String destinatario) {

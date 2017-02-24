@@ -35,6 +35,7 @@ import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.VisibilidadArticulo;
 //Prueba de que ya sincronizo el proyecto con alejandro
 //Prueba de que ya sincronizo el proyecto con manuel
 //Verificacion....
@@ -182,7 +183,7 @@ public class NoticiaControlador extends HttpServlet {
             java.sql.Date date = new java.sql.Date(parsed.getTime());
             art.setFechaFinPublicacion(date);
             art.setComunidad(usr.getPerfilCodigo().getComunidad());
-            art.setVisibilidad(Short.parseShort(request.getParameter("visibilidad")));
+            art.setVisibilidad(new VisibilidadArticulo(Short.parseShort(request.getParameter("visibilidad"))));
             if (codArt.equals("")) {
                 artFach.insertObject(art);
             } else {

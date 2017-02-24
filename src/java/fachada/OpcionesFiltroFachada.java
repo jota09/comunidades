@@ -22,18 +22,20 @@ public class OpcionesFiltroFachada implements GestionFachada {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO opcionesDAO = new OpcionesFiltroDAO();
+        return opcionesDAO.getObject(object);
     }
 
     @Override
     public int insertObject(Object object) {
-        GestionDAO opcionesDAO=new OpcionesFiltroDAO();
+        GestionDAO opcionesDAO = new OpcionesFiltroDAO();
         return opcionesDAO.insertObject(object);
     }
 
     @Override
     public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO opcionesDAO = new OpcionesFiltroDAO();
+        return opcionesDAO.getListObject(object);
     }
 
     @Override
@@ -60,5 +62,5 @@ public class OpcionesFiltroFachada implements GestionFachada {
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

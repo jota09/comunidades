@@ -1,6 +1,7 @@
 package persistencia.entidades;
 
 import java.io.Serializable;
+import org.json.simple.JSONObject;
 
 public class TipoMultimedia implements Serializable {
 
@@ -19,7 +20,7 @@ public class TipoMultimedia implements Serializable {
         this.extension = extension;
         this.activo = activo;
     }
-    
+
     public TipoMultimedia() {
     }
 
@@ -53,5 +54,13 @@ public class TipoMultimedia implements Serializable {
 
     public void setActivo(short activo) {
         this.activo = activo;
+    }
+
+    @Override
+    public String toString() {
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
 }

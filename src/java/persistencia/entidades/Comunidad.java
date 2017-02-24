@@ -2,6 +2,7 @@ package persistencia.entidades;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import org.json.simple.JSONObject;
 
 public class Comunidad implements Serializable {
 
@@ -101,8 +102,10 @@ public class Comunidad implements Serializable {
 
     @Override
     public String toString() {
-        return "Comunidad{" + "codigo=" + codigo + ", ciudadcodigo=" + ciudadcodigo + ", departamentocodigo=" + departamentocodigo + ", paiscodigo=" + paiscodigo + ", nombre=" + nombre + ", direccion=" + direccion + ", telefono=" + telefono + ", activo=" + activo + ", eliminado=" + eliminado + ", creacion=" + creacion + '}';
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
-    
-    
+
 }

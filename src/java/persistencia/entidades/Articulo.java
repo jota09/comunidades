@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.sql.Date;
 import java.util.List;
-
+import org.json.simple.JSONObject;
+import utilitarias.VisibilidadArticulo;
 
 public class Articulo implements Serializable {
 
@@ -27,9 +28,8 @@ public class Articulo implements Serializable {
     private List<ClasificadoInteres> listaInteres;
     private String rango;
     private String busqueda;
-    private short visibilidad;
+    private VisibilidadArticulo visibilidad;
 
-    
     public Articulo() {
     }
 
@@ -37,7 +37,7 @@ public class Articulo implements Serializable {
         this.codigo = codigo;
     }
 
-    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, short visibilidad) {
+    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, VisibilidadArticulo visibilidad) {
         this.codigo = codigo;
         this.usuario = usuario;
         this.usuariocodigoadm = usuariocodigoadm;
@@ -59,8 +59,6 @@ public class Articulo implements Serializable {
         this.busqueda = busqueda;
         this.visibilidad = visibilidad;
     }
-    
-    
 
     public int getCodigo() {
         return this.codigo;
@@ -157,23 +155,23 @@ public class Articulo implements Serializable {
     public void setTipoArticulo(TipoArticulo tipoarticulo) {
         this.tipoarticulo = tipoarticulo;
     }
-    
-    public Categoria getCategoria(){
+
+    public Categoria getCategoria() {
         return categoria;
     }
-    
-    public void setCategoria(Categoria categoria){
+
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
-    
-    public List<ClasificadoInteres> getListaInteres(){
+
+    public List<ClasificadoInteres> getListaInteres() {
         return listaInteres;
     }
-    
-    public void setListaInteres(List<ClasificadoInteres> listaInteres){
+
+    public void setListaInteres(List<ClasificadoInteres> listaInteres) {
         this.listaInteres = listaInteres;
     }
-    
+
     public String getRango() {
         return rango;
     }
@@ -181,18 +179,13 @@ public class Articulo implements Serializable {
     public void setRango(String rango) {
         this.rango = rango;
     }
-    
+
     public String getBusqueda() {
         return busqueda;
     }
 
     public void setBusqueda(String busqueda) {
         this.busqueda = busqueda;
-    }    
-
-    @Override
-    public String toString() {
-        return "Articulo{" + "codigo=" + codigo + ", usuario=" + usuario + ", usuariocodigoadm=" + usuariocodigoadm + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechapublicacion=" + fechapublicacion + ", precio=" + precio + ", fechafinpublicacion=" + fechafinpublicacion + ", prioridad=" + prioridad + ", observacionesadmon=" + observacionesadmon + ", estado=" + estado + ", tipoarticulo=" + tipoarticulo + ", categoria=" + categoria + ", comunidad=" + comunidad + ", listaInteres=" + listaInteres + ", rango=" + rango + ", busqueda=" + busqueda + '}';
     }
 
     public void setComunidad(Comunidad comunidad) {
@@ -218,12 +211,15 @@ public class Articulo implements Serializable {
     public void setActualizacion(Timestamp actualizacion) {
         this.actualizacion = actualizacion;
     }
-    
-    public short getVisibilidad() {
+
+    public VisibilidadArticulo getVisibilidad() {
         return visibilidad;
     }
 
-    public void setVisibilidad(short visibilidad) {
+    public void setVisibilidad(VisibilidadArticulo visibilidad) {
         this.visibilidad = visibilidad;// 1 para privado y 0 publico
     }
+
+   
+
 }

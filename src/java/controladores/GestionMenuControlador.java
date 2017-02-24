@@ -66,6 +66,7 @@ public class GestionMenuControlador extends HttpServlet {
                 }
                 case 5: {
                     editarmenu(request, response);
+                    break;
                 }
             }
         } catch (IOException ex) {

@@ -6,6 +6,7 @@
 package persistencia.entidades;
 
 import java.io.Serializable;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -71,7 +72,10 @@ public class Prioridad implements Serializable {
 
     @Override
     public String toString() {
-        return "Prioridad{" + "codigo=" + codigo + ", nombre=" + nombre + ", valor=" + valor + ", activo=" + activo + '}';
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
     
     

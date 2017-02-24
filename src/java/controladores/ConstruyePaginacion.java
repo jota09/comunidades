@@ -36,44 +36,52 @@ public class ConstruyePaginacion extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String obj = request.getParameter("obj");
         String tipo = request.getParameter("tipo");
+        String estadoArticulo = request.getParameter("estado");
         int rango = Integer.parseInt(request.getParameter("rango"));
         int codigoTipo = 0;
         try (PrintWriter out = response.getWriter()) {
             Class clase = Class.forName("fachada." + obj + "Fachada");
             GestionFachada gestionFachada = (GestionFachada) clase.newInstance();
+            CondicionPaginado condicion = new CondicionPaginado();
             if (tipo != null) {
                 codigoTipo = Integer.parseInt(tipo);
             }
+            if (estadoArticulo != null) {
+                condicion.setEstado(estadoArticulo);
+            }
             int cont = 1;
             Usuario user = (Usuario) request.getSession().getAttribute("user");
-            CondicionPaginado condicion = new CondicionPaginado();
             condicion.setTipo(codigoTipo);
             condicion.setUser(user);
+            
+
             condicion.setComunidad(user.getPerfilCodigo().getComunidad());
             List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(condicion), rango);
-            out.println("<nav aria-label='Page navigation'>");
-            out.println("<ul class='pagination'>");
-            String li = "<li  id='pag-" + cont + "' style=\"cursor:pointer;\" >";
-            out.println(li);
-            String a = "<a onclick=\"mostrar" + obj + "('" + paginas.get(0) + "', 'pag-" + cont + "'" + ((tipo != null) ? ",'" + tipo + "'" : "") + ")\">";
-            out.println(a);
-            out.println("<span aria-hidden='true'>&laquo;</span>");
-            out.println("</a>");
-            out.println("</li>");
-            for (String p : paginas) {
-                li = "<li " + ((cont == 1) ? "class='active'" : "") + " id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrar" + obj + "('" + p + "', '" + cont + "'" + ((tipo != null) ? "," + tipo : "") + ")\" >" + cont + "</a></li>";
+            if (paginas.size() > 0) {
+                out.println("<nav aria-label='Page navigation'>");
+                out.println("<ul class='pagination'>");
+                String li = "<li  id='pag-" + cont + "' style=\"cursor:pointer;\" >";
                 out.println(li);
-                cont++;
+                String a = "<a onclick=\"mostrar" + obj + "('" + paginas.get(0) + "', 'pag-" + cont + "'" + ((tipo != null) ? ",'" + tipo + "'" : "") + ")\">";
+                out.println(a);
+                out.println("<span aria-hidden='true'>&laquo;</span>");
+                out.println("</a>");
+                out.println("</li>");
+                for (String p : paginas) {
+                    li = "<li " + ((cont == 1) ? "class='active'" : "") + " id='" + cont + "' style='cursor:pointer;'><a  onclick=\"mostrar" + obj + "('" + p + "', '" + cont + "'" + ((tipo != null) ? "," + tipo : "") + ")\" >" + cont + "</a></li>";
+                    out.println(li);
+                    cont++;
+                }
+                li = "<li id='pag-" + cont + "' style='cursor:pointer;'>";
+                a = "<a onclick=\"mostrar" + obj + "('" + paginas.get(paginas.size() - 1) + "', 'pag-" + cont + "'" + ((tipo != null) ? ",'" + tipo + "'" : "") + ")\">";
+                out.println(li);
+                out.println(a);
+                out.println("<span aria-hidden=\"true\">&raquo;</span>");
+                out.println("</a>");
+                out.println("</li>");
+                out.println("</ul>");
+                out.println("</nav>");
             }
-            li = "<li id='pag-" + cont + "' style='cursor:pointer;'>";
-            a = "<a onclick=\"mostrar" + obj + "('" + paginas.get(paginas.size() - 1) + "', 'pag-" + cont + "'" + ((tipo != null) ? ",'" + tipo + "'" : "") + ")\">";
-            out.println(li);
-            out.println(a);
-            out.println("<span aria-hidden=\"true\">&raquo;</span>");
-            out.println("</a>");
-            out.println("</li>");
-            out.println("</ul>");
-            out.println("</nav>");
         } catch (ClassNotFoundException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());

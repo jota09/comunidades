@@ -1,6 +1,7 @@
 package persistencia.entidades;
 
 import java.io.Serializable;
+import org.json.simple.JSONObject;
 
 public class Perfil implements Serializable {
 
@@ -44,9 +45,12 @@ public class Perfil implements Serializable {
         this.comunidad = comunidad;
     }
 
-    @Override
+      @Override
     public String toString() {
-        return "Perfil{" + "codigo=" + codigo + ", nombre=" + nombre + ", comunidad=" + comunidad + ", activo=" + activo + '}';
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
     
     

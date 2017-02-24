@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.TipoArticulo;
@@ -64,7 +65,7 @@ public class TipoArticuloDAO implements GestionDAO {
             error.setTipoError(new TipoError(3));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
-        }finally{
+        } finally {
             ConexionBD.cerrarConexion(con);
         }
         return tpArt;
@@ -77,7 +78,46 @@ public class TipoArticuloDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        List<TipoArticulo> tipoArticulos = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT codigo,nombre FROM tipo_articulo ";
+            PreparedStatement pS = con.prepareStatement(query);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                TipoArticulo tipo = new TipoArticulo();
+                tipo.setCodigo(rS.getInt(1));
+                tipo.setNombre(rS.getString(2));
+                tipoArticulos.add(tipo);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return tipoArticulos;
     }
 
     @Override

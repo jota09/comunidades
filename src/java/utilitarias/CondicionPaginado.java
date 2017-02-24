@@ -17,6 +17,7 @@ public class CondicionPaginado {
     private int tipo;
     private Usuario user;
     private Comunidad comunidad;
+    private String estado;
 
     public CondicionPaginado() {
     }
@@ -25,10 +26,11 @@ public class CondicionPaginado {
         this.tipo = tipo;
     }
 
-    public CondicionPaginado(int tipo, Usuario user, Comunidad comunidad) {
+    public CondicionPaginado(int tipo, Usuario user, Comunidad comunidad, String estado) {
         this.tipo = tipo;
         this.user = user;
         this.comunidad = comunidad;
+        this.estado = estado;
     }
 
     public int getTipo() {
@@ -53,6 +55,14 @@ public class CondicionPaginado {
 
     public void setComunidad(Comunidad comunidad) {
         this.comunidad = comunidad;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
 }
