@@ -281,7 +281,7 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
-            obj.put("visibilidad", art.getVisibilidad());
+            obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
             obj.put("Imagenes", jsArray);
             obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "/");
             out.print(obj);
