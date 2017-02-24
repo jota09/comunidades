@@ -384,7 +384,7 @@ public class ClasificadoControlador extends HttpServlet {
                         String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
                     } else {
-                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
+                        String path = LecturaConfig.getValue("rutaImg") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
                         obj.put("imgDestacada", path);
                     }
                     obj.put("titulo", art2.getTitulo());
@@ -436,9 +436,15 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("precio", art.getPrecio());
             obj.put("prioridad", art.getPrioridad().getValor());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
-            obj.put("visibilidad", art.getVisibilidad());
+            obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
+            if (art.getObservacionesAdmon() != null && !art.getObservacionesAdmon().isEmpty()) {
+                obj.put("observacionAdmin", art.getObservacionesAdmon());
+            } else {
+                obj.put("observacionAdmin", "Sin observacion");
+            }
             obj.put("Imagenes", jsArray);
             obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "\\");
+            System.out.println(obj.toString());
             out.print(obj);
         }
     }
@@ -476,7 +482,7 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura estruc2 = new Estructura(ref2);
             estruc2 = (Estructura) estFach.getObject(estruc2);
             JSONArray jsonArray = new JSONArray();
-            int contador =0 ,contador2 = 0;
+            int contador = 0, contador2 = 0;
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
                 if (user.getCodigo() == art.getUsuario().getCodigo()) {
