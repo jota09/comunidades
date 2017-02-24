@@ -486,6 +486,8 @@ public class ArticuloDAO implements GestionDAO {
                     + "WHERE ((art.tipo_articulo_codigo=?) "
                     + busqueda + " "
                     + rango;
+            System.out.println(query);
+            System.out.println(articulo.getTipoArticulo().getCodigo()+" "+articulo.getUsuario().getCodigo()+" "+articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             if (Integer.parseInt(estruc.getValor()) != articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo()) {
