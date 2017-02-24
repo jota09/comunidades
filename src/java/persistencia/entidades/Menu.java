@@ -2,6 +2,7 @@ package persistencia.entidades;
 
 import java.io.Serializable;
 import java.util.List;
+import org.json.simple.JSONObject;
 
 public class Menu implements Serializable {
 
@@ -11,7 +12,6 @@ public class Menu implements Serializable {
     private String url;
     private short activo;
     private List<Menu> listaMenu;
-
 
     public Menu() {
     }
@@ -28,7 +28,7 @@ public class Menu implements Serializable {
         this.activo = activo;
         this.listaMenu = listaMenu;
     }
-    
+
     public int getCodigo() {
         return this.codigo;
     }
@@ -68,11 +68,20 @@ public class Menu implements Serializable {
     public void setActivo(short activo) {
         this.activo = activo;
     }
+
     public List<Menu> getListaMenu() {
         return listaMenu;
     }
 
     public void setListaMenu(List<Menu> listaMenu) {
         this.listaMenu = listaMenu;
+    }
+
+    @Override
+    public String toString() {
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
 }

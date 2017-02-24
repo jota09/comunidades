@@ -14,53 +14,54 @@ import persistencia.daos.GestionDAO;
  * @author manuel.alcala
  */
 public class FiltroFachada implements GestionFachada {
-
+    
     @Override
     public int getCount(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public Object getObject(Object object) {
         GestionDAO filtroDAO = new FiltroDAO();
         return filtroDAO.getListObject(object);
     }
-
+    
     @Override
     public int insertObject(Object object) {
         GestionDAO filtroDAO = new FiltroDAO();
         return filtroDAO.insertObject(object);
     }
-
+    
     @Override
     public List getListObject(Object object) {
         GestionDAO filtroDAO = new FiltroDAO();
         return filtroDAO.getListObject(object);
     }
-
+    
     @Override
     public List getListObject() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public int updateObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public void deleteObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO filtroDAO = new FiltroDAO();
+        return filtroDAO.getListByCondition(object);
     }
-
+    
     @Override
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
 }

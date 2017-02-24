@@ -7,7 +7,7 @@ package controladores;
 
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
-import fachada.SeguridadFachada;
+import fachada.SeguridadUsuarioFachada;
 import fachada.UsuarioFachada;
 import fachada.UsuarioPerfilFachada;
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class Inicio extends HttpServlet {
             sgUsr.setContrasena(cifrado);
             sgUsr.setIpUltimaSesion(request.getRemoteAddr());
             usr.setListaSeguridad(sgUsr);
-            SeguridadFachada sgdadFach = new SeguridadFachada();
+            SeguridadUsuarioFachada sgdadFach = new SeguridadUsuarioFachada();
             sgdadFach.updateObject(sgUsr);
 
             UsuarioFachada usrFachada = new UsuarioFachada();

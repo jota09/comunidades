@@ -5,6 +5,8 @@
  */
 package persistencia.entidades;
 
+import org.json.simple.JSONObject;
+
 /**
  *
  * @author manuel.alcala
@@ -42,6 +44,13 @@ public class TipoError {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+        @Override
+    public String toString() {
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.tipo);
+        return obj.toString();
     }
 
 

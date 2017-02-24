@@ -1,5 +1,8 @@
+import java.util.Map;
 import org.eclipse.jdt.internal.compiler.ast.ThisReference;
+import persistencia.daos.MetaDataDAO;
 import persistencia.entidades.Error;
+import persistencia.entidades.MetaData;
 import persistencia.entidades.TipoError;
 import utilitarias.Utilitaria;
 
@@ -18,18 +21,15 @@ public class prueba {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int i=0;
-        try{
-         i=10/0;
-        }catch(ArithmeticException ex){
-            Error error=new Error();
-            error.setClase("Prueba");
-            error.setMetodo("Main");
-            error.setDescripcion("error de prueba");
-            error.setTipoError(new TipoError(1));
-            Utilitaria.escribeError(error);
-        }
-        
+        MetaDataDAO meta=new MetaDataDAO();
+        MetaData metada=new MetaData();
+        metada.setTabla("articulo");
+        Map<String,MetaData> datos=meta.getColumnas(metada);
+        meta.getColumnasForaneas(metada,datos);
+        for(MetaData data:datos.values()){
+            System.out.println("Columnas PK:"+data.getPkTabla());
+        };
+        System.out.println("Tamano:"+datos.size());
     }
     
 }

@@ -1,6 +1,7 @@
 package persistencia.entidades;
 
 import java.io.Serializable;
+import org.json.simple.JSONObject;
 
 public class Pais implements Serializable {
 
@@ -33,5 +34,13 @@ public class Pais implements Serializable {
 
     public void setActivo(short activo) {
         this.activo = activo;
+    }
+
+    @Override
+    public String toString() {
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
 }

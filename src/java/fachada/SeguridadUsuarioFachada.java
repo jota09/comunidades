@@ -13,7 +13,7 @@ import persistencia.daos.SeguridadDAO;
  *
  * @author ferney.medina
  */
-public class SeguridadFachada implements GestionFachada {
+public class SeguridadUsuarioFachada implements GestionFachada {
 
     @Override
     public int updateObject(Object obj) {

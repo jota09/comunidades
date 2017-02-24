@@ -1,6 +1,7 @@
 package persistencia.entidades;
 
 import java.io.Serializable;
+import org.json.simple.JSONObject;
 
 public class ArticuloEstado implements Serializable {
 
@@ -50,6 +51,9 @@ public class ArticuloEstado implements Serializable {
 
     @Override
     public String toString() {
-        return "ArticuloEstado{" + "codigo=" + codigo + ", nombre=" + nombre + ", observacion=" + observacion + ", activo=" + activo + '}';
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
 }

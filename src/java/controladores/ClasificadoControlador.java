@@ -40,6 +40,7 @@ import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.VisibilidadArticulo;
 
 /**
  *
@@ -140,6 +141,8 @@ public class ClasificadoControlador extends HttpServlet {
             error.setTipoError(new TipoError(4));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
+        } catch (org.json.simple.parser.ParseException ex) {
+            Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -266,7 +269,12 @@ public class ClasificadoControlador extends HttpServlet {
             java.sql.Date date = new java.sql.Date(parsed.getTime());
             art.setFechaFinPublicacion(date);
             art.setComunidad(usr.getPerfilCodigo().getComunidad());
-            art.setVisibilidad(Short.parseShort(request.getParameter("visibilidad")));
+            short visibilidad = Short.parseShort(request.getParameter("visibilidad"));
+            if (request.getParameter("visibilidad") != null) {
+                VisibilidadArticulo visibilidadArticulo = new VisibilidadArticulo(visibilidad);
+                art.setVisibilidad(visibilidadArticulo);
+            }
+
             if (codArt.equals("")) {
                 artFach.insertObject(art);
                 request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
@@ -331,12 +339,15 @@ public class ClasificadoControlador extends HttpServlet {
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
             ArticuloEstado artEstado = new ArticuloEstado();
+            artEstado.setCodigo(1);
             String ref3 = "articuloEstadoAprobado";
             Estructura estruc3 = new Estructura(ref3);
             estruc3 = (Estructura) estrucFachada.getObject(estruc3);
             art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(user);
+            art.setEstado(artEstado);
+            art.setComunidad(user.getPerfilCodigo().getComunidad());
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
@@ -351,7 +362,7 @@ public class ClasificadoControlador extends HttpServlet {
         }
     }
 
-    private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, org.json.simple.parser.ParseException {
         try (PrintWriter out = response.getWriter()) {
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -363,54 +374,22 @@ public class ClasificadoControlador extends HttpServlet {
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             Articulo art = new Articulo();
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            art.setUsuario(user);
+            //art.setUsuario(user);
+            art.setComunidad(user.getPerfilCodigo().getComunidad());
             art.setRango(request.getParameter("limIni") + "," + estruc.getValor());
-            JSONParser parser = new JSONParser();
-            JSONObject jsonBusq = null;
-            try {
-                jsonBusq = (JSONObject) parser.parse(request.getParameter("busqueda"));
-            } catch (org.json.simple.parser.ParseException ex) {
-                Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            art.setBusqueda("");
-            if (jsonBusq.get("categoria").toString() != null && !jsonBusq.get("categoria").toString().isEmpty()) {
-                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "cat.codigo", "where", jsonBusq.get("categoria").toString(), "", "igual"));
-            }
-            if (jsonBusq.get("prioridad").toString() != null && !jsonBusq.get("prioridad").toString().isEmpty()) {
-                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "prioridad_codigo", "where", jsonBusq.get("prioridad").toString(), "", "igual"));
-            }
-            if (jsonBusq.get("titulo").toString() != null && !jsonBusq.get("titulo").toString().isEmpty()) {
-                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "char", "titulo", "like", jsonBusq.get("titulo").toString(), "", ""));
-            }
-            if (jsonBusq.get("precio").toString() != null && !jsonBusq.get("precio").toString().isEmpty()) {
-                String precio = jsonBusq.get("precio").toString().replace(" ", "");
-                precio = precio.replace("$", "");
-                if (precio.indexOf("-") >= 0) {
-                    String[] precioSplit = precio.split("-");
-                    art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precioSplit[0], precioSplit[1], "rango"));
-                } else if (precio.indexOf("+") >= 0) {
-                    precio = precio.replace("+", "");
-                    art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "mayor"));
-                } else {
-                    precio = precio.replace("-", "");
-                    art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "art.precio", "where", precio, "", "menor"));
-                }
-            }
-            if (jsonBusq.get("ordenar").toString() != null && !jsonBusq.get("ordenar").toString().isEmpty()) {
-                String orden = jsonBusq.get("ordenar").toString();
-                String[] ordenSplit = orden.split("-");
-                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "char", ordenSplit[0], "order", ordenSplit[1], "", ""));
-            }
-
+            String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             ArticuloFachada artFachada = new ArticuloFachada();
-            MultimediaFachada multFachada = new MultimediaFachada();
-            List<Articulo> listArticulo = artFachada.getListByPagination(art);
-            JSONArray array = new JSONArray();
+            art.setBusqueda(condicion);
             String ref3 = "articuloEstadoAprobado";
             Estructura estruc3 = new Estructura(ref3);
             estruc3 = (Estructura) estrucFachada.getObject(estruc3);
+            ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(estruc3.getValor()));
+            art.setEstado(estado);
+            MultimediaFachada multFachada = new MultimediaFachada();
+            List<Articulo> listArticulo = artFachada.getListByPagination(art);
+            JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
-                if (art2.getFechaPublicacion() != null && art2.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
+                if (art2.getFechaPublicacion() != null) {
                     JSONObject obj = new JSONObject();
                     obj.put("codigo", art2.getCodigo());
                     Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
@@ -494,7 +473,8 @@ public class ClasificadoControlador extends HttpServlet {
             articulo.setTipoArticulo(new TipoArticulo(Integer.parseInt(request.getParameter("tipo"))));
             articulo.setRango(request.getParameter("rango"));
             Usuario user = (Usuario) request.getSession().getAttribute("user");
-            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            articulo.setUsuario(user);
+            articulo.setComunidad(user.getPerfilCodigo().getComunidad());
             if (request.getParameter("cat") != null) {
                 if (!request.getParameter("cat").equals("")) {
                     articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));

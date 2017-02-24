@@ -12,6 +12,17 @@ public class Vista implements Serializable {
     public Vista() {
     }
 
+    public Vista(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public Vista(int codigo, String nombre, String url, short activo) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.url = url;
+        this.activo = activo;
+    }
+    
     public int getCodigo() {
         return this.codigo;
     }
