@@ -46,9 +46,10 @@ public class ConstruyeFiltro extends HttpServlet {
         try {
             response.setContentType("text/html;charset=UTF-8");
             String vi = request.getParameter("vista");
+            System.out.println(vi);
             GestionFachada filtroFachada = new FiltroFachada();
             GestionFachada opcionesFachada = new OpcionesFiltroFachada();
-            Vista vista=new Vista(Integer.parseInt(vi));
+            Vista vista = new Vista(Integer.parseInt(vi));
             JSONArray arrayFiltros = new JSONArray();
             List<Filtro> filtros = filtroFachada.getListByCondition(vista);
             for (Filtro f : filtros) {

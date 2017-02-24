@@ -6,6 +6,7 @@
 package fachada;
 
 import java.util.List;
+import java.util.Map;
 import persistencia.daos.MetaDataDAO;
 import persistencia.entidades.MetaData;
 
@@ -19,7 +20,7 @@ public class MetaDataFachada {
         MetaDataDAO metaDAO = new MetaDataDAO();
         return metaDAO.getTables();
     }
-     public List<String> getColumnas(MetaData metada) {
+     public Map<String,MetaData> getColumnas(MetaData metada) {
          MetaDataDAO metaDAO = new MetaDataDAO();
          return metaDAO.getColumnas(metada);
      }

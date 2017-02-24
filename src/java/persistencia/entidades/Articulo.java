@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.sql.Date;
 import java.util.List;
+import org.json.simple.JSONObject;
 import utilitarias.VisibilidadArticulo;
 
 public class Articulo implements Serializable {
@@ -187,11 +188,6 @@ public class Articulo implements Serializable {
         this.busqueda = busqueda;
     }
 
-    @Override
-    public String toString() {
-        return "Articulo{" + "codigo=" + codigo + ", usuario=" + usuario + ", usuariocodigoadm=" + usuariocodigoadm + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechapublicacion=" + fechapublicacion + ", precio=" + precio + ", fechafinpublicacion=" + fechafinpublicacion + ", prioridad=" + prioridad + ", observacionesadmon=" + observacionesadmon + ", estado=" + estado + ", tipoarticulo=" + tipoarticulo + ", categoria=" + categoria + ", comunidad=" + comunidad + ", listaInteres=" + listaInteres + ", rango=" + rango + ", busqueda=" + busqueda + '}';
-    }
-
     public void setComunidad(Comunidad comunidad) {
         this.comunidad = comunidad;
     }
@@ -223,4 +219,7 @@ public class Articulo implements Serializable {
     public void setVisibilidad(VisibilidadArticulo visibilidad) {
         this.visibilidad = visibilidad;// 1 para privado y 0 publico
     }
+
+   
+
 }

@@ -11,7 +11,9 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
@@ -68,17 +70,19 @@ public class MetaDataDAO {
         return tablas;
     }
 
-    public List<String> getColumnas(MetaData metada) {
+    public Map<String, MetaData> getColumnas(MetaData metada) {
         Connection con = null;
-        List<String> columnas = new ArrayList();
+        Map<String, MetaData> columnas = new HashMap();
         try {
             con = ConexionBD.obtenerConexion();
             DatabaseMetaData databaseMetaData = con.getMetaData();
             ResultSet rS = databaseMetaData.getColumns(null, "comunidades", metada.getTabla(), null);
             while (rS.next()) {
-                columnas.add(rS.getString(4));
+                MetaData columna = new MetaData();
+                columna.setColumna(rS.getString(4));
+                columna.setTabla(metada.getTabla());
+                columnas.put(rS.getString(4), columna);
             }
-
             rS.close();
         } catch (ClassNotFoundException ex) {
             Error error = new Error();
@@ -105,6 +109,44 @@ public class MetaDataDAO {
             ConexionBD.cerrarConexion(con);
         }
         return columnas;
+    }
+
+    public void getColumnasForaneas(MetaData metada, Map<String, MetaData> columnas) {
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            DatabaseMetaData databaseMetaData = con.getMetaData();
+            ResultSet rS = databaseMetaData.getImportedKeys(con.getCatalog(), "comunidades", metada.getTabla());
+            while (rS.next()) {
+                MetaData data =columnas.get(rS.getString("FKCOLUMN_NAME"));
+                data.setPkTabla(rS.getString("PKTABLE_NAME"));
+            }
+            rS.close();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getColumnas");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getColumnas");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getColumnas");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+
     }
 
 }

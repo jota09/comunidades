@@ -94,7 +94,7 @@ public class ArticuloDAO implements GestionDAO {
     @Override
     public List getListObject(Object obj) {
         Articulo art = (Articulo) obj;
-        ArrayList<Articulo> listArt = new ArrayList<Articulo>();
+        ArrayList<Articulo> listArt = new ArrayList();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
@@ -105,7 +105,7 @@ public class ArticuloDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             pS.setInt(2, art.getEstado().getCodigo());
-            pS.setInt(3, art.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
+            pS.setInt(3, art.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
@@ -275,7 +275,8 @@ public class ArticuloDAO implements GestionDAO {
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? ";
+            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? "
+                    + ""+((condicionPaginado.getEstado()!=null)?" and estados_codigo="+condicionPaginado.getEstado():"")+" ";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, condicionPaginado.getTipo());
             pS.setInt(2, condicionPaginado.getUser().getCodigo());
@@ -450,7 +451,6 @@ public class ArticuloDAO implements GestionDAO {
                             + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and usuario_codigo=" + art.getUsuario().getCodigo() : "") + " Limit " + art.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
-            System.out.println("QUERYYYY:" + pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo articulo = new Articulo();
@@ -475,7 +475,6 @@ public class ArticuloDAO implements GestionDAO {
                 articulo.setUsuario(usr);
                 articulos.add(articulo);
             }
-            System.out.println("Articulos Size:" + articulos.size());
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {

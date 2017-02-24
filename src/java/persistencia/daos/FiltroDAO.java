@@ -12,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.CondicionesFiltro;
 import persistencia.entidades.Filtro;
@@ -111,7 +109,7 @@ public class FiltroDAO implements GestionDAO {
         int tam = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Insert into filtro(codigo,nombre,tabla,campo,condicion_filtro_codigo,vista_codigo) values(?,?,?,?,?,?)";
+            String sql = "Insert into filtro(codigo,nombre,tabla,campo,condicion_filtro_codigo,vista_codigo,tablapk) values(?,?,?,?,?,?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
             filtro.setCodigo(getMaxCodigo());
             pS.setInt(1, filtro.getCodigo());
@@ -120,6 +118,7 @@ public class FiltroDAO implements GestionDAO {
             pS.setString(4, filtro.getCampo());
             pS.setInt(5, filtro.getCondicionFiltro().getCodigo());
             pS.setInt(6, filtro.getVista().getCodigo());
+            pS.setString(7,filtro.getTablaPK());
             tam = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {

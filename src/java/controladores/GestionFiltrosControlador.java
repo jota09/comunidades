@@ -8,7 +8,9 @@ import fachada.OpcionesFiltroFachada;
 import fachada.VistaFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.ProcessBuilder.Redirect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -18,9 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import persistencia.daos.MetaDataDAO;
 import persistencia.entidades.CondicionesFiltro;
 import persistencia.entidades.Filtro;
 import persistencia.entidades.MetaData;
@@ -90,6 +92,12 @@ public class GestionFiltrosControlador extends HttpServlet {
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);;
         } catch (ParseException ex) {
+            Logger.getLogger(GestionFiltrosControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionFiltrosControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(GestionFiltrosControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
             Logger.getLogger(GestionFiltrosControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -170,15 +178,20 @@ public class GestionFiltrosControlador extends HttpServlet {
     }
 
     private void getColumnas(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        MetaDataFachada metaFachada = new MetaDataFachada();
         String entidad = request.getParameter("entidad");
         MetaData tabla = new MetaData();
         tabla.setTabla(entidad);
         JSONArray array = new JSONArray();
-        List<String> columnas = metaFachada.getColumnas(tabla);
-        for (String col : columnas) {
+        MetaDataDAO meta = new MetaDataDAO();
+        MetaData metada = new MetaData();
+        metada.setTabla(entidad);
+        Map<String, MetaData> datos = meta.getColumnas(metada);
+        meta.getColumnasForaneas(metada, datos);
+        for (MetaData data : datos.values()) {
             JSONObject obj = new JSONObject();
-            obj.put("columna", col);
+            obj.put("columna", data.getColumna());
+            obj.put("pkTabla", data.getPkTabla());
+            obj.put("tabla", data.getTabla());
             array.add(obj);
         }
         try (PrintWriter out = response.getWriter()) {
@@ -211,32 +224,57 @@ public class GestionFiltrosControlador extends HttpServlet {
         }
     }
 
-    private void guardarFiltro(HttpServletRequest request, HttpServletResponse response) throws ParseException {
+    private void guardarFiltro(HttpServletRequest request, HttpServletResponse response) throws ParseException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
         JSONParser parser = new JSONParser();
         GestionFachada filtroFachada = new FiltroFachada();
         GestionFachada opcionesFachada = new OpcionesFiltroFachada();
         JSONArray array = (JSONArray) parser.parse(request.getParameter("opciones"));
-        Vista vista=new Vista(Integer.parseInt(request.getParameter("vista")));
+        Vista vista = new Vista(Integer.parseInt(request.getParameter("vista")));
         String nombre = request.getParameter("nombre");
         String condicion = request.getParameter("condicion");
         String campo = request.getParameter("campo");
         String entidad = request.getParameter("entidad");
+        String tablapK = request.getParameter("tablapK");
         Filtro filtro = new Filtro();
         filtro.setVista(vista);
         filtro.setTabla(entidad);
+        filtro.setTablaPK(tablapK);
         filtro.setCondicionFiltro(new CondicionesFiltro(Integer.parseInt(condicion)));
         filtro.setCampo(campo);
         filtro.setNombre(nombre);
         filtroFachada.insertObject(filtro);
-        for (int i = 0; i < array.size(); i++) {
-            JSONObject obj = (JSONObject) (array.get(i));
-            OpcionesFiltro opciones = new OpcionesFiltro();
-            opciones.setNombre(obj.get("nombre").toString());
-            opciones.setValor(obj.get("valor").toString());
-            opciones.setFiltro(filtro);
-            opcionesFachada.insertObject(opciones);
+        if (tablapK.isEmpty()) {
+            for (int i = 0; i < array.size(); i++) {
+                JSONObject obj = (JSONObject) (array.get(i));
+                OpcionesFiltro opciones = new OpcionesFiltro();
+                opciones.setNombre(obj.get("nombre").toString());
+                opciones.setValor(obj.get("valor").toString());
+                opciones.setFiltro(filtro);
+                opcionesFachada.insertObject(opciones);
+            }
+        } else {
+            String clasePK = "";
+            String[] arrayPk = tablapK.split("_");
+            if (arrayPk.length > 1) {
+                for (String s : arrayPk) {
+                    clasePK += s.replaceFirst(s.substring(0, 1), s.substring(0, 1).toUpperCase());
+                }
+            } else {
+                clasePK = clasePK += tablapK.replaceFirst(tablapK.substring(0, 1), tablapK.substring(0, 1).toUpperCase());
+            }
+            Class claseFachada = Class.forName("fachada." + clasePK + "Fachada");
+            GestionFachada gestionFachada = (GestionFachada) claseFachada.newInstance();
+            for (Object obj : gestionFachada.getListObject()) {
+                JSONObject jsonObject = (JSONObject) parser.parse(obj.toString());
+                OpcionesFiltro opciones = new OpcionesFiltro();
+                opciones.setNombre(jsonObject.get("nombre").toString());
+                opciones.setValor(jsonObject.get("codigo").toString());
+                opciones.setFiltro(filtro);
+                opcionesFachada.insertObject(opciones);
+            }
         }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el Filtro", "success"));
     }
 
     private void getVistas(HttpServletRequest request, HttpServletResponse response) throws IOException {

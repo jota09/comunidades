@@ -11,6 +11,7 @@ public class Filtro {
     private String tabla;
     private String campo;
     private String condicion;
+    private String tablaPK;
     private CondicionesFiltro condicionFiltro;
     private Vista vista;
 
@@ -85,6 +86,14 @@ public class Filtro {
 
     public void setVista(Vista vista) {
         this.vista = vista;
+    }
+
+    public String getTablaPK() {
+        return tablaPK;
+    }
+
+    public void setTablaPK(String tablaPK) {
+        this.tablaPK = tablaPK;
     }
 
 }

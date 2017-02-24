@@ -2,6 +2,7 @@ package persistencia.entidades;
 
 import java.io.Serializable;
 import java.util.List;
+import org.json.simple.JSONObject;
 
 public class TipoArticulo implements Serializable {
 
@@ -25,7 +26,7 @@ public class TipoArticulo implements Serializable {
     public TipoArticulo(int codigo) {
         this.codigo = codigo;
     }
-    
+
     public int getCodigo() {
         return this.codigo;
     }
@@ -49,7 +50,7 @@ public class TipoArticulo implements Serializable {
     public void setActivo(short activo) {
         this.activo = activo;
     }
-    
+
     public String getRango() {
         return rango;
     }
@@ -57,7 +58,7 @@ public class TipoArticulo implements Serializable {
     public void setRango(String rango) {
         this.rango = rango;
     }
-    
+
     public List<Articulo> getListaArticulos() {
         return listaArticulos;
     }
@@ -68,6 +69,9 @@ public class TipoArticulo implements Serializable {
 
     @Override
     public String toString() {
-        return "TipoArticulo{" + "codigo=" + codigo + ", nombre=" + nombre + ", activo=" + activo + ", listaArticulos=" + listaArticulos + ", rango=" + rango + '}';
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
 }

@@ -2,6 +2,7 @@ package persistencia.entidades;
 
 import java.io.Serializable;
 import java.util.List;
+import org.json.simple.JSONObject;
 
 public class Categoria implements Serializable {
 
@@ -14,7 +15,7 @@ public class Categoria implements Serializable {
     public Categoria() {
     }
 
-    public Categoria(int codigo, String nombre, int codigopadre, short activo, List<Categoria>      listaCategorias) {
+    public Categoria(int codigo, String nombre, int codigopadre, short activo, List<Categoria> listaCategorias) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.codigopadre = codigopadre;
@@ -25,7 +26,6 @@ public class Categoria implements Serializable {
     public Categoria(int codigo) {
         this.codigo = codigo;
     }
-    
 
     public int getCodigo() {
         return this.codigo;
@@ -58,12 +58,20 @@ public class Categoria implements Serializable {
     public void setActivo(short activo) {
         this.activo = activo;
     }
-    
+
     public List<Categoria> getListaCategorias() {
         return listaCategorias;
     }
 
     public void setListaCategorias(List<Categoria> listaCategorias) {
         this.listaCategorias = listaCategorias;
+    }
+
+    @Override
+    public String toString() {
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.nombre);
+        return obj.toString();
     }
 }
