@@ -499,21 +499,11 @@ public class NoticiaControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             Articulo art = new Articulo();
-            String ref = "cantidadUltimosClasificados";
-            Estructura estruc = new Estructura(ref);
-            estruc = (Estructura) estrucFachada.getObject(estruc);
-            art.setRango("0," + estruc.getValor());
-            String ref2 = "tipoClasificado";
-            Estructura estruc2 = new Estructura(ref2);
-            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            ArticuloEstado artEstado = new ArticuloEstado();
-            String ref3 = "articuloEstadoAprobado";
-            Estructura estruc3 = new Estructura(ref3);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
+            art.setRango("0," + ((Estructura) estrucFachada.getObject(new Estructura("cantidadUltimasNoticias"))).getValor());
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoNoticia"))).getValor())));
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(user);
+            art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
             art.setComunidad(user.getPerfilCodigo().getComunidad());
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListObject(art);
@@ -523,6 +513,7 @@ public class NoticiaControlador extends HttpServlet {
                 obj.put("codigo", art2.getCodigo());
                 obj.put("nombre", art2.getTitulo());
                 array.add(obj);
+
             }
             out.print(array);
         }
@@ -564,10 +555,7 @@ public class NoticiaControlador extends HttpServlet {
                     if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
                         String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
-                    } else {
-                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
-                        obj.put("imgDestacada", path);
-                    }
+                    } 
                     obj.put("titulo", art2.getTitulo());
                     obj.put("descripcion",art2.getDescripcion());
                     obj.put("finPublicacion",art2.getFechaFinPublicacion().toString());
