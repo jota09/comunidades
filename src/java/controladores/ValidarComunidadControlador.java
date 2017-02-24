@@ -54,6 +54,10 @@ public class ValidarComunidadControlador extends HttpServlet {
                     redirigirAComunidad(request, response);
                     break;
                 }
+                case 3: {
+                    redirigirAValidaComunidad(request, response);
+                    break;
+                }
             }
         } catch (IOException ex) {
             Error error = new Error();
@@ -77,7 +81,7 @@ public class ValidarComunidadControlador extends HttpServlet {
         perfil.setCodigo(codigoPerfil);
         user.setPerfilCodigo(perfil);
         session.setAttribute("user", user);
-        session.removeAttribute("perfiles");
+        //session.removeAttribute("perfiles");
         request.getSession().setAttribute("view", "menuprincipal.html");
         response.sendRedirect("/Comunidades");
     }
@@ -138,5 +142,12 @@ public class ValidarComunidadControlador extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void redirigirAValidaComunidad(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (request.getSession().getAttribute("perfiles") != null) {
+            request.getSession().setAttribute("view", "validacomunidad.html");
+        }
+        response.sendRedirect("/Comunidades");
+    }
 
 }

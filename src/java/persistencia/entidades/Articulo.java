@@ -222,7 +222,10 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        return "Articulo{" + "codigo=" + codigo + ", usuario=" + usuario + ", usuariocodigoadm=" + usuariocodigoadm + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechapublicacion=" + fechapublicacion + ", precio=" + precio + ", fechafinpublicacion=" + fechafinpublicacion + ", prioridad=" + prioridad + ", creacion=" + creacion + ", actualizacion=" + actualizacion + ", observacionesadmon=" + observacionesadmon + ", estado=" + estado + ", tipoarticulo=" + tipoarticulo + ", categoria=" + categoria + ", comunidad=" + comunidad + ", listaInteres=" + listaInteres + ", rango=" + rango + ", busqueda=" + busqueda + ", visibilidad=" + visibilidad + '}';
+        JSONObject obj=new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.titulo);
+        return obj.toString();
     }
 
    
