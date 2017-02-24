@@ -277,14 +277,13 @@ public class ClasificadoControlador extends HttpServlet {
 
             if (codArt.equals("")) {
                 artFach.insertObject(art);
-                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
             } else {
                 art.setCodigo(Integer.parseInt(codArt));
                 artFach.updateObject(art);
-                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se modifico el clasificado correctamente", "success"));
             }
             out.print(art.getCodigo());
         }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
     }
 
     private void aprobarArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
@@ -299,7 +298,6 @@ public class ClasificadoControlador extends HttpServlet {
             art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
             ArticuloFachada artFach = new ArticuloFachada();
             artFach.updateObject(art);
-            request.getSession().setAttribute("message", Utilitaria.createAlert("Por favor espere", "Se está notificando por correo electronico...", "warning"));
             art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
             Utilitaria.enviarMailArticuloAprobado(art, art.getTitulo());
             out.print(1);
@@ -309,20 +307,18 @@ public class ClasificadoControlador extends HttpServlet {
     }
 
     private void devolverArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
-        try (PrintWriter out = response.getWriter()) {
-            GestionFachada estructuraFachada = new EstructuraFachada();
-            response.setContentType("text/html;charset=UTF-8");
-            Articulo art = new Articulo();
-            art.setCodigo(Integer.parseInt(request.getParameter("cod")));
-            art.setObservacionesAdmon(request.getParameter("obs"));
-            art.setEstado(new ArticuloEstado((Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("articuloDevuelto"))).getValor()))));
-            ArticuloFachada artFach = new ArticuloFachada();
-            artFach.updateObject(art);
-            request.getSession().setAttribute("message", Utilitaria.createAlert("Por favor espere", "Se está notificando por correo electronico...", "warning"));
-            art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
-            Utilitaria.enviarMailArticuloDevuelto(art, request.getParameter("obs"), request.getParameter("tit"));
-            out.print(1);
-        }
+        PrintWriter out = response.getWriter();
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        response.setContentType("text/html;charset=UTF-8");
+        Articulo art = new Articulo();
+        art.setCodigo(Integer.parseInt(request.getParameter("cod")));
+        art.setObservacionesAdmon(request.getParameter("obs"));
+        art.setEstado(new ArticuloEstado((Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("articuloDevuelto"))).getValor()))));
+        ArticuloFachada artFach = new ArticuloFachada();
+        artFach.updateObject(art);
+        art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
+        Utilitaria.enviarMailArticuloDevuelto(art, request.getParameter("obs"), request.getParameter("tit"));
+        out.print(1);
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se envio a correción el clasificado", "success"));
     }
 
@@ -330,25 +326,14 @@ public class ClasificadoControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             Articulo art = new Articulo();
-            String ref = "cantidadUltimosClasificados";
-            Estructura estruc = new Estructura(ref);
-            estruc = (Estructura) estrucFachada.getObject(estruc);
-            art.setRango("0," + estruc.getValor());
-            String ref2 = "tipoClasificado";
-            Estructura estruc2 = new Estructura(ref2);
-            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            ArticuloEstado artEstado = new ArticuloEstado();
-            artEstado.setCodigo(1);
-            String ref3 = "articuloEstadoAprobado";
-            Estructura estruc3 = new Estructura(ref3);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
+            art.setRango("0," + ((Estructura) estrucFachada.getObject(new Estructura("cantidadUltimosClasificados"))).getValor());
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(user);
-            art.setEstado(artEstado);
+            art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
             art.setComunidad(user.getPerfilCodigo().getComunidad());
             ArticuloFachada artFachada = new ArticuloFachada();
+            System.out.println(art);
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
@@ -491,6 +476,7 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura estruc2 = new Estructura(ref2);
             estruc2 = (Estructura) estFach.getObject(estruc2);
             JSONArray jsonArray = new JSONArray();
+            int contador =0 ,contador2 = 0;
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
                 if (user.getCodigo() == art.getUsuario().getCodigo()) {
@@ -564,7 +550,6 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
             ArticuloFachada artFachada = new ArticuloFachada();
             Articulo art2 = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("cod").trim())));
-            request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se está notificando por correo electronico...", "warning"));
             artFachada.deleteObject(art);
             Utilitaria.enviarMailArticuloEliminado(art2, request.getParameter("descrip"), request.getParameter("tit"));
             out.print(1);
@@ -669,7 +654,6 @@ public class ClasificadoControlador extends HttpServlet {
                 JSONObject obj1 = new JSONObject();
                 obj1.put("ruta", pathOrigen + "\\" + mult.getCodigo() + "." + mult.getExtension());
                 obj1.put("destacada", mult.getDestacada());
-                System.out.println(obj1.toString());
                 jsArray.add(obj1);
             }
             JSONObject obj = new JSONObject();
