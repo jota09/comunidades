@@ -38,6 +38,7 @@ public class GeneradorView extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         String view = (String) session.getAttribute("view");//getAttribute("view");
+        System.out.println("Vista:" + view);
         if (view == null) {
             view = request.getParameter("view");
         }

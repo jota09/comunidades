@@ -1,6 +1,7 @@
 package persistencia.entidades;
 
 import java.io.Serializable;
+import org.json.simple.JSONObject;
 
 public class Atributo implements Serializable {
 
@@ -51,6 +52,14 @@ public class Atributo implements Serializable {
 
     public void setCondicion(String condicion) {
         this.condicion = condicion;
+    }
+
+    @Override
+    public String toString() {
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", this.codigo);
+        obj.put("nombre", this.referencia);
+        return obj.toString();
     }
 
 }
