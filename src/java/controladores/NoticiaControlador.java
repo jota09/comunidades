@@ -581,6 +581,8 @@ public class NoticiaControlador extends HttpServlet {
                         obj.put("imgDestacada", path);
                     }
                     obj.put("titulo", art2.getTitulo());
+                    obj.put("descripcion",art2.getDescripcion());
+                    obj.put("finPublicacion",art2.getFechaFinPublicacion().toString());
                     array.add(obj);
                 }
             }
