@@ -142,6 +142,8 @@ public class NoticiaControlador extends HttpServlet {
             error.setTipoError(new TipoError(4));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
+        } catch (org.json.simple.parser.ParseException ex) {
+            Logger.getLogger(NoticiaControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -497,21 +499,12 @@ public class NoticiaControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             Articulo art = new Articulo();
-            String ref = "cantidadUltimosClasificados";
-            Estructura estruc = new Estructura(ref);
-            estruc = (Estructura) estrucFachada.getObject(estruc);
-            art.setRango("0," + estruc.getValor());
-            String ref2 = "tipoClasificado";
-            Estructura estruc2 = new Estructura(ref2);
-            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            ArticuloEstado artEstado = new ArticuloEstado();
-            String ref3 = "articuloEstadoAprobado";
-            Estructura estruc3 = new Estructura(ref3);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
+            art.setRango("0," + ((Estructura) estrucFachada.getObject(new Estructura("cantidadUltimasNoticias"))).getValor());
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoNoticia"))).getValor())));
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(user);
+            art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
+            art.setComunidad(user.getPerfilCodigo().getComunidad());
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
@@ -526,7 +519,7 @@ public class NoticiaControlador extends HttpServlet {
         }
     }
     
-    private void recuperarInicioNoticia(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void recuperarInicioNoticia(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, org.json.simple.parser.ParseException {
         try (PrintWriter out = response.getWriter()) {
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -538,37 +531,22 @@ public class NoticiaControlador extends HttpServlet {
             estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             Articulo art = new Articulo();
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            art.setUsuario(user);
+            //art.setUsuario(user);
+            art.setComunidad(user.getPerfilCodigo().getComunidad());
             art.setRango(request.getParameter("limIni") + "," + estruc.getValor());
-            JSONParser parser = new JSONParser();
-            JSONObject jsonBusq = null;
-            try {
-                jsonBusq = (JSONObject) parser.parse(request.getParameter("busqueda"));
-            } catch (org.json.simple.parser.ParseException ex) {
-                Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            art.setBusqueda("");
-            if (jsonBusq.get("categoria").toString() != null && !jsonBusq.get("categoria").toString().isEmpty()) {
-                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "int", "cat.codigo", "where", jsonBusq.get("categoria").toString(), "", "igual"));
-            }
-            if (jsonBusq.get("titulo").toString() != null && !jsonBusq.get("titulo").toString().isEmpty()) {
-                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "char", "titulo", "like", jsonBusq.get("titulo").toString(), "", ""));
-            }            
-            if (jsonBusq.get("ordenar").toString() != null && !jsonBusq.get("ordenar").toString().isEmpty()) {
-                String orden = jsonBusq.get("ordenar").toString();
-                String[] ordenSplit = orden.split("-");
-                art.setBusqueda(Utilitaria.filtros(art.getBusqueda(), "char", ordenSplit[0], "order", ordenSplit[1], "", ""));
-            }
-
+            String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             ArticuloFachada artFachada = new ArticuloFachada();
-            MultimediaFachada multFachada = new MultimediaFachada();
-            List<Articulo> listArticulo = artFachada.getListByPagination(art);
-            JSONArray array = new JSONArray();
+            art.setBusqueda(condicion);
             String ref3 = "articuloEstadoAprobado";
             Estructura estruc3 = new Estructura(ref3);
             estruc3 = (Estructura) estrucFachada.getObject(estruc3);
+            ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(estruc3.getValor()));
+            art.setEstado(estado);
+            MultimediaFachada multFachada = new MultimediaFachada();
+            List<Articulo> listArticulo = artFachada.getListByPagination(art);
+            JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
-                if (art2.getFechaPublicacion() != null && art2.getEstado().getCodigo() == Integer.parseInt(estruc3.getValor())) {
+                if (art2.getFechaPublicacion() != null) {
                     JSONObject obj = new JSONObject();
                     obj.put("codigo", art2.getCodigo());
                     Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
@@ -577,10 +555,7 @@ public class NoticiaControlador extends HttpServlet {
                     if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
                         String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
-                    } else {
-                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
-                        obj.put("imgDestacada", path);
-                    }
+                    } 
                     obj.put("titulo", art2.getTitulo());
                     obj.put("descripcion",art2.getDescripcion());
                     obj.put("finPublicacion",art2.getFechaFinPublicacion().toString());

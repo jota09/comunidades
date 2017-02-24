@@ -108,6 +108,7 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             pS.setInt(2, art.getEstado().getCodigo());
             pS.setInt(3, art.getComunidad().getCodigo());
+            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
