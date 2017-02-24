@@ -269,13 +269,14 @@ public class ClasificadoControlador extends HttpServlet {
             art.setVisibilidad(Short.parseShort(request.getParameter("visibilidad")));
             if (codArt.equals("")) {
                 artFach.insertObject(art);
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
             } else {
                 art.setCodigo(Integer.parseInt(codArt));
                 artFach.updateObject(art);
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se modifico el clasificado correctamente", "success"));
             }
             out.print(art.getCodigo());
         }
-        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
     }
 
     private void aprobarArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
@@ -289,7 +290,12 @@ public class ClasificadoControlador extends HttpServlet {
             estruc3 = (Estructura) estrucFachada.getObject(estruc3);
             art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
             ArticuloFachada artFach = new ArticuloFachada();
-            out.print(artFach.updateObject(art));
+            artFach.updateObject(art);
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Por favor espere", "Se está notificando por correo electronico...", "warning"));
+            art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
+            Utilitaria.enviarMailArticuloAprobado(art, art.getTitulo());
+            out.print(1);
+
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se aprobo el clasificado", "success"));
     }
@@ -303,9 +309,11 @@ public class ClasificadoControlador extends HttpServlet {
             art.setObservacionesAdmon(request.getParameter("obs"));
             art.setEstado(new ArticuloEstado((Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("articuloDevuelto"))).getValor()))));
             ArticuloFachada artFach = new ArticuloFachada();
-            out.print(artFach.updateObject(art));
+            artFach.updateObject(art);
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Por favor espere", "Se está notificando por correo electronico...", "warning"));
             art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
             Utilitaria.enviarMailArticuloDevuelto(art, request.getParameter("obs"), request.getParameter("tit"));
+            out.print(1);
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se envio a correción el clasificado", "success"));
     }
@@ -576,9 +584,12 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
             ArticuloFachada artFachada = new ArticuloFachada();
             Articulo art2 = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("cod").trim())));
+            request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se está notificando por correo electronico...", "warning"));
             artFachada.deleteObject(art);
             Utilitaria.enviarMailArticuloEliminado(art2, request.getParameter("descrip"), request.getParameter("tit"));
+            out.print(1);
         }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se ha eliminado el clasificado correctamente", "success"));
     }
 
     private void filtrarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -676,7 +687,7 @@ public class ClasificadoControlador extends HttpServlet {
             String pathOrigen = LecturaConfig.getValue("rutaVisualiza") + "\\" + art.getCodigo();
             for (Multimedia mult : listMult) {
                 JSONObject obj1 = new JSONObject();
-                obj1.put("ruta", pathOrigen+"\\" + mult.getCodigo() + "." + mult.getExtension() );
+                obj1.put("ruta", pathOrigen + "\\" + mult.getCodigo() + "." + mult.getExtension());
                 obj1.put("destacada", mult.getDestacada());
                 System.out.println(obj1.toString());
                 jsArray.add(obj1);
