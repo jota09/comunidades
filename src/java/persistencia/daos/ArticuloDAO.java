@@ -451,8 +451,10 @@ public class ArticuloDAO implements GestionDAO {
                     + "         tipo_articulo_codigo=? " + ((art.getComunidad() != null) ? "and comunidad_codigo=" + art.getComunidad().getCodigo() : "")
                     + ((art.getVisibilidad() != null) ? " and visibilidad=" + art.getVisibilidad().getVisibilidad() + " "
                             + "         and " : "") + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
-                            + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and usuario_codigo=" + art.getUsuario().getCodigo() : "") + " Limit " + art.getRango();
+                            + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and usuario_codigo=" + art.getUsuario().getCodigo() : "")
+                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= NOW() " : "") + " Limit " + art.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
+            System.out.println(sql);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

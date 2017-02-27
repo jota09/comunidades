@@ -257,7 +257,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Aprobaci&oacute;n clasificado " + tit, art.getUsuario().getCorreo());
+        envioMail.sendEmail(mensaje, "Aprobación de clasificado " + tit, art.getUsuario().getCorreo());
     }
 
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {
@@ -270,7 +270,6 @@ public class Utilitaria {
             opcionesFachada.getObject(opcion);
             condicion += opcion.getFiltro().getCampo() + " " + opcion.getFiltro().getCondicionFiltro().getCondicion().replace("?", opcion.getValor()) + ((i + 1 < array.size()) ? " and " : "");
         }
-        //System.out.println("Condicion:" + condicion);
         return condicion;
     }
 
