@@ -93,11 +93,9 @@ public class CerrarSesion extends HttpServlet {
         PrintWriter out = response.getWriter();
         HttpSession sesion=request.getSession(false);
         if (sesion != null) {
-            System.out.println("Session valida:"+sesion);
             out.print(1);
         } else {
             out.print(0);
-            System.out.println("Session invalida:"+sesion);
         }
 
     }
