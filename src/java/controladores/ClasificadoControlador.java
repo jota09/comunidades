@@ -429,6 +429,8 @@ public class ClasificadoControlador extends HttpServlet {
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
+            obj.put("usuario_nombres", art.getUsuario().getNombres());
+            obj.put("usuario_apellidos", art.getUsuario().getApellidos());
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
             obj.put("fecha_publicacion", ((art.getFechaPublicacion() == null ? "" : art.getFechaPublicacion().toString())));
