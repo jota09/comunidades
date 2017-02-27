@@ -110,7 +110,7 @@ public class SubeArchivoControlador extends HttpServlet {
         multimedia.setArticulocodigo(new Articulo(Integer.parseInt(codArticulo)));
         multimediaFachada.deleteObject(multimedia);
         String path = LecturaConfig.getValue("rutaUpload") + codArticulo + File.separator;
-        Utilitaria.borrarArchivos(path, false);        
+        Utilitaria.borrarArchivos(path, false);
     }
 
     private void generarArchivoBase64(String ruta, String base64) throws IOException {
@@ -125,8 +125,13 @@ public class SubeArchivoControlador extends HttpServlet {
 
     private synchronized void generaArchivo(String path, String archivo, byte[] content) throws FileNotFoundException, IOException {
         File file = new File(path);
+
         if (!file.exists()) {
             file.mkdirs();
+            file.setReadable(true, false);
+            file.setExecutable(true, false);
+            file.setWritable(true, false);
+
         }
         String nuevaRuta = path + archivo;
         File file2 = new File(nuevaRuta);
@@ -134,6 +139,9 @@ public class SubeArchivoControlador extends HttpServlet {
         writer.write(content);
         writer.flush();
         writer.close();
+        file2.setReadable(true, false);
+        file2.setExecutable(true, false);
+        file2.setWritable(true, false);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

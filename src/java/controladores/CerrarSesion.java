@@ -1,6 +1,7 @@
 package controladores;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import persistencia.entidades.Usuario;
 import utilitarias.Utilitaria;
 
 @WebServlet(name = "CerrarSesion", urlPatterns = {"/CerrarSesion"})
@@ -16,15 +18,17 @@ public class CerrarSesion extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
+        int op = Integer.parseInt(request.getParameter("op"));
         try {
-            response.setContentType("text/html;charset=UTF-8");
-            HttpSession sesion = request.getSession();//el constructor con false permite que no vuelva a crear el obj session
-            if (sesion.getAttribute("user") != null) {
-                sesion.removeAttribute("user");
+            switch (op) {
+                case 1: {
+                    cierraSesion(request, response);
+                    break;
+                }
+                case 2: {
+                    validaSesion(request, response);
+                }
             }
-            sesion.invalidate();
-            //request.getServletContext().getRequestDispatcher("menuprincipal.jsp").forward(request, response);//redirige con los valores de request y response y mantiene la url
-            response.sendRedirect("/Comunidades");//redirige totalmente a la pagina
         } catch (IOException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());
@@ -73,5 +77,29 @@ public class CerrarSesion extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void cierraSesion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession sesion = request.getSession();//el constructor con false permite que no vuelva a crear el obj session
+        if (sesion.getAttribute("user") != null) {
+            sesion.removeAttribute("user");
+        }
+        sesion.invalidate();
+        //request.getServletContext().getRequestDispatcher("menuprincipal.jsp").forward(request, response);//redirige con los valores de request y response y mantiene la url
+        response.sendRedirect("/Comunidades");//redirige totalmente a la pagina
+    }
+
+    private void validaSesion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        HttpSession sesion=request.getSession(false);
+        if (sesion != null) {
+            System.out.println("Session valida:"+sesion);
+            out.print(1);
+        } else {
+            out.print(0);
+            System.out.println("Session invalida:"+sesion);
+        }
+
+    }
 
 }
