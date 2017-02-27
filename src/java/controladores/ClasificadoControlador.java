@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
@@ -127,6 +126,9 @@ public class ClasificadoControlador extends HttpServlet {
                         break;
                     case 21:
                         usuarioLogueado(request, response);
+                        break;
+                    case 22:
+                        borrarRegistrosAdmin(request, response);
                         break;
                 }
             }
@@ -353,26 +355,17 @@ public class ClasificadoControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             Usuario user = (Usuario) request.getSession().getAttribute("user");
             EstructuraFachada estrucFachada = new EstructuraFachada();
-            String ref = "clasificadoMostrarInicio";
-            Estructura estruc = new Estructura(ref);
-            estruc = (Estructura) estrucFachada.getObject(estruc);
-            ref = "tipoClasificado";
-            Estructura estruc2 = new Estructura(ref);
-            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
             Articulo art = new Articulo();
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            //art.setUsuario(user);
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             art.setComunidad(user.getPerfilCodigo().getComunidad());
-            art.setRango(request.getParameter("limIni") + "," + estruc.getValor());
+            art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicio"))).getValor());
             String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             ArticuloFachada artFachada = new ArticuloFachada();
             art.setBusqueda(condicion);
-            String ref3 = "articuloEstadoAprobado";
-            Estructura estruc3 = new Estructura(ref3);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(estruc3.getValor()));
+            ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor()));
             art.setEstado(estado);
             MultimediaFachada multFachada = new MultimediaFachada();
+            art.setInicio(true);
             List<Articulo> listArticulo = artFachada.getListByPagination(art);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
@@ -547,6 +540,23 @@ public class ClasificadoControlador extends HttpServlet {
     }
 
     private void borrarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            int cod = Integer.parseInt(request.getParameter("cod").trim());
+            Articulo art = new Articulo();
+            art.setCodigo(cod);
+            String ref = "tipoClasificado";
+            Estructura estruc2 = new Estructura(ref);
+            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
+            ArticuloFachada artFachada = new ArticuloFachada();
+            artFachada.deleteObject(art);
+            out.print(1);
+        }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se ha eliminado el clasificado correctamente", "success"));
+    }
+
+    private void borrarRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             int cod = Integer.parseInt(request.getParameter("cod").trim());
@@ -755,12 +765,12 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-    
+
     private void usuarioLogueado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         Usuario user = (Usuario) request.getSession().getAttribute("user");
         JSONObject obj = new JSONObject();
-        obj.put("codigo",user.getCodigo());
+        obj.put("codigo", user.getCodigo());
         obj.put("nombres", user.getNombres());
         obj.put("apellidos", user.getApellidos());
         out.print(obj);
