@@ -7,7 +7,6 @@ package utilitarias;
 
 import fachada.ErrorFachada;
 import fachada.EstructuraFachada;
-import fachada.FiltroFachada;
 import fachada.GestionFachada;
 import fachada.OpcionesFiltroFachada;
 import java.io.File;
@@ -292,7 +291,7 @@ public class Utilitaria {
             int ascii = (int) (Math.random() * (48 - (122 + 1)) + (122));
             codigoGen += (char) ascii;
         }
-//        System.out.println("LETRA ASCCI:" + codigoGen);
+        System.out.println("LETRA ASCCI:" + codigoGen);
         return codigoGen;
     }
 
