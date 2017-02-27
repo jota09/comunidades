@@ -21,15 +21,7 @@ public class prueba {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        MetaDataDAO meta=new MetaDataDAO();
-        MetaData metada=new MetaData();
-        metada.setTabla("articulo");
-        Map<String,MetaData> datos=meta.getColumnas(metada);
-        meta.getColumnasForaneas(metada,datos);
-        for(MetaData data:datos.values()){
-            System.out.println("Columnas PK:"+data.getPkTabla());
-        };
-        System.out.println("Tamano:"+datos.size());
+        Utilitaria.genCodigoRegComunidad(123);
     }
     
 }

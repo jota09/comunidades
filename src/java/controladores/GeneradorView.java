@@ -44,6 +44,7 @@ public class GeneradorView extends HttpServlet {
         if (view != null && !view.equals("validacomunidad.html")) {
             session.removeAttribute("view");
         }
+          System.out.println("View:"+view);
         try (PrintWriter out = response.getWriter()) {
             String rutaView = LecturaConfig.getValue("pathView");
             if (view == null || session.getAttribute("user") == null) {
@@ -115,6 +116,7 @@ public class GeneradorView extends HttpServlet {
                 pagina = pagina.replace("<@rangoPagina@>", html);
             }
             out.print(pagina);
+          
         } catch (IOException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());
