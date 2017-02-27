@@ -1,9 +1,8 @@
-import java.util.Map;
-import org.eclipse.jdt.internal.compiler.ast.ThisReference;
-import persistencia.daos.MetaDataDAO;
-import persistencia.entidades.Error;
-import persistencia.entidades.MetaData;
-import persistencia.entidades.TipoError;
+
+import fachada.GestionFachada;
+import fachada.RegistroFachada;
+import persistencia.entidades.Comunidad;
+import persistencia.entidades.Registro;
 import utilitarias.Utilitaria;
 
 /*
@@ -21,15 +20,13 @@ public class prueba {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        MetaDataDAO meta=new MetaDataDAO();
-        MetaData metada=new MetaData();
-        metada.setTabla("articulo");
-        Map<String,MetaData> datos=meta.getColumnas(metada);
-        meta.getColumnasForaneas(metada,datos);
-        for(MetaData data:datos.values()){
-            System.out.println("Columnas PK:"+data.getPkTabla());
-        };
-        System.out.println("Tamano:"+datos.size());
+        GestionFachada registroFachada = new RegistroFachada();
+        Registro registro = new Registro();
+        Comunidad comunidad = new Comunidad();
+        comunidad.setCodigo(1);
+        registro.setComunidad(comunidad);
+        registro.setCodigoGenerado(Utilitaria.genCodigoRegComunidad(1));
+        registroFachada.insertObject(registro);
     }
-    
+
 }

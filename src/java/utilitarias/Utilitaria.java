@@ -7,7 +7,6 @@ package utilitarias;
 
 import fachada.ErrorFachada;
 import fachada.EstructuraFachada;
-import fachada.FiltroFachada;
 import fachada.GestionFachada;
 import fachada.OpcionesFiltroFachada;
 import java.io.File;
@@ -237,7 +236,7 @@ public class Utilitaria {
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
         envioMail.sendEmail(mensaje, "Eliminación clasificado " + tit, art.getUsuario().getCorreo());
     }
-    
+
     public static void enviarMailArticuloAprobado(Object obj, String tit) {
         Articulo art = (Articulo) obj;
         Calendar calendar = Calendar.getInstance();
@@ -247,7 +246,7 @@ public class Utilitaria {
         String cuerpo = ((Estructura) estructuraFachada.getObject(new Estructura("cuerpoAdminAprobacion"))).getValor();
         String firma = ((Estructura) estructuraFachada.getObject(new Estructura("firmaAdminAprobacion"))).getValor();
         String mensaje = titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + " " + "\n"
-                + "\n" + cuerpo + "\n" + tit + "\nPublicado "+ fecha +"\n\n\n" + firma;
+                + "\n" + cuerpo + "\n" + tit + "\nPublicado " + fecha + "\n\n\n" + firma;
         String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
         int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
         String correo = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
@@ -272,8 +271,8 @@ public class Utilitaria {
         }
         return condicion;
     }
-    
-    public  static void borrarArchivos(String path,boolean borrarDir) {        
+
+    public static void borrarArchivos(String path, boolean borrarDir) {
         File file = new File(path);
         File[] files = file.listFiles();
         if (files.length > 0) {
@@ -281,10 +280,19 @@ public class Utilitaria {
                 f.delete();
             }
         }
-        if(borrarDir)
-        {
+        if (borrarDir) {
             file.delete();
         }
+    }
+
+    public static String genCodigoRegComunidad(int codigoComunidad) {
+        String codigoGen = String.valueOf(codigoComunidad);
+        for (int i = 0; i < 12; i++) {
+            int ascii = (int) (Math.random() * (48 - (122 + 1)) + (122));
+            codigoGen += (char) ascii;
+        }
+        System.out.println("LETRA ASCCI:" + codigoGen);
+        return codigoGen;
     }
 
 }

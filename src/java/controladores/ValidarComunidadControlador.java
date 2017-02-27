@@ -144,9 +144,10 @@ public class ValidarComunidadControlador extends HttpServlet {
     }// </editor-fold>
 
     private void redirigirAValidaComunidad(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getSession().getAttribute("perfiles") != null) {
-            request.getSession().setAttribute("view", "validacomunidad.html");
+        if (request.getSession(false).getAttribute("perfiles") != null) {
+            request.getSession(false).setAttribute("view", "validacomunidad.html");
         }
+        System.out.println("entro a redirigir a validaComunidad");
         response.sendRedirect("/Comunidades");
     }
 
