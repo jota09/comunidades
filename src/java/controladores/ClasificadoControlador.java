@@ -125,6 +125,9 @@ public class ClasificadoControlador extends HttpServlet {
                     case 20:
                         buscarRegistrosAdmin(request, response);
                         break;
+                    case 21:
+                        usuarioLogueado(request, response);
+                        break;
                 }
             }
         } catch (IOException ex) {
@@ -333,7 +336,6 @@ public class ClasificadoControlador extends HttpServlet {
             art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
             art.setComunidad(user.getPerfilCodigo().getComunidad());
             ArticuloFachada artFachada = new ArticuloFachada();
-            System.out.println(art);
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
@@ -444,7 +446,6 @@ public class ClasificadoControlador extends HttpServlet {
             }
             obj.put("Imagenes", jsArray);
             obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "\\");
-            System.out.println(obj.toString());
             out.print(obj);
         }
     }
@@ -482,7 +483,6 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura estruc2 = new Estructura(ref2);
             estruc2 = (Estructura) estFach.getObject(estruc2);
             JSONArray jsonArray = new JSONArray();
-            int contador = 0, contador2 = 0;
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
                 if (user.getCodigo() == art.getUsuario().getCodigo()) {
@@ -515,7 +515,7 @@ public class ClasificadoControlador extends HttpServlet {
             Articulo articulo = new Articulo();
             articulo.setTipoArticulo(tipArt);
             articulo.setRango(request.getParameter("rango"));
-            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
+            articulo.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             if (request.getParameter("cat") != null) {
                 if (!request.getParameter("cat").equals("")) {
                     articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
@@ -752,6 +752,16 @@ public class ClasificadoControlador extends HttpServlet {
             }
             out.print(jsonArray);
         }
+    }
+    
+    private void usuarioLogueado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        Usuario user = (Usuario) request.getSession().getAttribute("user");
+        JSONObject obj = new JSONObject();
+        obj.put("codigo",user.getCodigo());
+        obj.put("nombres", user.getNombres());
+        obj.put("apellidos", user.getApellidos());
+        out.print(obj);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

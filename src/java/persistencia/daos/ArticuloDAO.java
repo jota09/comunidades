@@ -108,7 +108,6 @@ public class ArticuloDAO implements GestionDAO {
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             pS.setInt(2, art.getEstado().getCodigo());
             pS.setInt(3, art.getComunidad().getCodigo());
-            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
@@ -175,11 +174,12 @@ public class ArticuloDAO implements GestionDAO {
                 numfilas = pS.executeUpdate();
                 pS.close();
             } else {
-                String sql = "UPDATE articulo SET fecha_publicacion=CURDATE(), estados_codigo=?"
+                String sql = "UPDATE articulo SET fecha_publicacion=CURDATE(), estados_codigo=?,observaciones_admon = ?"
                         + " WHERE codigo=?";
                 PreparedStatement pS = con.prepareStatement(sql);
                 pS.setInt(1, art.getEstado().getCodigo());
-                pS.setInt(2, art.getCodigo());
+                pS.setString(2, art.getObservacionesAdmon());
+                pS.setInt(3, art.getCodigo());
 
                 numfilas = pS.executeUpdate();
                 pS.close();
