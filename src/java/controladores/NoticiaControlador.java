@@ -125,6 +125,9 @@ public class NoticiaControlador extends HttpServlet {
                     case 19:
                         buscarRegistrosAdmin(request, response);
                         break;                        
+                    case 20:
+                        usuarioLogueado(request, response);
+                        break;                        
                 }
             } else {
                 System.out.println("La opcion es nula por favor verificar");
@@ -277,6 +280,7 @@ public class NoticiaControlador extends HttpServlet {
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
+            obj.put("autor",art.getUsuario().getNombres()+" "+art.getUsuario().getApellidos());
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
             obj.put("fecha_publicacion", ((art.getFechaPublicacion() == null ? "" : art.getFechaPublicacion().toString())));
@@ -297,9 +301,11 @@ public class NoticiaControlador extends HttpServlet {
             Articulo art = new Articulo();
             art.setCodigo(cod);
             TipoArticulo tpArt = new TipoArticulo();
-            Estructura est=new Estructura();
-            est.setReferencia("tipoNoticia");
-            tpArt.setCodigo(Integer.parseInt(est.getReferencia()));//Tipo articulo noticia es 2
+            GestionFachada estFach = new EstructuraFachada();
+            Estructura estructura = new Estructura();
+            estructura.setReferencia("tipoNoticia");
+            Estructura est = (Estructura) estFach.getObject(estructura);
+            tpArt.setCodigo(Integer.parseInt(est.getValor()));//Tipo articulo noticia es 2
             art.setTipoArticulo(tpArt);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);
@@ -693,6 +699,16 @@ public class NoticiaControlador extends HttpServlet {
             }
             out.print(jsonArray);
         }
+    }
+     
+     private void usuarioLogueado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        Usuario user = (Usuario) request.getSession().getAttribute("user");
+        JSONObject obj = new JSONObject();
+        obj.put("codigo", user.getCodigo());
+        obj.put("nombres", user.getNombres());
+        obj.put("apellidos", user.getApellidos());
+        out.print(obj);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
