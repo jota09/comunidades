@@ -36,18 +36,20 @@ public class GeneradorView extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
         response.setContentType("text/html;charset=UTF-8");
+        String inicio = request.getParameter("inicio");
         HttpSession session = request.getSession();
         String view = (String) session.getAttribute("view");//getAttribute("view");
         if (view == null) {
             view = request.getParameter("view");
+
         }
         if (view != null && !view.equals("validacomunidad.html")) {
             session.removeAttribute("view");
         }
-          System.out.println("View:"+view);
+
         try (PrintWriter out = response.getWriter()) {
             String rutaView = LecturaConfig.getValue("pathView");
-            if (view == null || session.getAttribute("user") == null) {
+            if ((view == null || session.getAttribute("user") == null) && inicio == null) {
                 view = LecturaConfig.getValue("paginicio");
             }
             VistaFachada vistaFachada = new VistaFachada();
@@ -116,7 +118,6 @@ public class GeneradorView extends HttpServlet {
                 pagina = pagina.replace("<@rangoPagina@>", html);
             }
             out.print(pagina);
-          
         } catch (IOException ex) {
             Error error = new Error();
             error.setClase(getClass().getName());
@@ -131,7 +132,8 @@ public class GeneradorView extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (request.getSession().getAttribute("user") == null) {
-            if (request.getParameter("view") != null) {
+            String inicio = request.getParameter("inicio");
+            if (request.getParameter("view") != null && inicio == null) {
                 try (PrintWriter out = response.getWriter()) {
                     out.println("<script>$('#cierre').submit();</script>");
                 }
@@ -146,9 +148,8 @@ public class GeneradorView extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        processRequest(req, resp);
     }
 
     @Override
