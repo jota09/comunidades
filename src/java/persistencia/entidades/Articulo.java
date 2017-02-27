@@ -29,6 +29,7 @@ public class Articulo implements Serializable {
     private String rango;
     private String busqueda;
     private VisibilidadArticulo visibilidad;
+    private boolean inicio;
 
     public Articulo() {
     }
@@ -37,7 +38,7 @@ public class Articulo implements Serializable {
         this.codigo = codigo;
     }
 
-    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, VisibilidadArticulo visibilidad) {
+    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, VisibilidadArticulo visibilidad, Boolean inicio) {
         this.codigo = codigo;
         this.usuario = usuario;
         this.usuariocodigoadm = usuariocodigoadm;
@@ -58,6 +59,7 @@ public class Articulo implements Serializable {
         this.rango = rango;
         this.busqueda = busqueda;
         this.visibilidad = visibilidad;
+        this.inicio = inicio;
     }
 
     public int getCodigo() {
@@ -232,6 +234,12 @@ public class Articulo implements Serializable {
         return "Articulo{" + "codigo=" + codigo + ", usuario=" + usuario + ", usuariocodigoadm=" + usuariocodigoadm + ", titulo=" + titulo + ", descripcion=" + descripcion + ", fechapublicacion=" + fechapublicacion + ", precio=" + precio + ", fechafinpublicacion=" + fechafinpublicacion + ", prioridad=" + prioridad + ", creacion=" + creacion + ", actualizacion=" + actualizacion + ", observacionesadmon=" + observacionesadmon + ", estado=" + estado + ", tipoarticulo=" + tipoarticulo + ", categoria=" + categoria + ", comunidad=" + comunidad + ", listaInteres=" + listaInteres + ", rango=" + rango + ", busqueda=" + busqueda + ", visibilidad=" + visibilidad + '}';
     }
 
-   
+    public boolean getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(boolean inicio) {
+        this.inicio = inicio;
+    }
 
 }

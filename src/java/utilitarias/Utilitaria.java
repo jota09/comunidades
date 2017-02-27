@@ -270,7 +270,6 @@ public class Utilitaria {
             opcionesFachada.getObject(opcion);
             condicion += opcion.getFiltro().getCampo() + " " + opcion.getFiltro().getCondicionFiltro().getCondicion().replace("?", opcion.getValor()) + ((i + 1 < array.size()) ? " and " : "");
         }
-        //System.out.println("Condicion:" + condicion);
         return condicion;
     }
     
