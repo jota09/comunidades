@@ -309,7 +309,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setTipoArticulo(tpArt);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);
-            Utilitaria.borrarArchivos(LecturaConfig.getValue("rutaUpload"+art.getCodigo()), true);
+            Utilitaria.borrarArchivos(LecturaConfig.getValue("rutaUpload")+art.getCodigo(), true);            
         }
     }
 
