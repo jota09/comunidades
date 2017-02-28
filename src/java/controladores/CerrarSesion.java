@@ -2,6 +2,8 @@ package controladores;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -91,13 +93,20 @@ public class CerrarSesion extends HttpServlet {
 
     private void validaSesion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
-        HttpSession sesion=request.getSession(false);
-        if (sesion != null) {
-            out.print(1);
-        } else {
+        HttpSession sesion = request.getSession(false);
+        try {
+            Date tiempoValida = new Date(((Date) sesion.getAttribute("ultimaActividad")).getTime());
+            Date tiempoActual = new Date();
+            long tiempoSesion = tiempoValida.getTime() + (Long.parseLong((String) sesion.getAttribute("tiempoSesion")) * 1000);
+            tiempoValida.setTime(tiempoSesion);
+            if (tiempoActual.before(tiempoValida)) {
+                out.print(1);
+            } else {
+                out.print(0);
+            }
+        } catch (NullPointerException ex) {
             out.print(0);
         }
-
     }
 
 }

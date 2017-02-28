@@ -102,6 +102,7 @@ public class Inicio extends HttpServlet {
                 estructura.setReferencia("tiempoSesion");
                 estructuraFachada.getObject(estructura);
                 sesion.setMaxInactiveInterval(Integer.parseInt(estructura.getValor()));
+                sesion.setAttribute("tiempoSesion", estructura.getValor());
                 response.sendRedirect("/Comunidades");
                 //crear sesion, validar perfil y redireccionar a menu
             } else {
