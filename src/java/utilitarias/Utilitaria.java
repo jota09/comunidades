@@ -272,7 +272,7 @@ public class Utilitaria {
         return condicion;
     }
 
-    public static void borrarArchivos(String path, boolean borrarDir) {
+    public static void borrarArchivos(String path, boolean borrarDir) {        
         File file = new File(path);
         File[] files = file.listFiles();
         if (files.length > 0) {

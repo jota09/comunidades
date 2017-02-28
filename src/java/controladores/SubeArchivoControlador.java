@@ -109,7 +109,7 @@ public class SubeArchivoControlador extends HttpServlet {
         Multimedia multimedia = new Multimedia();
         multimedia.setArticulocodigo(new Articulo(Integer.parseInt(codArticulo)));
         multimediaFachada.deleteObject(multimedia);
-        String path = LecturaConfig.getValue("rutaUpload") + codArticulo + File.separator;
+        String path = LecturaConfig.getValue("rutaUpload") + codArticulo + File.separator;        
         Utilitaria.borrarArchivos(path, false);
     }
 
