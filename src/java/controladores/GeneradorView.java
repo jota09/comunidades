@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -51,6 +52,9 @@ public class GeneradorView extends HttpServlet {
             String rutaView = LecturaConfig.getValue("pathView");
             if ((view == null || session.getAttribute("user") == null) && inicio == null) {
                 view = LecturaConfig.getValue("paginicio");
+            }
+            if (session.getAttribute("user") != null) {
+                session.setAttribute("ultimaActividad", new Date());
             }
             VistaFachada vistaFachada = new VistaFachada();
             Vista vista = new Vista();

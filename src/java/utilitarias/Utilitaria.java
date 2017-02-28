@@ -291,7 +291,6 @@ public class Utilitaria {
             int ascii = (int) (Math.random() * (48 - (122 + 1)) + (122));
             codigoGen += (char) ascii;
         }
-        System.out.println("LETRA ASCCI:" + codigoGen);
         return codigoGen;
     }
 
