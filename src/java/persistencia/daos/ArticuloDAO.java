@@ -101,7 +101,7 @@ public class ArticuloDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String query = "SELECT CODIGO, TITULO,FECHA_PUBLICACION "
                     + "FROM articulo "
-                    + "WHERE FECHA_PUBLICACION <= NOW() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
+                    + "WHERE FECHA_PUBLICACION <= CURDATE() AND TIPO_ARTICULO_CODIGO = ? AND ESTADOS_CODIGO = ? AND COMUNIDAD_CODIGO = ? "
                     + "ORDER BY FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
@@ -452,7 +452,7 @@ public class ArticuloDAO implements GestionDAO {
                     + ((art.getVisibilidad() != null) ? " and visibilidad=" + art.getVisibilidad().getVisibilidad() + " "
                             + "         and " : "") + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
                             + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and usuario_codigo=" + art.getUsuario().getCodigo() : "")
-                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= NOW() " : "") + " Limit " + art.getRango();
+                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= CURDATE() " : "") + " Limit " + art.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             System.out.println(sql);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
