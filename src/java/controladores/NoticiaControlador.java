@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import persistencia.entidades.Articulo;
