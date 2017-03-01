@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import java.sql.Date;
 import java.util.List;
 import org.json.simple.JSONObject;
-import utilitarias.VisibilidadArticulo;
+import utilitarias.Visibilidad;
 
 public class Articulo implements Serializable {
 
@@ -28,7 +28,7 @@ public class Articulo implements Serializable {
     private List<ClasificadoInteres> listaInteres;
     private String rango;
     private String busqueda;
-    private VisibilidadArticulo visibilidad;
+    private Visibilidad visibilidad;
     private boolean inicio;
 
     public Articulo() {
@@ -38,7 +38,7 @@ public class Articulo implements Serializable {
         this.codigo = codigo;
     }
 
-    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, VisibilidadArticulo visibilidad, Boolean inicio) {
+    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, Visibilidad visibilidad, Boolean inicio) {
         this.codigo = codigo;
         this.usuario = usuario;
         this.usuariocodigoadm = usuariocodigoadm;
@@ -214,11 +214,11 @@ public class Articulo implements Serializable {
         this.actualizacion = actualizacion;
     }
 
-    public VisibilidadArticulo getVisibilidad() {
+    public Visibilidad getVisibilidad() {
         return visibilidad;
     }
 
-    public void setVisibilidad(VisibilidadArticulo visibilidad) {
+    public void setVisibilidad(Visibilidad visibilidad) {
         this.visibilidad = visibilidad;// 1 para privado y 0 publico
     }
 

@@ -3,21 +3,33 @@ package persistencia.entidades;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import org.json.simple.JSONObject;
+import utilitarias.Visibilidad;
 
 public class Comunidad implements Serializable {
 
     private int codigo;
-    private int ciudadcodigo;
-    private int departamentocodigo;
-    private int paiscodigo;
+    private Ciudad ciudadcodigo;
+    private Departamento departamentocodigo;
+    private Pais paiscodigo;
     private String nombre;
     private String direccion;
     private String telefono;
     private short activo;
     private short eliminado;
     private Timestamp creacion;
+    private Visibilidad visibilidad;
 
     public Comunidad() {
+    }
+
+    public Comunidad(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public Comunidad(int codigo,String nombre) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+
     }
 
     public int getCodigo() {
@@ -28,27 +40,27 @@ public class Comunidad implements Serializable {
         this.codigo = codigo;
     }
 
-    public int getCiudadCodigo() {
+    public Ciudad getCiudadCodigo() {
         return this.ciudadcodigo;
     }
 
-    public void setCiudadCodigo(int ciudadcodigo) {
+    public void setCiudadCodigo(Ciudad ciudadcodigo) {
         this.ciudadcodigo = ciudadcodigo;
     }
 
-    public int getDepartamentoCodigo() {
+    public Departamento getDepartamentoCodigo() {
         return this.departamentocodigo;
     }
 
-    public void setDepartamentoCodigo(int departamentocodigo) {
+    public void setDepartamentoCodigo(Departamento departamentocodigo) {
         this.departamentocodigo = departamentocodigo;
     }
 
-    public int getPaisCodigo() {
+    public Pais getPaisCodigo() {
         return this.paiscodigo;
     }
 
-    public void setPaisCodigo(int paiscodigo) {
+    public void setPaisCodigo(Pais paiscodigo) {
         this.paiscodigo = paiscodigo;
     }
 
@@ -98,6 +110,14 @@ public class Comunidad implements Serializable {
 
     public void setCreacion(Timestamp creacion) {
         this.creacion = creacion;
+    }
+
+    public Visibilidad getVisibilidad() {
+        return visibilidad;
+    }
+
+    public void setVisibilidad(Visibilidad visibilidad) {
+        this.visibilidad = visibilidad;
     }
 
     @Override

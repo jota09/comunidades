@@ -12,6 +12,11 @@ public class Pais implements Serializable {
     public Pais() {
     }
 
+    public Pais(int codigo, String nombre) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+    }
+
     public int getCodigo() {
         return this.codigo;
     }

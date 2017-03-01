@@ -30,6 +30,7 @@ import org.json.simple.JSONObject;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
+import persistencia.entidades.Comunidad;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Multimedia;
 import persistencia.entidades.Prioridad;
@@ -39,7 +40,7 @@ import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
-import utilitarias.VisibilidadArticulo;
+import utilitarias.Visibilidad;
 
 /**
  *
@@ -129,6 +130,15 @@ public class ClasificadoControlador extends HttpServlet {
                         break;
                     case 22:
                         borrarRegistrosAdmin(request, response);
+                        break;
+                    case 23:
+                        recuperarInicioClasificadoPublico(request, response);
+                        break;
+                    case 24:
+                        recuperarUltimosClasificadosPublico(request, response);
+                        break;
+                    case 25:
+                        editarRegistrosInicio(request, response);
                         break;
                 }
             }
@@ -276,7 +286,7 @@ public class ClasificadoControlador extends HttpServlet {
             art.setComunidad(usr.getPerfilCodigo().getComunidad());
             short visibilidad = Short.parseShort(request.getParameter("visibilidad"));
             if (request.getParameter("visibilidad") != null) {
-                VisibilidadArticulo visibilidadArticulo = new VisibilidadArticulo(visibilidad);
+                Visibilidad visibilidadArticulo = new Visibilidad(visibilidad);
                 art.setVisibilidad(visibilidadArticulo);
             }
 
@@ -334,9 +344,9 @@ public class ClasificadoControlador extends HttpServlet {
             art.setRango("0," + ((Estructura) estrucFachada.getObject(new Estructura("cantidadUltimosClasificados"))).getValor());
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             Usuario user = (Usuario) request.getSession().getAttribute("user");
-            art.setUsuario(user);
             art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
             art.setComunidad(user.getPerfilCodigo().getComunidad());
+            art.setInicio(true);
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
@@ -552,6 +562,7 @@ public class ClasificadoControlador extends HttpServlet {
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);
             out.print(1);
+            Utilitaria.borrarArchivos(LecturaConfig.getValue("rutaUpload") + art.getCodigo(), true);
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se ha eliminado el clasificado correctamente", "success"));
     }
@@ -657,13 +668,10 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void recuperarClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            Articulo art = new Articulo(Integer.parseInt(request.getParameter("id")));
             ArticuloFachada artFachada = new ArticuloFachada();
-            art = (Articulo) artFachada.getObject(art);
-            Usuario user = new Usuario(art.getUsuario().getCodigo());
+            Articulo art = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("id"))));
             UsuarioFachada userFachada = new UsuarioFachada();
-            user = (Usuario) userFachada.getObject(user);
-            art.setUsuario(user);
+            art.setUsuario((Usuario) userFachada.getObject(new Usuario(art.getUsuario().getCodigo())));
             MultimediaFachada multFachada = new MultimediaFachada();
             List<Multimedia> listMult = multFachada.getListObject(art);
             JSONArray jsArray = new JSONArray();
@@ -687,6 +695,7 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
             obj.put("descripcion", art.getDescripcion());
             obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
+            obj.put("ubicacion",art.getComunidad().getDepartamentoCodigo().getNombre()+","+art.getComunidad().getCiudadCodigo().getNombre()+","+art.getComunidad().getNombre());
             obj.put("imagenes", jsArray);
             out.print(obj);
         }
@@ -774,6 +783,128 @@ public class ClasificadoControlador extends HttpServlet {
         obj.put("nombres", user.getNombres());
         obj.put("apellidos", user.getApellidos());
         out.print(obj);
+    }
+
+    private void recuperarInicioClasificadoPublico(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, org.json.simple.parser.ParseException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            Articulo art = new Articulo();
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
+            art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicio"))).getValor());
+            String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
+            ArticuloFachada artFachada = new ArticuloFachada();
+            art.setBusqueda(condicion);
+            ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor()));
+            art.setEstado(estado);
+            MultimediaFachada multFachada = new MultimediaFachada();
+            art.setInicio(true);
+            art.setVisibilidad(new Visibilidad(Short.parseShort("1")));
+            art.setComunidad(new Comunidad(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("comunidadAnonima"))).getValor())));
+            art.getComunidad().setVisibilidad(new Visibilidad(Short.parseShort("1")));
+            List<Articulo> listArticulo = artFachada.getListByPagination(art);
+            JSONArray array = new JSONArray();
+            for (Articulo art2 : listArticulo) {
+                if (art2.getFechaPublicacion() != null) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("codigo", art2.getCodigo());
+                    Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
+                    mult.setDestacada(Short.parseShort("1"));
+                    mult = (Multimedia) multFachada.getObject(mult);
+                    if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
+                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
+                        obj.put("imgDestacada", path);
+                    } else {
+                        String path = LecturaConfig.getValue("rutaImg") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
+                        obj.put("imgDestacada", path);
+                    }
+                    obj.put("titulo", art2.getTitulo());
+                    obj.put("precio", Utilitaria.conversionNatural(art2.getPrecio()));
+                    array.add(obj);
+                }
+            }
+            out.print(array);
+        }
+    }
+
+    private void recuperarUltimosClasificadosPublico(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            Articulo art = new Articulo();
+            art.setRango("0," + ((Estructura) estrucFachada.getObject(new Estructura("cantidadUltimosClasificados"))).getValor());
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
+            art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
+            art.setInicio(true);
+            art.setVisibilidad(new Visibilidad(Short.parseShort("1")));
+            art.setComunidad(new Comunidad(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("comunidadAnonima"))).getValor())));
+            art.getComunidad().setVisibilidad(new Visibilidad(Short.parseShort("1")));
+            ArticuloFachada artFachada = new ArticuloFachada();
+            List<Articulo> listArticulo = artFachada.getListObject(art);
+            JSONArray array = new JSONArray();
+            for (Articulo art2 : listArticulo) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", art2.getCodigo());
+                obj.put("nombre", art2.getTitulo());
+                array.add(obj);
+
+            }
+            out.print(array);
+        }
+    }
+    
+    private void editarRegistrosInicio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            int cod = Integer.parseInt(request.getParameter("id"));
+            Articulo art = new Articulo();
+            art.setCodigo(cod);
+            ArticuloFachada artFachada = new ArticuloFachada();
+            TipoArticulo tpArt = new TipoArticulo();
+            GestionFachada estFach = new EstructuraFachada();
+            Estructura estructura = new Estructura();
+            estructura.setReferencia("tipoClasificado");
+            Estructura est = (Estructura) estFach.getObject(estructura);
+            tpArt.setCodigo(Integer.parseInt(est.getValor()));
+            art.setTipoArticulo(tpArt);
+//            Usuario usr = (Usuario) request.getSession().getAttribute("user");
+//            art.setComunidad(usr.getPerfilCodigo().getComunidad());
+            art = (Articulo) artFachada.getObject(art);
+            UsuarioFachada userFachada = new UsuarioFachada();
+            art.setUsuario((Usuario) userFachada.getObject(new Usuario(art.getUsuario().getCodigo())));
+            MultimediaFachada multFachada = new MultimediaFachada();
+            List<Multimedia> listMult = multFachada.getListObject(art);
+            JSONArray jsArray = new JSONArray();
+            for (Multimedia mult : listMult) {
+                JSONObject obj1 = new JSONObject();
+                String name = String.valueOf(mult.getCodigo());
+                obj1.put("name", name);
+                obj1.put("ext", mult.getExtension());
+                obj1.put("destacada", mult.getDestacada());
+                jsArray.add(obj1);
+            }
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", art.getCodigo());
+            obj.put("usuario_codigo", art.getUsuario().getCodigo());
+            obj.put("autor",art.getUsuario().getNombres()+" "+art.getUsuario().getApellidos());
+            obj.put("nombreUsuario", art.getUsuario().getUserName());
+            if (art.getUsuario().getCelular() != null) {
+                obj.put("telefono", art.getUsuario().getCelular());
+            } else {
+                obj.put("telefono", art.getUsuario().getTelefono());
+            }
+            obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
+            obj.put("ubicacion",art.getComunidad().getDepartamentoCodigo().getNombre()+","+art.getComunidad().getCiudadCodigo().getNombre()+","+art.getComunidad().getNombre());
+            obj.put("titulo", art.getTitulo());
+            obj.put("descripcion", art.getDescripcion());
+            obj.put("fecha_publicacion", ((art.getFechaPublicacion() == null ? "" : art.getFechaPublicacion().toString())));
+            obj.put("fecha_fin_publicacion", ((art.getFechaFinPublicacion() == null ? "" : art.getFechaFinPublicacion().toString())));
+            obj.put("estados_codigo", art.getEstado().getCodigo());
+            obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
+            obj.put("categoria_codigo", art.getCategoria().getCodigo());
+            obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
+            obj.put("Imagenes", jsArray);
+            obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "/");
+            System.out.println(obj);
+            out.print(obj);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
