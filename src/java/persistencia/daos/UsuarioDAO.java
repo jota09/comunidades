@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import persistencia.conexion.ConexionBD;
+import persistencia.entidades.Comunidad;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
@@ -82,7 +83,57 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Comunidad comunidad = (Comunidad) object;
+        ArrayList<Usuario> listUsuario = new ArrayList();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT usr.codigo,usr.codigo_documento,usr.nombres,"
+                    + " usr.apellidos,usr.correo,usr.celular,usr.telefono,usr.user_name FROM usuario usr"
+                    + " join usuario_perfil usrpf on usrpf.usuario_codigo=usr.codigo "
+                    + " join perfil pf on usrpf.perfil_codigo=pf.codigo WHERE usr.activo=1 and pf.comunidad_codigo=?";
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setInt(1, comunidad.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Usuario user = new Usuario();
+                user.setCodigo(rS.getInt(1));
+                user.setCodigoDocumento(rS.getInt(2));
+                user.setNombres(rS.getString(3));
+                user.setApellidos(rS.getString(4));
+                user.setCorreo(rS.getString(5));
+                user.setCelular(rS.getString(6));
+                user.setTelefono(rS.getString(7));
+                user.setUserName(rS.getString(8));
+                listUsuario.add(user);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return listUsuario;
     }
 
     @Override
@@ -97,17 +148,23 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        ArrayList<Usuario> listUsuario = new ArrayList<Usuario>();
+        ArrayList<Usuario> listUsuario = new ArrayList();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM usuario WHERE activo=1";
+            String query = "SELECT codigo,codigo_documento,nombres,apellidos,correo,celular,telefono,user_name FROM usuario WHERE activo=1";
             PreparedStatement pS = con.prepareStatement(query);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Usuario user = new Usuario();
-                user.setCodigo(rS.getInt("codigo"));
-                user.setUserName(rS.getString("user_name"));
+                user.setCodigo(rS.getInt(1));
+                user.setCodigoDocumento(rS.getInt(2));
+                user.setNombres(rS.getString(3));
+                user.setApellidos(rS.getString(4));
+                user.setCorreo(rS.getString(5));
+                user.setCelular(rS.getString(6));
+                user.setTelefono(rS.getString(7));
+                user.setUserName(rS.getString(8));
                 listUsuario.add(user);
             }
             rS.close();

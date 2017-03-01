@@ -79,13 +79,6 @@ public class RegistroDAO implements GestionDAO {
     @Override
     public int insertObject(Object object) {
         Registro registro = (Registro) object;
-        GestionDAO estructuraDAO = new EstructuraDAO();
-        Estructura estructura = new Estructura();
-        estructura.setReferencia("tiempoVigenciaCodigoGenerado");
-        estructuraDAO.getObject(estructura);
-        Calendar calendar = Calendar.getInstance();
-        int dia = calendar.get(Calendar.DAY_OF_YEAR) + Integer.parseInt(estructura.getValor());
-        calendar.set(Calendar.DAY_OF_YEAR, dia);
         Connection con = null;
         int tamano = 0;
         try {
@@ -94,7 +87,7 @@ public class RegistroDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setString(1, registro.getCodigoGenerado());
             pS.setInt(2, registro.getComunidad().getCodigo());
-            pS.setDate(3, new Date(calendar.getTime().getTime()));
+            pS.setTimestamp(3, registro.getFechaVencimiento());
             tamano = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {

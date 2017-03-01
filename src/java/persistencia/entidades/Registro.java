@@ -5,6 +5,8 @@
  */
 package persistencia.entidades;
 
+import java.sql.Timestamp;
+
 /**
  *
  * @author manuel.alcala
@@ -14,6 +16,7 @@ public class Registro {
     private int codigo;
     private String codigoGenerado;
     private Comunidad comunidad;
+    private Timestamp fechaVencimiento;
 
     public Registro() {
     }
@@ -22,7 +25,8 @@ public class Registro {
         this.codigo = codigo;
     }
 
-    public Registro(int codigo, String codigoGenerado, Comunidad comunidad) {
+    public Registro(int codigo, String codigoGenerado, Comunidad comunidad, Timestamp fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
         this.codigo = codigo;
         this.codigoGenerado = codigoGenerado;
         this.comunidad = comunidad;
@@ -50,6 +54,14 @@ public class Registro {
 
     public void setComunidad(Comunidad comunidad) {
         this.comunidad = comunidad;
+    }
+
+    public Timestamp getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public void setFechaVencimiento(Timestamp fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
     }
 
 }
