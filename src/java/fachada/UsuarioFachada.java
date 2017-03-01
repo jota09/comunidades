@@ -26,8 +26,9 @@ public class UsuarioFachada implements GestionFachada {
     }
 
     @Override
-    public List getListObject(Object rango) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List getListObject(Object object) {
+        GestionDAO userDAO = new UsuarioDAO();
+        return userDAO.getListObject(object);
     }
 
     @Override
