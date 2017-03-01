@@ -864,8 +864,6 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura est = (Estructura) estFach.getObject(estructura);
             tpArt.setCodigo(Integer.parseInt(est.getValor()));
             art.setTipoArticulo(tpArt);
-//            Usuario usr = (Usuario) request.getSession().getAttribute("user");
-//            art.setComunidad(usr.getPerfilCodigo().getComunidad());
             art = (Articulo) artFachada.getObject(art);
             UsuarioFachada userFachada = new UsuarioFachada();
             art.setUsuario((Usuario) userFachada.getObject(new Usuario(art.getUsuario().getCodigo())));
