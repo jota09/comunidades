@@ -5,6 +5,7 @@
  */
 package persistencia.daos;
 
+import fachada.EstructuraFachada;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,10 +25,11 @@ import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
+import persistencia.entidades.Estructura;
 import persistencia.entidades.Pais;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoError;
-import utilitarias.VisibilidadArticulo;
+import utilitarias.Visibilidad;
 
 /**
  *
@@ -63,7 +65,7 @@ public class ArticuloDAO implements GestionDAO {
                 art.setEstado(new ArticuloEstado(rS.getInt("art.estados_codigo")));
                 art.setPrecio(rS.getDouble("art.precio"));
                 art.setPrioridad(new Prioridad(rS.getInt("p.codigo"), rS.getString("p.nombre"), rS.getInt("p.valor")));
-                art.setVisibilidad(new VisibilidadArticulo(rS.getShort("visibilidad")));
+                art.setVisibilidad(new Visibilidad(rS.getShort("visibilidad")));
                 Comunidad comunidad = new Comunidad(rS.getInt("c.CODIGO"),rS.getString("c.nombre"));
                 comunidad.setCiudadCodigo(new Ciudad(rS.getInt("ciu.codigo"),rS.getString("ciu.nombre")));
                 comunidad.setPaisCodigo(new Pais(rS.getInt("pais.codigo"),rS.getString("pais.nombre")));
@@ -101,17 +103,20 @@ public class ArticuloDAO implements GestionDAO {
     @Override
     public List getListObject(Object obj) {
         Articulo art = (Articulo) obj;
+        EstructuraFachada estrucFachada = new EstructuraFachada();
+        int anonimo = Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("comunidadAnonima"))).getValor());
         ArrayList<Articulo> listArt = new ArrayList();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT CODIGO, TITULO,FECHA_PUBLICACION "
-                    + "FROM articulo "
-                    + "WHERE TIPO_ARTICULO_CODIGO = ? " + ((art.getInicio() == true) ? " AND FECHA_FIN_PUBLICACION >= CURDATE() " : "")
-                    + " " + ((art.getEstado() != null) ? " AND ESTADOS_CODIGO = " + art.getEstado().getCodigo() : "")
-                    + " " + ((art.getVisibilidad() != null) ? " AND VISIBILIDAD=" + art.getVisibilidad().getVisibilidad() : "")
-                    + " " + ((art.getComunidad() != null) ? "AND COMUNIDAD_CODIGO=" + art.getComunidad().getCodigo() : "")
-                    + " ORDER BY FECHA_PUBLICACION DESC "
+            String query = "SELECT art.CODIGO, art.TITULO, art.FECHA_PUBLICACION "
+                    + "FROM articulo AS art INNER JOIN comunidad AS c ON c.CODIGO = art.COMUNIDAD_CODIGO "
+                    + "WHERE art.TIPO_ARTICULO_CODIGO = ? " + ((art.getInicio() == true) ? " AND art.FECHA_FIN_PUBLICACION >= CURDATE() " : "")
+                    + " " + ((art.getEstado() != null) ? " AND art.ESTADOS_CODIGO = " + art.getEstado().getCodigo() : "")
+                    + " " + ((art.getVisibilidad() != null) ? " AND art.VISIBILIDAD=" + art.getVisibilidad().getVisibilidad() : "")
+                    + " " + ((art.getComunidad() != null && art.getComunidad().getCodigo() != anonimo) ? "AND art.COMUNIDAD_CODIGO=" + art.getComunidad().getCodigo() : "")
+                    + " " + ((art.getComunidad().getVisibilidad() != null) ? "AND c.VISIBILIDAD=" + art.getComunidad().getVisibilidad().getVisibilidad(): "")
+                    + " ORDER BY art.FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
@@ -443,6 +448,8 @@ public class ArticuloDAO implements GestionDAO {
     public List getListByPagination(Object object) {
         Connection con = null;
         Articulo art = (Articulo) object;
+        EstructuraFachada estrucFachada = new EstructuraFachada();
+        int anonimo = Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("comunidadAnonima"))).getValor());
         List<Articulo> articulos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
@@ -453,13 +460,16 @@ public class ArticuloDAO implements GestionDAO {
                     + "   FROM articulo art "
                     + "         JOIN categoria cat ON art.categoria_codigo=cat.codigo "
                     + "         JOIN articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "         JOIN usuario usr ON  art.usuario_codigo=usr.codigo"
-                    + "    WHERE " + ((art.getEstado() != null) ? "estados_codigo=" + art.getEstado().getCodigo() + " and " : "") + " "
-                    + "         tipo_articulo_codigo=? " + ((art.getComunidad() != null) ? "and comunidad_codigo=" + art.getComunidad().getCodigo() : "")
-                    + ((art.getVisibilidad() != null) ? " and visibilidad=" + art.getVisibilidad().getVisibilidad() + " " : "") + ""
+                    + "         JOIN usuario usr ON art.usuario_codigo=usr.codigo"
+                    + "         JOIN comunidad c ON art.comunidad_codigo=c.codigo"
+                    + "    WHERE " + ((art.getEstado() != null) ? "art.estados_codigo=" + art.getEstado().getCodigo() + " and " : "") + " "
+                    + "         art.tipo_articulo_codigo=? " + ((art.getComunidad() != null && art.getComunidad().getCodigo() != anonimo) ? "and art.comunidad_codigo=" + art.getComunidad().getCodigo() : "")
+                    + ((art.getVisibilidad() != null) ? " and art.visibilidad=" + art.getVisibilidad().getVisibilidad() + " " : "") + ""
                     + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
-                    + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and usuario_codigo=" + art.getUsuario().getCodigo() : "")
-                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= CURDATE() " : "") + " Limit " + art.getRango();
+                    + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and art.usuario_codigo=" + art.getUsuario().getCodigo() : "")
+                    + " " + ((art.getComunidad().getVisibilidad() != null) ? "AND c.visibilidad=" + art.getComunidad().getVisibilidad().getVisibilidad(): "")
+                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= CURDATE() " : "") + ""
+                    + " Limit " + art.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
             ResultSet rS = pS.executeQuery();

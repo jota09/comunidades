@@ -3,6 +3,7 @@ package persistencia.entidades;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import org.json.simple.JSONObject;
+import utilitarias.Visibilidad;
 
 public class Comunidad implements Serializable {
 
@@ -16,6 +17,7 @@ public class Comunidad implements Serializable {
     private short activo;
     private short eliminado;
     private Timestamp creacion;
+    private Visibilidad visibilidad;
 
     public Comunidad() {
     }
@@ -108,6 +110,14 @@ public class Comunidad implements Serializable {
 
     public void setCreacion(Timestamp creacion) {
         this.creacion = creacion;
+    }
+
+    public Visibilidad getVisibilidad() {
+        return visibilidad;
+    }
+
+    public void setVisibilidad(Visibilidad visibilidad) {
+        this.visibilidad = visibilidad;
     }
 
     @Override

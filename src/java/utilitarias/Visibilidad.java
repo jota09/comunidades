@@ -9,13 +9,13 @@ package utilitarias;
  *
  * @author manuel.alcala
  */
-public class VisibilidadArticulo {
+public class Visibilidad {
     private Short visibilidad;
 
-    public VisibilidadArticulo() {
+    public Visibilidad() {
     }
 
-    public VisibilidadArticulo(short visibilidad) {
+    public Visibilidad(short visibilidad) {
         this.visibilidad = visibilidad;
     }
 
