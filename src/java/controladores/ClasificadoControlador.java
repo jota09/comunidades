@@ -270,7 +270,7 @@ public class ClasificadoControlador extends HttpServlet {
             estruc3 = (Estructura) estrucFachada.getObject(estruc3);
             art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
             art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
-            art.setPrecio(Double.parseDouble(request.getParameter("precio")));
+            art.setPrecio(Double.parseDouble(request.getParameter("precio").replace(".","")));
             ArticuloFachada artFach = new ArticuloFachada();
             String ref = "tipoClasificado";
             Estructura estruc2 = new Estructura(ref);
