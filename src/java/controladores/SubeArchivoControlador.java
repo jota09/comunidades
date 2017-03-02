@@ -131,7 +131,6 @@ public class SubeArchivoControlador extends HttpServlet {
             file.setReadable(true, false);
             file.setExecutable(true, false);
             file.setWritable(true, false);
-
         }
         String nuevaRuta = path + archivo;
         File file2 = new File(nuevaRuta);

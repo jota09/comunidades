@@ -21,7 +21,8 @@ public class LecturaConfig {
     public static String getValue(String key) {
         Properties prop = new Properties();
         try {
-            File archivoConf = new File("/configComunidades/configuracion.properties");
+            File archivoConf = new File("/configComunidades/configuracion.properties"); // Para el local
+//            File archivoConf = new File("/comunidades/configComunidades/configuracion.properties"); // Para el servidor
             //File archivoConf=new File("/configuracion.properties");
             InputStream iS = new FileInputStream(archivoConf);
 
