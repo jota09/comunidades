@@ -186,7 +186,7 @@ public class ArticuloDAO implements GestionDAO {
                 numfilas = pS.executeUpdate();
                 pS.close();
             } else {
-                String sql = "UPDATE articulo SET fecha_publicacion=CURDATE(), estados_codigo=?,observaciones_admon = ?"
+                String sql = "UPDATE articulo SET fecha_publicacion=NOW(), estados_codigo=?,observaciones_admon = ?"
                         + " WHERE codigo=?";
                 PreparedStatement pS = con.prepareStatement(sql);
                 pS.setInt(1, art.getEstado().getCodigo());
@@ -380,19 +380,19 @@ public class ArticuloDAO implements GestionDAO {
                     + "    usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "    categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "    articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "    WHERE art.tipo_articulo_codigo=? AND art.usuario_codigo=?"
+                    + "    WHERE art.tipo_articulo_codigo=? " + ( (articulo.getUsuario() != null) ? "AND art.usuario_codigo="+articulo.getUsuario().getCodigo() : "" )
                     + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
-                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_publicacion LIKE ?) and art.COMUNIDAD_CODIGO = ?";
+                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_fin_publicacion LIKE ? OR cat.nombre LIKE ?) and art.COMUNIDAD_CODIGO = ?";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
-            pS.setInt(2, articulo.getUsuario().getCodigo());
+            pS.setString(2, "%" + articulo.getBusqueda() + "%");
             pS.setString(3, "%" + articulo.getBusqueda() + "%");
             pS.setString(4, "%" + articulo.getBusqueda() + "%");
             pS.setString(5, "%" + articulo.getBusqueda() + "%");
             pS.setString(6, "%" + articulo.getBusqueda() + "%");
             pS.setString(7, "%" + articulo.getBusqueda() + "%");
-            pS.setInt(8, articulo.getUsuario().getPerfilCodigo().getComunidad().getCodigo());
+            pS.setInt(8, articulo.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art = new Articulo();
@@ -462,7 +462,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "         JOIN articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
                     + "         JOIN usuario usr ON art.usuario_codigo=usr.codigo"
                     + "         JOIN comunidad c ON art.comunidad_codigo=c.codigo"
-                    + "    WHERE " + ((art.getEstado() != null) ? "art.estados_codigo=" + art.getEstado().getCodigo() + " and " : "") + " "
+                    + "   WHERE " + ((art.getEstado() != null) ? "art.estados_codigo=" + art.getEstado().getCodigo() + " and " : "") + " "
                     + "         art.tipo_articulo_codigo=? " + ((art.getComunidad() != null && art.getComunidad().getCodigo() != anonimo) ? "and art.comunidad_codigo=" + art.getComunidad().getCodigo() : "")
                     + ((art.getVisibilidad() != null) ? " and art.visibilidad=" + art.getVisibilidad().getVisibilidad() + " " : "") + ""
                     + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
