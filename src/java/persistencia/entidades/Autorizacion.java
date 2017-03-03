@@ -1,22 +1,36 @@
 package persistencia.entidades;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Autorizacion implements Serializable {
 
     private int codigo;
     private int usuariocodigo;
-    private Timestamp fechaingreso;
+    private Date fechaautorizacion;
+    private Timestamp fecharealingreso;
     private String personaingresa;
     private int documentopersonaingresa;
-    private String estado;
-    private String motivo;
-    private Timestamp fechasalida;
+    private EstadoAutorizacion estado;
+    private MotivoAutorizacion motivo;
+    private Timestamp fecharealsalida;
     private String empresacontratista;
     private short activo;
 
     public Autorizacion() {
+    }
+
+    public Autorizacion(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public Date getFechaautorizacion() {
+        return fechaautorizacion;
+    }
+
+    public void setFechaautorizacion(Date fechaautorizacion) {
+        this.fechaautorizacion = fechaautorizacion;
     }
 
     public int getCodigo() {
@@ -35,12 +49,12 @@ public class Autorizacion implements Serializable {
         this.usuariocodigo = usuariocodigo;
     }
 
-    public Timestamp getFechaIngreso() {
-        return this.fechaingreso;
+    public Timestamp getFechaRealIngreso() {
+        return this.fecharealingreso;
     }
 
-    public void setFechaIngreso(Timestamp fechaingreso) {
-        this.fechaingreso = fechaingreso;
+    public void setFechaRealIngreso(Timestamp fecharealingreso) {
+        this.fecharealingreso = fecharealingreso;
     }
 
     public String getPersonaIngresa() {
@@ -59,28 +73,28 @@ public class Autorizacion implements Serializable {
         this.documentopersonaingresa = documentopersonaingresa;
     }
 
-    public String getEstado() {
+    public EstadoAutorizacion getEstado() {
         return this.estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoAutorizacion estado) {
         this.estado = estado;
     }
 
-    public String getMotivo() {
+    public MotivoAutorizacion getMotivo() {
         return this.motivo;
     }
 
-    public void setMotivo(String motivo) {
+    public void setMotivo(MotivoAutorizacion motivo) {
         this.motivo = motivo;
     }
 
-    public Timestamp getFechaSalida() {
-        return this.fechasalida;
+    public Timestamp getFechaRealSalida() {
+        return this.fecharealsalida;
     }
 
-    public void setFechaSalida(Timestamp fechasalida) {
-        this.fechasalida = fechasalida;
+    public void setFechaRealSalida(Timestamp fecharealsalida) {
+        this.fecharealsalida = fecharealsalida;
     }
 
     public String getEmpresaContratista() {
