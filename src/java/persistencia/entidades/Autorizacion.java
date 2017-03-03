@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 public class Autorizacion implements Serializable {
 
     private int codigo;
-    private int usuariocodigo;
+    private Usuario usuariocodigo;
     private Date fechaautorizacion;
     private Timestamp fecharealingreso;
     private String personaingresa;
@@ -41,11 +41,11 @@ public class Autorizacion implements Serializable {
         this.codigo = codigo;
     }
 
-    public int getUsuarioCodigo() {
+    public Usuario getUsuarioCodigo() {
         return this.usuariocodigo;
     }
 
-    public void setUsuarioCodigo(int usuariocodigo) {
+    public void setUsuarioCodigo(Usuario usuariocodigo) {
         this.usuariocodigo = usuariocodigo;
     }
 
