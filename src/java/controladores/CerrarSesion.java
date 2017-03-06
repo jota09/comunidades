@@ -2,7 +2,6 @@ package controladores;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Calendar;
 import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
-import persistencia.entidades.Usuario;
 import utilitarias.Utilitaria;
 
 @WebServlet(name = "CerrarSesion", urlPatterns = {"/CerrarSesion"})

@@ -16,6 +16,7 @@ public class Registro {
     private int codigo;
     private String codigoGenerado;
     private Comunidad comunidad;
+    private String correo;
     private Timestamp fechaVencimiento;
 
     public Registro() {
@@ -25,11 +26,12 @@ public class Registro {
         this.codigo = codigo;
     }
 
-    public Registro(int codigo, String codigoGenerado, Comunidad comunidad, Timestamp fechaVencimiento) {
+    public Registro(int codigo, String codigoGenerado, Comunidad comunidad, String correo, Timestamp fechaVencimiento) {
         this.fechaVencimiento = fechaVencimiento;
         this.codigo = codigo;
         this.codigoGenerado = codigoGenerado;
         this.comunidad = comunidad;
+        this.correo = correo;
     }
 
     public int getCodigo() {
@@ -62,6 +64,14 @@ public class Registro {
 
     public void setFechaVencimiento(Timestamp fechaVencimiento) {
         this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
 }

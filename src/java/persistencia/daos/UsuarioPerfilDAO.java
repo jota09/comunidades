@@ -12,12 +12,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Comunidad;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import persistencia.entidades.UsuarioPerfil;
 import utilitarias.Utilitaria;
 
 /**
@@ -101,7 +104,27 @@ public class UsuarioPerfilDAO implements GestionDAO {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        UsuarioPerfil usuarioPerfil = (UsuarioPerfil) object;
+        Connection con = null;
+        int tam = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "insert into usuario_perfil(perfil_codigo,usuario_codigo) values(?,?)";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, usuarioPerfil.getPerfil().getCodigo());
+            pS.setInt(2, usuarioPerfil.getUsuario().getCodigo());
+            tam = pS.executeUpdate();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioPerfilDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return tam;
     }
 
     @Override

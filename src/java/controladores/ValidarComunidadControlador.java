@@ -5,6 +5,8 @@
  */
 package controladores;
 
+import fachada.ComunidadFachada;
+import fachada.GestionFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -73,15 +75,16 @@ public class ValidarComunidadControlador extends HttpServlet {
         int codigoPerfil = Integer.parseInt(request.getParameter("codigoPerfil"));
         int codigoComunidad = Integer.parseInt(request.getParameter("codigoComun"));
         HttpSession session = request.getSession();
+        GestionFachada comunidadFachada = new ComunidadFachada();
         Usuario user = (Usuario) session.getAttribute("user");
         Perfil perfil = new Perfil();
         Comunidad comunidad = new Comunidad();
         comunidad.setCodigo(codigoComunidad);
+        comunidadFachada.getObject(comunidad);
         perfil.setComunidad(comunidad);
         perfil.setCodigo(codigoPerfil);
         user.setPerfilCodigo(perfil);
         session.setAttribute("user", user);
-        //session.removeAttribute("perfiles");
         request.getSession().setAttribute("view", "menuprincipal.html");
         response.sendRedirect("/Comunidades");
     }

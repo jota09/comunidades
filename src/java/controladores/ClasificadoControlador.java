@@ -388,10 +388,10 @@ public class ClasificadoControlador extends HttpServlet {
                     mult.setDestacada(Short.parseShort("1"));
                     mult = (Multimedia) multFachada.getObject(mult);
                     if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
-                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
+                        String path = LecturaConfig.getValue("rutaVisualiza")  + art2.getCodigo() + "/" + mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
                     } else {
-                        String path = LecturaConfig.getValue("rutaImg") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
+                        String path = LecturaConfig.getValue("rutaImg") + "/" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
                         obj.put("imgDestacada", path);
                     }
                     obj.put("titulo", art2.getTitulo());
@@ -452,7 +452,7 @@ public class ClasificadoControlador extends HttpServlet {
                 obj.put("observacionAdmin", "Sin observacion");
             }
             obj.put("Imagenes", jsArray);
-            obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "\\");
+            obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "/");
             out.print(obj);
         }
     }
@@ -672,10 +672,10 @@ public class ClasificadoControlador extends HttpServlet {
             MultimediaFachada multFachada = new MultimediaFachada();
             List<Multimedia> listMult = multFachada.getListObject(art);
             JSONArray jsArray = new JSONArray();
-            String pathOrigen = LecturaConfig.getValue("rutaVisualiza") + "\\" + art.getCodigo();
+            String pathOrigen = LecturaConfig.getValue("rutaVisualiza") + "/" + art.getCodigo();
             for (Multimedia mult : listMult) {
                 JSONObject obj1 = new JSONObject();
-                obj1.put("ruta", pathOrigen + "\\" + mult.getCodigo() + "." + mult.getExtension());
+                obj1.put("ruta", pathOrigen + "/" + mult.getCodigo() + "." + mult.getExtension());
                 obj1.put("destacada", mult.getDestacada());
                 jsArray.add(obj1);
             }
@@ -814,10 +814,10 @@ public class ClasificadoControlador extends HttpServlet {
                     mult.setDestacada(Short.parseShort("1"));
                     mult = (Multimedia) multFachada.getObject(mult);
                     if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
-                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
+                        String path = LecturaConfig.getValue("rutaVisualiza")  + art2.getCodigo() + "/" + mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
                     } else {
-                        String path = LecturaConfig.getValue("rutaImg") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
+                        String path = LecturaConfig.getValue("rutaImg")  + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
                         obj.put("imgDestacada", path);
                     }
                     obj.put("titulo", art2.getTitulo());

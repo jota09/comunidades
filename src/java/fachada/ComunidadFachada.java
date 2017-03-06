@@ -5,50 +5,50 @@
  */
 package fachada;
 
+
 import java.util.List;
+import persistencia.daos.ComunidadDAO;
 import persistencia.daos.GestionDAO;
-import persistencia.daos.SeguridadDAO;
 
 /**
  *
- * @author ferney.medina
+ * @author manuel.alcala
  */
-public class SeguridadUsuarioFachada implements GestionFachada {
+public class ComunidadFachada implements GestionFachada {
 
     @Override
-    public int updateObject(Object obj) {
-        GestionDAO sgdad = new SeguridadDAO();
-        return sgdad.updateObject(obj);
+    public int getCount(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO comunidadDAO = new ComunidadDAO();
+        return comunidadDAO.getObject(object);
     }
 
     @Override
     public int insertObject(Object object) {
-        GestionDAO sgdad = new SeguridadDAO();
-        return sgdad.insertObject(object);
-    }
-
-    @Override
-    public List getListObject(Object rango) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getCount(Object obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deleteObject(Object object) {
+    public List getListObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public List getListObject() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int updateObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
