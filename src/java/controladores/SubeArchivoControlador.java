@@ -125,13 +125,12 @@ public class SubeArchivoControlador extends HttpServlet {
 
     private synchronized void generaArchivo(String path, String archivo, byte[] content) throws FileNotFoundException, IOException {
         File file = new File(path);
-
         if (!file.exists()) {
             file.mkdirs();
             file.setReadable(true, false);
             file.setExecutable(true, false);
             file.setWritable(true, false);
-
+         
         }
         String nuevaRuta = path + archivo;
         File file2 = new File(nuevaRuta);

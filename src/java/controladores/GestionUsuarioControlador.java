@@ -127,7 +127,7 @@ public class GestionUsuarioControlador extends HttpServlet {
         }
         out.print(arrayUsuarios);
     }
-
+    
     private void generarCodigo(HttpServletRequest request, HttpServletResponse response) {
         GestionFachada estructuraFachada = new EstructuraFachada();
         GestionFachada registroFachada = new RegistroFachada();
@@ -145,8 +145,8 @@ public class GestionUsuarioControlador extends HttpServlet {
         registro.setComunidad(comunidad);
         registro.setCodigoGenerado(Utilitaria.genCodigoRegComunidad(comunidad.getCodigo()));
         registro.setFechaVencimiento(new Timestamp(tiempoEnMilis));
+        registro.setCorreo(correo);
         registroFachada.insertObject(registro);
-        //Falta enviar Correo
         String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
         int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
         String correoSoporte = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
@@ -163,7 +163,7 @@ public class GestionUsuarioControlador extends HttpServlet {
         } else {
             request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se generarón los codigos masivamente", "success"));
         }
-
+        
     }
-
+    
 }

@@ -31,13 +31,19 @@ public class PerfilDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM perfil WHERE codigo=?";
+            String query = "SELECT codigo,nombre,comunidad_codigo FROM perfil WHERE codigo=? or (comunidad_codigo=? and nombre=?)";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, perfil.getCodigo());
+            pS.setInt(2, ((perfil.getComunidad() != null) ? perfil.getComunidad().getCodigo() : 0));
+            pS.setString(3, perfil.getNombre());
             ResultSet rS = pS.executeQuery();
+            System.out.println("QUERY:" + pS);
             if (rS.next()) {
-                perfil.setCodigo(rS.getInt("codigo"));
-                perfil.setNombre(rS.getString("nombre"));
+                perfil.setCodigo(rS.getInt(1));
+                perfil.setNombre(rS.getString(2));
+                Comunidad comunidad = new Comunidad(rS.getInt(3));
+                perfil.setComunidad(comunidad);
+
             }
             rS.close();
             pS.close();
@@ -90,6 +96,7 @@ public class PerfilDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select p.codigo,p.nombre,c.codigo,c.nombre from perfil p left join comunidad c on p.comunidad_codigo=c.codigo  where p.activo=1 order by p.nombre";
+            System.out.println("Imprimiendo PERFIL:" + sql);
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

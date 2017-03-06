@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.SeguridadUsuario;
 import persistencia.entidades.Error;
@@ -74,7 +76,28 @@ public class SeguridadDAO implements GestionDAO {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        SeguridadUsuario seguridad = (SeguridadUsuario) object;
+        int tam = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "insert into seguridad_usuario(contrasena,usuario_codigo,fecha_ultima_sesion,ip_ultima_sesion) values(?,?,now(),?)";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, seguridad.getContrasena());
+            pS.setInt(2, seguridad.getUsuarioCodigo());
+            pS.setString(3, seguridad.getIpUltimaSesion());
+            tam = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SeguridadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return tam;
     }
 
     @Override

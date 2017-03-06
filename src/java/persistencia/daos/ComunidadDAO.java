@@ -5,7 +5,16 @@
  */
 package persistencia.daos;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import persistencia.conexion.ConexionBD;
+import persistencia.entidades.Comunidad;
 
 /**
  *
@@ -20,7 +29,31 @@ public class ComunidadDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Comunidad comunidad = (Comunidad) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select nombre,direccion,telefono from comunidad where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, comunidad.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if(rS.next()){
+                comunidad.setNombre(rS.getString(1));
+                comunidad.setDireccion(rS.getString(2));
+                comunidad.setTelefono(rS.getString(3));
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            ConexionBD.cerrarConexion(con);
+        }  
+        return comunidad;
     }
 
     @Override
@@ -57,5 +90,5 @@ public class ComunidadDAO implements GestionDAO {
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

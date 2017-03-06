@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Comunidad;
 import persistencia.entidades.Usuario;
@@ -32,10 +34,11 @@ public class UsuarioDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT  usr.nombres,usr.apellidos,usr.correo,usr.celular,"
-                    + "usr.telefono,usr.user_name,usr.activo,"
-                    + "sgUsr.contrasena,sgUsr.activo,usr.codigo_documento,usr.activo,sgUsr.activo,sgUsr.codigo FROM usuario usr "
+                    + "usr.telefono,usr.codigo,usr.user_name"
+                    + " FROM usuario usr "
                     + "JOIN seguridad_usuario sgUsr ON sgUsr.usuario_codigo=usr.codigo "
                     + "WHERE ((usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1) or usr.codigo=?";
+
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setString(1, user.getUserName());
             pS.setString(2, user.getCorreo());
@@ -44,13 +47,13 @@ public class UsuarioDAO implements GestionDAO {
             pS.setInt(5, user.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
-                user.setNombres(rS.getString("nombres"));
-                user.setApellidos(rS.getString("apellidos"));
-                user.setCorreo(rS.getString("correo"));
-                user.setCelular(rS.getString("celular"));
-                user.setTelefono(rS.getString("telefono"));
-                user.setCodigo(rS.getInt("codigo"));
-                user.setUserName(rS.getString("user_name"));
+                user.setNombres(rS.getString(1));
+                user.setApellidos(rS.getString(2));
+                user.setCorreo(rS.getString(3));
+                user.setCelular(rS.getString(4));
+                user.setTelefono(rS.getString(5));
+                user.setCodigo(rS.getInt(6));
+                user.setUserName(rS.getString(7));
             }
             rS.close();
             pS.close();
@@ -143,7 +146,35 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Usuario user = (Usuario) object;
+        Connection con = null;
+        int tam = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "insert into usuario(codigo_documento,tipo_documento_codigo,nombres,apellidos,"
+                    + "correo,celular,telefono,user_name,codigo) values(?,?,?,?,?,?,?,?,?)";
+            PreparedStatement pS = con.prepareStatement(sql);
+            user.setCodigo(getMaxCodigo());
+            pS.setInt(1, user.getCodigoDocumento());
+            pS.setInt(2, user.getTipoDocumentoCodigo());
+            pS.setString(3, user.getNombres());
+            pS.setString(4, user.getApellidos());
+            pS.setString(5, user.getCorreo());
+            pS.setString(6, user.getCelular());
+            pS.setString(7, user.getTelefono());
+            pS.setString(8, user.getUserName());
+            pS.setInt(9, user.getCodigo());
+            tam = pS.executeUpdate();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return tam;
     }
 
     @Override
@@ -214,5 +245,46 @@ public class UsuarioDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private int getMaxCodigo() {
+        Connection con = null;
+        int cont = 1;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT MAX(codigo)+1 codigo FROM usuario ";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                int max = rS.getInt(1);
+                cont = ((max > 0) ? max : cont);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getMaxCodigo");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return cont;
     }
 }

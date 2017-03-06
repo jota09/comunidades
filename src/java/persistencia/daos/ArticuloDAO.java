@@ -525,7 +525,7 @@ public class ArticuloDAO implements GestionDAO {
         return articulos;
     }
 
-    private synchronized int getMaxCodigo() {
+    private  int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
         try {
