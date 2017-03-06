@@ -160,14 +160,14 @@ public class ClasificadoControlador extends HttpServlet {
             Logger.getLogger(ClasificadoControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     private void recuperarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             CategoriaFachada catFachada = new CategoriaFachada();
             out.print(Utilitaria.construirCategorias(catFachada.getListObject()));
         }
     }
-
+    
     private void recuperarPrioridad(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             PrioridadFachada prioFachada = new PrioridadFachada();
@@ -184,7 +184,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
-
+    
     private void recuperarMostrar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -201,7 +201,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
-
+    
     private void recuperarRangoPrecio(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -218,7 +218,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
-
+    
     private void recuperarOrdenarPor(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -251,7 +251,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
-
+    
     private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -270,7 +270,7 @@ public class ClasificadoControlador extends HttpServlet {
             estruc3 = (Estructura) estrucFachada.getObject(estruc3);
             art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
             art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
-            art.setPrecio(Double.parseDouble(request.getParameter("precio")));
+            art.setPrecio(Double.parseDouble(request.getParameter("precio").replace(".","")));
             ArticuloFachada artFach = new ArticuloFachada();
             String ref = "tipoClasificado";
             Estructura estruc2 = new Estructura(ref);
@@ -289,7 +289,7 @@ public class ClasificadoControlador extends HttpServlet {
                 Visibilidad visibilidadArticulo = new Visibilidad(visibilidad);
                 art.setVisibilidad(visibilidadArticulo);
             }
-
+            
             if (codArt.equals("")) {
                 artFach.insertObject(art);
             } else {
@@ -300,33 +300,27 @@ public class ClasificadoControlador extends HttpServlet {
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
     }
-
+    
     private void aprobarArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             response.setContentType("text/html;charset=UTF-8");
-            Articulo art = new Articulo();
-            art.setCodigo(Integer.parseInt(request.getParameter("cod")));
-            String ref2 = "articuloEstadoAprobado";
-            Estructura estruc3 = new Estructura(ref2);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
+            Articulo art = new Articulo(Integer.parseInt(request.getParameter("cod")));
+            art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
             ArticuloFachada artFach = new ArticuloFachada();
             artFach.updateObject(art);
             art = (Articulo) artFach.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
             Utilitaria.enviarMailArticuloAprobado(art, art.getTitulo());
             out.print(1);
-
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se aprobo el clasificado", "success"));
     }
-
+    
     private void devolverArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         PrintWriter out = response.getWriter();
         GestionFachada estructuraFachada = new EstructuraFachada();
         response.setContentType("text/html;charset=UTF-8");
-        Articulo art = new Articulo();
-        art.setCodigo(Integer.parseInt(request.getParameter("cod")));
+        Articulo art = new Articulo(Integer.parseInt(request.getParameter("cod")));
         art.setObservacionesAdmon(request.getParameter("obs"));
         art.setEstado(new ArticuloEstado((Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("articuloDevuelto"))).getValor()))));
         ArticuloFachada artFach = new ArticuloFachada();
@@ -336,7 +330,7 @@ public class ClasificadoControlador extends HttpServlet {
         out.print(1);
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se envio a correción el clasificado", "success"));
     }
-
+    
     private void recuperarUltimosClasificados(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -355,12 +349,12 @@ public class ClasificadoControlador extends HttpServlet {
                 obj.put("codigo", art2.getCodigo());
                 obj.put("nombre", art2.getTitulo());
                 array.add(obj);
-
+                
             }
             out.print(array);
         }
     }
-
+    
     private void recuperarInicioClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, org.json.simple.parser.ParseException {
         try (PrintWriter out = response.getWriter()) {
             Usuario user = (Usuario) request.getSession().getAttribute("user");
@@ -371,7 +365,15 @@ public class ClasificadoControlador extends HttpServlet {
             art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicio"))).getValor());
             String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             ArticuloFachada artFachada = new ArticuloFachada();
-            art.setBusqueda(condicion);
+            if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) {
+                if (condicion != null && condicion != "") {
+                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%' or art.precio LIKE '%" + request.getParameter("busqueda") + "%') and " + condicion);
+                } else {
+                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%' or art.precio LIKE '%" + request.getParameter("busqueda") + "%')");
+                }
+            } else {
+                art.setBusqueda(condicion);
+            }
             ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor()));
             art.setEstado(estado);
             MultimediaFachada multFachada = new MultimediaFachada();
@@ -400,7 +402,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
-
+    
     private void editarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             int cod = Integer.parseInt(request.getParameter("cod"));
@@ -454,14 +456,14 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(obj);
         }
     }
-
+    
     private void tipoArticulo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             GestionFachada estFach = new EstructuraFachada();
             out.print(((Estructura) estFach.getObject(new Estructura("tipoClasificado"))).getValor());
         }
     }
-
+    
     private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -510,7 +512,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-
+    
     private void tablaRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -548,7 +550,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-
+    
     private void borrarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -566,26 +568,21 @@ public class ClasificadoControlador extends HttpServlet {
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se ha eliminado el clasificado correctamente", "success"));
     }
-
+    
     private void borrarRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
-            int cod = Integer.parseInt(request.getParameter("cod").trim());
-            Articulo art = new Articulo();
-            art.setCodigo(cod);
-            String ref = "tipoClasificado";
-            Estructura estruc2 = new Estructura(ref);
-            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
+            Articulo art = new Articulo(Integer.parseInt(request.getParameter("cod")));
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             ArticuloFachada artFachada = new ArticuloFachada();
-            Articulo art2 = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("cod").trim())));
+            Articulo art2 = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("cod"))));
             artFachada.deleteObject(art);
             Utilitaria.enviarMailArticuloEliminado(art2, request.getParameter("descrip"), request.getParameter("tit"));
             out.print(1);
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se ha eliminado el clasificado correctamente", "success"));
     }
-
+    
     private void filtrarCategorias(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -625,7 +622,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-
+    
     private void filtrarCategoriasAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -665,7 +662,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-
+    
     private void recuperarClasificado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -695,12 +692,12 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("fechaPublicacion", Utilitaria.convertirFecha(art.getFechaPublicacion()));
             obj.put("descripcion", art.getDescripcion());
             obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
-            obj.put("ubicacion",art.getComunidad().getDepartamentoCodigo().getNombre()+","+art.getComunidad().getCiudadCodigo().getNombre()+","+art.getComunidad().getNombre());
+            obj.put("ubicacion", art.getComunidad().getDepartamentoCodigo().getNombre() + "," + art.getComunidad().getCiudadCodigo().getNombre() + "," + art.getComunidad().getNombre());
             obj.put("imagenes", jsArray);
             out.print(obj);
         }
     }
-
+    
     private void buscarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -710,8 +707,11 @@ public class ClasificadoControlador extends HttpServlet {
             Articulo articulo = new Articulo();
             articulo.setTipoArticulo(tipArt);
             articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
-            if (request.getParameter("buscar") != null) {
+            articulo.setComunidad(new Comunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad().getCodigo()));
+            if (request.getParameter("buscar") != null && !request.getParameter("buscar").isEmpty() && !request.getParameter("buscar").equals("null")) {
                 articulo.setBusqueda(request.getParameter("buscar"));
+            } else {
+                articulo.setBusqueda("");
             }
             List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
             JSONArray jsonArray = new JSONArray();
@@ -737,7 +737,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-
+    
     private void buscarRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -746,9 +746,11 @@ public class ClasificadoControlador extends HttpServlet {
             tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
             Articulo articulo = new Articulo();
             articulo.setTipoArticulo(tipArt);
-            articulo.setUsuario((Usuario) request.getSession().getAttribute("user"));
-            if (request.getParameter("buscar") != null) {
+            articulo.setComunidad(new Comunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad().getCodigo()));
+            if (request.getParameter("buscar") != null && !request.getParameter("buscar").isEmpty() && !request.getParameter("buscar").equals("null")) {
                 articulo.setBusqueda(request.getParameter("buscar"));
+            } else {
+                articulo.setBusqueda("");
             }
             List<Articulo> listArticulo = artFachada.getListByCondition(articulo);
             JSONArray jsonArray = new JSONArray();
@@ -761,7 +763,8 @@ public class ClasificadoControlador extends HttpServlet {
                     jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
                     jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
                     jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                    jsonObj.put("nombreEstado", art.getCategoria().getNombre());
+                    jsonObj.put("nombreEstado", art.getEstado().getNombre());
+                    jsonObj.put("codigoEstado", art.getEstado().getCodigo());
                     jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
                     if (art.getFechaPublicacion() == null) {
                         jsonObj.put("fechaPublicacion", 0);
@@ -774,7 +777,7 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-
+    
     private void usuarioLogueado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         Usuario user = (Usuario) request.getSession().getAttribute("user");
@@ -784,13 +787,13 @@ public class ClasificadoControlador extends HttpServlet {
         obj.put("apellidos", user.getApellidos());
         out.print(obj);
     }
-
+    
     private void recuperarInicioClasificadoPublico(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, org.json.simple.parser.ParseException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             Articulo art = new Articulo();
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
-            art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicio"))).getValor());
+            art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicioPublico"))).getValor());
             String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             ArticuloFachada artFachada = new ArticuloFachada();
             art.setBusqueda(condicion);
@@ -825,12 +828,12 @@ public class ClasificadoControlador extends HttpServlet {
             out.print(array);
         }
     }
-
+    
     private void recuperarUltimosClasificadosPublico(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             Articulo art = new Articulo();
-            art.setRango("0," + ((Estructura) estrucFachada.getObject(new Estructura("cantidadUltimosClasificados"))).getValor());
+            art.setRango("0," + ((Estructura) estrucFachada.getObject(new Estructura("cantidadUltimosClasificadosPublico"))).getValor());
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
             art.setInicio(true);
@@ -845,7 +848,7 @@ public class ClasificadoControlador extends HttpServlet {
                 obj.put("codigo", art2.getCodigo());
                 obj.put("nombre", art2.getTitulo());
                 array.add(obj);
-
+                
             }
             out.print(array);
         }
@@ -864,8 +867,6 @@ public class ClasificadoControlador extends HttpServlet {
             Estructura est = (Estructura) estFach.getObject(estructura);
             tpArt.setCodigo(Integer.parseInt(est.getValor()));
             art.setTipoArticulo(tpArt);
-//            Usuario usr = (Usuario) request.getSession().getAttribute("user");
-//            art.setComunidad(usr.getPerfilCodigo().getComunidad());
             art = (Articulo) artFachada.getObject(art);
             UsuarioFachada userFachada = new UsuarioFachada();
             art.setUsuario((Usuario) userFachada.getObject(new Usuario(art.getUsuario().getCodigo())));
@@ -883,7 +884,7 @@ public class ClasificadoControlador extends HttpServlet {
             JSONObject obj = new JSONObject();
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
-            obj.put("autor",art.getUsuario().getNombres()+" "+art.getUsuario().getApellidos());
+            obj.put("autor", art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
             obj.put("nombreUsuario", art.getUsuario().getUserName());
             if (art.getUsuario().getCelular() != null) {
                 obj.put("telefono", art.getUsuario().getCelular());
@@ -891,7 +892,7 @@ public class ClasificadoControlador extends HttpServlet {
                 obj.put("telefono", art.getUsuario().getTelefono());
             }
             obj.put("precio", Utilitaria.conversionNatural(art.getPrecio()));
-            obj.put("ubicacion",art.getComunidad().getDepartamentoCodigo().getNombre()+","+art.getComunidad().getCiudadCodigo().getNombre()+","+art.getComunidad().getNombre());
+            obj.put("ubicacion", art.getComunidad().getDepartamentoCodigo().getNombre() + "," + art.getComunidad().getCiudadCodigo().getNombre() + "," + art.getComunidad().getNombre());
             obj.put("titulo", art.getTitulo());
             obj.put("descripcion", art.getDescripcion());
             obj.put("fecha_publicacion", ((art.getFechaPublicacion() == null ? "" : art.getFechaPublicacion().toString())));
@@ -902,7 +903,6 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
             obj.put("Imagenes", jsArray);
             obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "/");
-            System.out.println(obj);
             out.print(obj);
         }
     }
@@ -919,9 +919,9 @@ public class ClasificadoControlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         processRequest(request, response);
-
+        
     }
 
     /**

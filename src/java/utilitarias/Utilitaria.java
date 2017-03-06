@@ -215,7 +215,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Correciones del clasificado " + tit, art.getUsuario().getCorreo());
+        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo());
     }
 
     public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) {
@@ -234,7 +234,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Eliminación clasificado " + tit, art.getUsuario().getCorreo());
+        envioMail.sendEmail(mensaje, "Eliminación articulo " + tit, art.getUsuario().getCorreo());
     }
 
     public static void enviarMailArticuloAprobado(Object obj, String tit) {
@@ -256,7 +256,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Aprobación de clasificado " + tit, art.getUsuario().getCorreo());
+        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo());
     }
 
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {
