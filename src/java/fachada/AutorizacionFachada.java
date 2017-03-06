@@ -6,7 +6,6 @@
 package fachada;
 
 import java.util.List;
-import persistencia.daos.ArticuloDAO;
 import persistencia.daos.AutorizacionDAO;
 import persistencia.daos.GestionDAO;
 

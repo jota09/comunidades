@@ -19,6 +19,10 @@ public class MotivoAutorizacion {
         this.codigo = codigo;
     }
 
+    public MotivoAutorizacion(String nombre) {
+        this.nombre = nombre;
+    }
+
     public int getCodigo() {
         return codigo;
     }

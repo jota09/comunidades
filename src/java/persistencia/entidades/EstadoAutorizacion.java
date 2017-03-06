@@ -19,6 +19,10 @@ public class EstadoAutorizacion {
         this.codigo = codigo;
     }
 
+    public EstadoAutorizacion(String nombre) {
+        this.nombre = nombre;
+    }
+
     public int getCodigo() {
         return codigo;
     }

@@ -11,12 +11,15 @@ public class Autorizacion implements Serializable {
     private Date fechaautorizacion;
     private Timestamp fecharealingreso;
     private String personaingresa;
-    private int documentopersonaingresa;
+    private String documentopersonaingresa;
     private EstadoAutorizacion estado;
     private MotivoAutorizacion motivo;
     private Timestamp fecharealsalida;
     private String empresacontratista;
     private short activo;
+    private Comunidad comunidadcodigo;
+    private String rango;
+    private String busqueda;
 
     public Autorizacion() {
     }
@@ -65,11 +68,11 @@ public class Autorizacion implements Serializable {
         this.personaingresa = personaingresa;
     }
 
-    public int getDocumentoPersonaIngresa() {
+    public String getDocumentoPersonaIngresa() {
         return this.documentopersonaingresa;
     }
 
-    public void setDocumentoPersonaIngresa(int documentopersonaingresa) {
+    public void setDocumentoPersonaIngresa(String documentopersonaingresa) {
         this.documentopersonaingresa = documentopersonaingresa;
     }
 
@@ -112,4 +115,29 @@ public class Autorizacion implements Serializable {
     public void setActivo(short activo) {
         this.activo = activo;
     }
+
+    public Comunidad getComunidadcodigo() {
+        return comunidadcodigo;
+    }
+
+    public void setComunidadcodigo(Comunidad comunidadcodigo) {
+        this.comunidadcodigo = comunidadcodigo;
+    }
+
+    public String getRango() {
+        return rango;
+    }
+
+    public void setRango(String rango) {
+        this.rango = rango;
+    }
+
+    public String getBusqueda() {
+        return busqueda;
+    }
+
+    public void setBusqueda(String busqueda) {
+        this.busqueda = busqueda;
+    }
+
 }
