@@ -140,4 +140,9 @@ public class Autorizacion implements Serializable {
         this.busqueda = busqueda;
     }
 
+    @Override
+    public String toString() {
+        return "Autorizacion{" + "codigo=" + codigo + ", usuariocodigo=" + usuariocodigo + ", fechaautorizacion=" + fechaautorizacion + ", fecharealingreso=" + fecharealingreso + ", personaingresa=" + personaingresa + ", documentopersonaingresa=" + documentopersonaingresa + ", estado=" + estado + ", motivo=" + motivo + ", fecharealsalida=" + fecharealsalida + ", empresacontratista=" + empresacontratista + ", activo=" + activo + ", comunidadcodigo=" + comunidadcodigo + ", rango=" + rango + ", busqueda=" + busqueda + '}';
+    }
+
 }

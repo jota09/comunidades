@@ -19,6 +19,7 @@ import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Categoria;
 import persistencia.entidades.EstadoAutorizacion;
 import persistencia.entidades.Estructura;
+import persistencia.entidades.Inmueble;
 import persistencia.entidades.MotivoAutorizacion;
 import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
@@ -233,22 +234,25 @@ public class AutorizacionDAO implements GestionDAO {
         Autorizacion auto = (Autorizacion) object;
         Connection con = null;
         int result = 0;
+                        System.out.println("Entro a la creacion de autorizacion");
+
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "INSERT INTO autorizacion( codigo,usuario_codigo, fecha_autorizacion,"
-                    + " persona_ingresa, documento_persona_ingresa,empresa_contratista"
-                    + " estado_autorizacion_codigo, motivo_autorizacion_codigo,comunidad_codigo"
-                    + " VALUES (?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO autorizacion( usuario_codigo, fecha_autorizacion,"
+                    + " persona_ingresa, documento_persona_ingresa,empresa_contratista,"
+                    + " estado_autorizacion_codigo, motivo_autorizacion_codigo,comunidad_codigo)"
+                    + " VALUES (?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
-                pS.setInt(1, auto.getCodigo());
-                pS.setInt(2, auto.getUsuarioCodigo().getCodigo());
-                pS.setDate(3, auto.getFechaautorizacion());
-                pS.setString(4, auto.getPersonaIngresa());
-                pS.setString(5, auto.getDocumentoPersonaIngresa());
+                System.out.println(sql);
+                pS.setInt(1, auto.getUsuarioCodigo().getCodigo());
+                pS.setDate(2, auto.getFechaautorizacion());
+                pS.setString(3, auto.getPersonaIngresa());
+                pS.setString(4, auto.getDocumentoPersonaIngresa());
+                pS.setString(5,auto.getEmpresaContratista());
                 pS.setInt(6, auto.getEstado().getCodigo());
                 pS.setInt(7, auto.getMotivo().getCodigo());
-                pS.setString(8, auto.getEmpresaContratista());
-                pS.setInt(9, auto.getComunidadcodigo().getCodigo());
+                pS.setInt(8, auto.getComunidadcodigo().getCodigo());
+                System.out.println(pS);
                 result = pS.executeUpdate();
                 pS.close();
             }
@@ -418,15 +422,17 @@ public class AutorizacionDAO implements GestionDAO {
             String sql = "SELECT auto.codigo,auto.usuario_codigo,auto.fecha_autorizacion,"
                     + " auto.fecha_real_ingreso,"
                     + " auto.persona_ingresa,auto.documento_persona_ingresa,auto.fecha_real_salida,"
-                    + " auto.empresa_contratista, usr.nombres,usr.apellidos,"
+                    + " auto.empresa_contratista, usr.nombres,usr.apellidos,i.codigo,i.ubicacion,"
                     + " e.codigo,e.nombre,m.codigo,m.nombre  "
                     + " FROM autorizacion auto "
                     + " JOIN motivo_autorizacion m ON auto.motivo_autorizacion_codigo=m.codigo "
                     + " JOIN estado_autorizacion e ON auto.estado_autorizacion_codigo=e.codigo "
                     + " JOIN usuario usr ON auto.usuario_codigo=usr.codigo"
                     + " JOIN comunidad c ON auto.comunidad_codigo=c.codigo"
-                    + "   WHERE " + ((auto.getComunidadcodigo()!= null) ? "auto.comunidad_codigo=" + auto.getComunidadcodigo().getCodigo() + " and " : "") + " "
-                    + ((auto.getEstado() != null) ? "e.nombre='" + auto.getEstado().getNombre()+ "'" : "") + " "
+                    + " JOIN inmueble i ON usr.codigo=i.usuario_codigo"
+                    + " WHERE " + ((auto.getComunidadcodigo()!= null) ? "auto.comunidad_codigo=" + auto.getComunidadcodigo().getCodigo() + " " : "") + " "
+                    + ((auto.getEstado() != null) ? " and e.codigo=" + auto.getEstado().getCodigo()+ "" : "") + " "
+                    + ((auto.getEstado() != null) ? " and user.codigo=" + auto.getUsuarioCodigo().getCodigo()+ "" : "") + " "
                     + " Limit " + auto.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
@@ -443,12 +449,13 @@ public class AutorizacionDAO implements GestionDAO {
                 usr.setCodigo(rS.getInt(2));
                 usr.setNombres(rS.getString(9));
                 usr.setApellidos(rS.getString(10));
+                usr.setInmueble(new Inmueble(rS.getInt(11),rS.getString(12)));
                 autorizacion.setUsuarioCodigo(usr);
-                EstadoAutorizacion estado = new EstadoAutorizacion(rS.getInt(11));
-                estado.setNombre(rS.getString(12));
+                EstadoAutorizacion estado = new EstadoAutorizacion(rS.getInt(13));
+                estado.setNombre(rS.getString(14));
                 autorizacion.setEstado(estado);
-                MotivoAutorizacion motivo = new MotivoAutorizacion(rS.getInt(13));
-                motivo.setNombre(rS.getString(14));
+                MotivoAutorizacion motivo = new MotivoAutorizacion(rS.getInt(15));
+                motivo.setNombre(rS.getString(16));
                 autorizacion.setMotivo(motivo);
                 autorizaciones.add(autorizacion);
             }

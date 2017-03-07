@@ -6,14 +6,21 @@ public class Inmueble implements Serializable {
 
     private int codigo;
     private int comunidadcodigo;
-    private int comunidadciudadcodigo;
-    private int comunidaddepartamentocodigo;
-    private int comunidadpaiscodigo;
     private int usuariocodigo;
-    private int tipoinmueblecodigo;
+    private String ubicacion;
+    private TipoInmueble tipoinmueblecodigo;
     private short activo;
 
     public Inmueble() {
+    }
+
+    public Inmueble(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public Inmueble(int codigo, String ubicacion) {
+        this.codigo = codigo;
+        this.ubicacion = ubicacion;
     }
 
     public int getCodigo() {
@@ -32,30 +39,6 @@ public class Inmueble implements Serializable {
         this.comunidadcodigo = comunidadcodigo;
     }
 
-    public int getComunidadCiudadCodigo() {
-        return this.comunidadciudadcodigo;
-    }
-
-    public void setComunidadCiudadCodigo(int comunidadciudadcodigo) {
-        this.comunidadciudadcodigo = comunidadciudadcodigo;
-    }
-
-    public int getComunidadDepartamentoCodigo() {
-        return this.comunidaddepartamentocodigo;
-    }
-
-    public void setComunidadDepartamentoCodigo(int comunidaddepartamentocodigo) {
-        this.comunidaddepartamentocodigo = comunidaddepartamentocodigo;
-    }
-
-    public int getComunidadPaisCodigo() {
-        return this.comunidadpaiscodigo;
-    }
-
-    public void setComunidadPaisCodigo(int comunidadpaiscodigo) {
-        this.comunidadpaiscodigo = comunidadpaiscodigo;
-    }
-
     public int getUsuarioCodigo() {
         return this.usuariocodigo;
     }
@@ -64,11 +47,11 @@ public class Inmueble implements Serializable {
         this.usuariocodigo = usuariocodigo;
     }
 
-    public int getTipoInmuebleCodigo() {
+    public TipoInmueble getTipoInmuebleCodigo() {
         return this.tipoinmueblecodigo;
     }
 
-    public void setTipoInmuebleCodigo(int tipoinmueblecodigo) {
+    public void setTipoInmuebleCodigo(TipoInmueble tipoinmueblecodigo) {
         this.tipoinmueblecodigo = tipoinmueblecodigo;
     }
 
@@ -78,5 +61,13 @@ public class Inmueble implements Serializable {
 
     public void setActivo(short activo) {
         this.activo = activo;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
     }
 }
