@@ -229,7 +229,37 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public int getCount(Object obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Usuario user = (Usuario) obj;
+        Connection con = null;
+        int cont = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql;
+            PreparedStatement pS;
+            if (user != null) {
+                sql = "Select count(codigo) from usuario where correo=?";
+                pS = con.prepareStatement(sql);
+                pS.setString(1, user.getCorreo());
+            } else {
+                sql = "Select count(codigo) from usuario";
+                pS = con.prepareStatement(sql);
+            }
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                cont = rS.getInt(1);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return cont;
     }
 
     @Override

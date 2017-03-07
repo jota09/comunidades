@@ -62,6 +62,7 @@ public class GestionUsuarioControlador extends HttpServlet {
                     break;
                 }
                 case 3: {
+                    validarCorreo(request, response);
                     break;
                 }
             }
@@ -127,7 +128,7 @@ public class GestionUsuarioControlador extends HttpServlet {
         }
         out.print(arrayUsuarios);
     }
-    
+
     private void generarCodigo(HttpServletRequest request, HttpServletResponse response) {
         GestionFachada estructuraFachada = new EstructuraFachada();
         GestionFachada registroFachada = new RegistroFachada();
@@ -163,7 +164,20 @@ public class GestionUsuarioControlador extends HttpServlet {
         } else {
             request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se generarón los codigos masivamente", "success"));
         }
-        
+
     }
-    
+
+    private void validarCorreo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String correo = request.getParameter("correo");
+        GestionFachada usuarioFachada = new UsuarioFachada();
+        Usuario user = new Usuario();
+        user.setCorreo(correo);
+        PrintWriter out = response.getWriter();
+        if (usuarioFachada.getCount(user) > 0) {
+            out.print(1);
+        } else {
+            out.print(0);
+        }
+    }
+
 }

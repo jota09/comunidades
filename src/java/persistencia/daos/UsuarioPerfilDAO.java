@@ -46,7 +46,8 @@ public class UsuarioPerfilDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select  p.codigo,p.nombre,c.codigo,c.nombre,c.direccion,c.telefono from usuario_perfil up join perfil p on up.perfil_codigo=p.codigo "
+            String sql = "Select  p.codigo,p.nombre,c.codigo,c.nombre,c.direccion,c.telefono from usuario_perfil up"
+                    + " join perfil p on up.perfil_codigo=p.codigo "
                     + "join comunidad c on p.comunidad_codigo=c.codigo where up.usuario_codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, usuario.getCodigo());

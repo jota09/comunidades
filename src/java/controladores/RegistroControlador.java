@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.Registro;
 import persistencia.entidades.SeguridadUsuario;
-import persistencia.entidades.TipoDocumento;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.UsuarioPerfil;
 import utilitarias.Cifrar;
@@ -63,6 +62,7 @@ public class RegistroControlador extends HttpServlet {
                 }
                 case 2: {
                     registrarUsuario(request, response);
+                    break;
                 }
             }
         } catch (IOException ex) {
@@ -128,14 +128,14 @@ public class RegistroControlador extends HttpServlet {
         registroFachada.getObject(registro);
         PrintWriter out = response.getWriter();
         if (registro.getComunidad() != null && registro.getFechaVencimiento().after(new Date())) {
-            construyeFormulario(out, codigoRegistro,registro.getCorreo());
+            construyeFormulario(out, codigoRegistro, registro.getCorreo());
         } else {
             out.print("<h2 class='text-center'>EL CODIGO NO ES VALIDO</h2>");
         }
 
     }
 
-    private void construyeFormulario(PrintWriter out, String codigo,String correo) {
+    private void construyeFormulario(PrintWriter out, String codigo, String correo) {
         String html = "<form action='RegistroControlador' method='post'> <label>Documento:</label>";
         html += "<input type='text' id='documento' name='documento' class='form-control'>";
         html += "<label>Nombre:</label>";
@@ -143,7 +143,7 @@ public class RegistroControlador extends HttpServlet {
         html += "<label>Apellido:</label>";
         html += "<input type='text' name='apellido' id='apellido' class='form-control margenTop'>";
         html += "<label>Correo:</label>";
-        html += "<input type='text' name='correo' value='"+correo+"' disabled id='correo' class='form-control margenTop'>";
+        html += "<input type='text' name='correo' value='" + correo + "' disabled id='correo' class='form-control margenTop'>";
         html += "<label>Celular:</label>";
         html += "<input type='text' name='celular' id='celular' class='form-control margenTop'>";
         html += "<label>Telefono:</label>";
@@ -209,5 +209,7 @@ public class RegistroControlador extends HttpServlet {
         response.sendRedirect("/Comunidades");
 
     }
+
+
 
 }
