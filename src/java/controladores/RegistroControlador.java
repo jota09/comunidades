@@ -136,24 +136,24 @@ public class RegistroControlador extends HttpServlet {
     }
 
     private void construyeFormulario(PrintWriter out, String codigo, String correo) {
-        String html = "<form action='RegistroControlador' method='post'> <label>Documento:</label>";
-        html += "<input type='text' id='documento' name='documento' class='form-control'>";
-        html += "<label>Nombre:</label>";
-        html += "<input type='text' name='nombre' id='nombre' class='form-control margenTop'>";
-        html += "<label>Apellido:</label>";
-        html += "<input type='text' name='apellido' id='apellido' class='form-control margenTop'>";
-        html += "<label>Correo:</label>";
-        html += "<input type='text' name='correo' value='" + correo + "' disabled id='correo' class='form-control margenTop'>";
-        html += "<label>Celular:</label>";
-        html += "<input type='text' name='celular' id='celular' class='form-control margenTop'>";
-        html += "<label>Telefono:</label>";
-        html += "<input type='text' name='telefono' id='telefono' class='form-control margenTop'>";
-        html += "<label>Nombre de Usuario:</label>";
-        html += "<input type='text' id='username' name='username' class='form-control margenTop'>";
-        html += "<label>Contraseña:</label>";
-        html += "<input type='password' name='contrasena' id='contrasena' class='form-control margenTop'>";
-        html += "<label>Confirmar Contraseña:</label>";
-        html += "<input type='password' name='confirmContrasena' id='confirmContrasena' class='form-control margenTop'>";
+        String html = "<form action='RegistroControlador' method='post'> <label>Documento(*):</label>";
+        html += "<input type='text' id='documento' name='documento' class='form-control' required>";
+        html += "<label>Nombre(*):</label>";
+        html += "<input type='text' name='nombre' id='nombre' class='form-control margenTop' required>";
+        html += "<label>Apellido(*):</label>";
+        html += "<input type='text' name='apellido' id='apellido' class='form-control margenTop' required>";
+        html += "<label>Correo(*):</label>";
+        html += "<input type='text' name='correo' value='" + correo + "' disabled id='correo' class='form-control margenTop' required>";
+        html += "<label>Celular(*):</label>";
+        html += "<input type='text' name='celular' id='celular' class='form-control margenTop' required>";
+        html += "<label>Telefono(*):</label>";
+        html += "<input type='text' name='telefono' id='telefono' class='form-control margenTop' required>";
+        html += "<label>Nombre de Usuario(*):</label>";
+        html += "<input type='text' id='username' name='username' class='form-control margenTop' required>";
+        html += "<label>Contraseña(*):</label>";
+        html += "<input type='password' name='contrasena' id='contrasena' class='form-control margenTop' required>";
+        html += "<label>Confirmar Contraseña(*):</label>";
+        html += "<input type='password' name='confirmContrasena' id='confirmContrasena' class='form-control margenTop' required>";
         html += "<input type='hidden' name='codigoRegistro' value='" + codigo + "' >";
         html += "<input type='hidden' name='op' value='2' >";
         html += "<input type='submit' value='Registrar'style='margin-top:5px' class='btn btn-primary pull-right'></form>";
