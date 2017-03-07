@@ -15,6 +15,9 @@ public class MotivoAutorizacion {
     private String nombre;
     private short activo;
 
+    public MotivoAutorizacion() {
+    }
+
     public MotivoAutorizacion(int codigo) {
         this.codigo = codigo;
     }
@@ -46,4 +49,9 @@ public class MotivoAutorizacion {
     public void setActivo(short activo) {
         this.activo = activo;
     }   
+
+    @Override
+    public String toString() {
+        return "MotivoAutorizacion{" + "codigo=" + codigo + ", nombre=" + nombre + ", activo=" + activo + '}';
+    }
 }

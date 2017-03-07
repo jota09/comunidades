@@ -46,5 +46,10 @@ public class EstadoAutorizacion {
     public void setActivo(short activo) {
         this.activo = activo;
     }
+
+    @Override
+    public String toString() {
+        return "EstadoAutorizacion{" + "codigo=" + codigo + ", nombre=" + nombre + ", activo=" + activo + '}';
+    }
     
 }

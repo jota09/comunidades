@@ -9,16 +9,17 @@ import fachada.ArticuloFachada;
 import fachada.AutorizacionFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
+import fachada.MotivoAutorizacionFachada;
 import fachada.MultimediaFachada;
+import fachada.PrioridadFachada;
 import fachada.UsuarioFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,7 +31,9 @@ import persistencia.entidades.Articulo;
 import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Autorizacion;
 import persistencia.entidades.Categoria;
+import persistencia.entidades.EstadoAutorizacion;
 import persistencia.entidades.Estructura;
+import persistencia.entidades.MotivoAutorizacion;
 import persistencia.entidades.Multimedia;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoArticulo;
@@ -67,7 +70,7 @@ public class AutorizacionControlador extends HttpServlet {
                         tablaRegistros(request, response);
                         break;
                     case 2:
-                        recuperarAutorizacion(request,response);
+                        recuperarAutorizacion(request, response);
                         break;
                     case 3:
                         crearRegistros(request, response);
@@ -76,7 +79,7 @@ public class AutorizacionControlador extends HttpServlet {
                         editarRegistros(request, response);
                         break;
                     case 5:
-                        borrarRegistros(request,response);
+                        borrarRegistros(request, response);
                         break;
                     case 6:
                         tablaRegistrosAdmin(request, response);
@@ -86,6 +89,9 @@ public class AutorizacionControlador extends HttpServlet {
                         break;
                     case 8:
                         registrarEntrada(request, response);
+                        break;
+                    case 9:
+                        recuperarMotivo(request, response);
                         break;
                 }
             }
@@ -106,128 +112,88 @@ public class AutorizacionControlador extends HttpServlet {
         }
     }
 
-    private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-           /* AutorizacionFachada autoFachada = new AutorizacionFachada();
-            GestionFachada estFach = new EstructuraFachada();
+            AutorizacionFachada autoFachada = new AutorizacionFachada();
             Autorizacion autorizacion = new Autorizacion();
+            autorizacion.setRango(request.getParameter("rango"));
+            autorizacion.setUsuarioCodigo((Usuario) request.getSession().getAttribute("user"));
+            autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             List<Autorizacion> listArticulo = autoFachada.getListByPagination(autorizacion);
-            String ref = "articuloEstadoAprobado";
-            Estructura estruc = new Estructura(ref);
-            estruc = (Estructura) estFach.getObject(estruc);
-            String ref2 = "articuloEstadoInicial";
-            Estructura estruc2 = new Estructura(ref2);
-            estruc2 = (Estructura) estFach.getObject(estruc2);
             JSONArray jsonArray = new JSONArray();
             for (Autorizacion auto : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
-                if (user.getCodigo() == auto.getUsuario().getCodigo()) {
+                if (((Usuario) request.getSession().getAttribute("user")).getCodigo() == auto.getComunidadcodigo().getCodigo()) {
                     jsonObj.put("codigo", auto.getCodigo());
-                    jsonObj.put("titulo", auto.getTitulo());
-                    jsonObj.put("nombreUsuario", auto.getUsuario().getNombres());
-                    jsonObj.put("apellidoUsuario", auto.getUsuario().getApellidos());
-                    jsonObj.put("nombreCategoria", auto.getCategoria().getNombre());
-                    jsonObj.put("nombreEstado", auto.getEstado().getNombre());
-                    jsonObj.put("codigoEstado", auto.getEstado().getCodigo());
-                    jsonObj.put("fechafinPublicacion", auto.getFechaFinPublicacion().toString());
-                    if (auto.getEstado().getCodigo() == Integer.parseInt(estruc.getValor()) || auto.getEstado().getCodigo() == Integer.parseInt(estruc2.getValor())) {
-                        jsonObj.put("fechaPublicacion", 0);
-                    } else {
-                        jsonObj.put("fechaPublicacion", auto.getFechaPublicacion().toString());
-                    }
-                    jsonArray.add(jsonObj);
-                }
-            }*/
-            out.print(1);
-        }
-    }
-    
-    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
-        try (PrintWriter out = response.getWriter()) {
-            EstructuraFachada estrucFachada = new EstructuraFachada();
-            response.setContentType("text/html;charset=UTF-8");
-            String codArt = request.getParameter("codArt");
-            Articulo art = new Articulo();
-            art.setTitulo(request.getParameter("titulo"));
-            art.setDescripcion(request.getParameter("descripcion"));
-            Usuario usr = (Usuario) request.getSession().getAttribute("user");
-            art.setUsuario(usr);
-            int cat;
-            cat = Integer.parseInt(request.getParameter("categoria"));
-            ArticuloEstado artEstado = new ArticuloEstado();
-            String ref2 = "articuloEstadoInicial";
-            Estructura estruc3 = new Estructura(ref2);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
-            art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
-            art.setPrecio(Double.parseDouble(request.getParameter("precio").replace(".","")));
-            ArticuloFachada artFach = new ArticuloFachada();
-            String ref = "tipoClasificado";
-            Estructura estruc2 = new Estructura(ref);
-            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
-            Categoria categ = new Categoria();
-            categ.setCodigo(cat);
-            art.setCategoria(categ);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            Date parsed = format.parse(request.getParameter("finPublicacion"));
-            java.sql.Date date = new java.sql.Date(parsed.getTime());
-            art.setFechaFinPublicacion(date);
-            art.setComunidad(usr.getPerfilCodigo().getComunidad());
-            short visibilidad = Short.parseShort(request.getParameter("visibilidad"));
-            if (request.getParameter("visibilidad") != null) {
-                Visibilidad visibilidadArticulo = new Visibilidad(visibilidad);
-                art.setVisibilidad(visibilidadArticulo);
-            }
-            
-            if (codArt.equals("")) {
-                artFach.insertObject(art);
-            } else {
-                art.setCodigo(Integer.parseInt(codArt));
-                artFach.updateObject(art);
-            }
-            out.print(art.getCodigo());
-        }
-        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
-    }
-    
-    private void tablaRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try (PrintWriter out = response.getWriter()) {
-            ArticuloFachada artFachada = new ArticuloFachada();
-            GestionFachada estFach = new EstructuraFachada();
-            TipoArticulo tipArt = new TipoArticulo();
-            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
-            Articulo articulo = new Articulo();
-            articulo.setTipoArticulo(tipArt);
-            articulo.setRango(request.getParameter("rango"));
-            articulo.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
-            if (request.getParameter("cat") != null) {
-                if (!request.getParameter("cat").equals("")) {
-                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
-                }
-            }
-            if (request.getParameter("buscar") != null) {
-                articulo.setBusqueda(request.getParameter("buscar"));
-            }
-            List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
-            JSONArray jsonArray = new JSONArray();
-            String estadoI = ((Estructura) estFach.getObject(new Estructura("articuloEstadoInicial"))).getValor();
-            for (Articulo art : listArticulo) {
-                if (art.getFechaPublicacion() == null && art.getEstado().getCodigo() == Integer.parseInt(estadoI)) {
-                    JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("codigo", art.getCodigo());
-                    jsonObj.put("titulo", art.getTitulo());
-                    jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
-                    jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
-                    jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                    jsonObj.put("nombreEstado", art.getEstado().getNombre());
-                    jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                    jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
+                    jsonObj.put("documento_ingres", auto.getDocumentoPersonaIngresa());
+                    jsonObj.put("fecha_autorizacion", auto.getFechaautorizacion().toString());
+                    jsonObj.put("autoriza", auto.getUsuarioCodigo().getNombres() + " " + auto.getUsuarioCodigo().getApellidos());
+                    jsonObj.put("direccion", auto.getUsuarioCodigo().getInmueble().getUbicacion());
+                    jsonObj.put("estado", auto.getEstado().getNombre());
+                    jsonObj.put("motivo", auto.getMotivo().getNombre());
                     jsonArray.add(jsonObj);
                 }
             }
             out.print(jsonArray);
         }
     }
+
+    private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            response.setContentType("text/html;charset=UTF-8");
+            String codigo = request.getParameter("codigo");
+            Autorizacion auto = new Autorizacion();
+            auto.setUsuarioCodigo(((Usuario) request.getSession().getAttribute("user")));
+            auto.setPersonaIngresa(request.getParameter("nombre"));
+            auto.setDocumentoPersonaIngresa(request.getParameter("documento"));
+            auto.setEstado(new EstadoAutorizacion(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("autorizacionEstadoInicial"))).getValor())));
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsed = format.parse(request.getParameter("fechaAuto"));
+            java.sql.Date date = new java.sql.Date(parsed.getTime());
+            auto.setFechaautorizacion(date);
+            auto.setMotivo(new MotivoAutorizacion(Integer.parseInt(request.getParameter("motivo"))));
+            auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            AutorizacionFachada autoFachada = new AutorizacionFachada();
+            System.out.println("Obj autorizacion: "+auto);
+            if (codigo.equals("")) {
+                System.out.println("Entro aqui en insert");
+                autoFachada.insertObject(auto);
+            } else {
+                System.out.println("Entro aqui en update");
+                auto.setCodigo(Integer.parseInt(codigo));
+                autoFachada.updateObject(auto);
+            }
+            out.print(1);
+        }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
+    }
+
+    private void tablaRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            AutorizacionFachada autoFachada = new AutorizacionFachada();
+            Autorizacion autorizacion = new Autorizacion();
+            autorizacion.setRango(request.getParameter("rango"));
+            autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            List<Autorizacion> listArticulo = autoFachada.getListByPagination(autorizacion);
+            JSONArray jsonArray = new JSONArray();
+            for (Autorizacion auto : listArticulo) {
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("codigo", auto.getCodigo());
+                jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
+                jsonObj.put("documento_ingres", auto.getDocumentoPersonaIngresa());
+                jsonObj.put("fecha_autorizacion", auto.getFechaautorizacion().toString());
+                jsonObj.put("autoriza", auto.getUsuarioCodigo().getNombres() + " " + auto.getUsuarioCodigo().getApellidos());
+                jsonObj.put("direccion", auto.getUsuarioCodigo().getInmueble().getUbicacion());
+                jsonObj.put("estado", auto.getEstado().getNombre());
+                jsonObj.put("motivo", auto.getMotivo().getNombre());
+                jsonArray.add(jsonObj);
+            }
+            out.print(jsonArray);
+        }
+    }
+
     private void editarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             int cod = Integer.parseInt(request.getParameter("cod"));
@@ -281,7 +247,7 @@ public class AutorizacionControlador extends HttpServlet {
             out.print(obj);
         }
     }
-    
+
     private void registrarEntrada(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -296,7 +262,7 @@ public class AutorizacionControlador extends HttpServlet {
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se aprobo el clasificado", "success"));
     }
-    
+
     private void registrarSalida(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         PrintWriter out = response.getWriter();
         GestionFachada estructuraFachada = new EstructuraFachada();
@@ -311,7 +277,7 @@ public class AutorizacionControlador extends HttpServlet {
         out.print(1);
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se envio a correción el clasificado", "success"));
     }
-    
+
     private void borrarRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -329,6 +295,7 @@ public class AutorizacionControlador extends HttpServlet {
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se ha eliminado el clasificado correctamente", "success"));
     }
+
     private void recuperarAutorizacion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
@@ -363,8 +330,21 @@ public class AutorizacionControlador extends HttpServlet {
             out.print(obj);
         }
     }
-                            
 
+    private void recuperarMotivo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            MotivoAutorizacionFachada motFachada = new MotivoAutorizacionFachada();
+            List<MotivoAutorizacion> listMotivo = motFachada.getListObject();
+            JSONArray array = new JSONArray();
+            for (MotivoAutorizacion mot : listMotivo) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", mot.getCodigo());
+                obj.put("nombre", mot.getNombre());
+                array.add(obj);
+            }
+            out.print(array);
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

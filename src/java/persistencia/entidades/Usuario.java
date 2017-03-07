@@ -20,7 +20,7 @@ public class Usuario implements Serializable {
     private Timestamp actualizacion;
     private int edad;
     private SeguridadUsuario listaSeguridad;
-    private Autorizacion listaAutorizacion;
+    private Inmueble inmueble;
 
     public Usuario() {
     }
@@ -45,7 +45,6 @@ public class Usuario implements Serializable {
         this.actualizacion = actualizacion;
         this.edad = edad;
         this.listaSeguridad = listaSeguridad;
-        this.listaAutorizacion = listaAutorizacion;
     } 
 
     
@@ -169,17 +168,17 @@ public class Usuario implements Serializable {
         this.listaSeguridad = listaSeguridad;
     }
 
-    public Autorizacion getListaAutorizacion() {
-        return listaAutorizacion;
-    }
-
-    public void setListaAutorizacion(Autorizacion listaAutorizacion) {
-        this.listaAutorizacion = listaAutorizacion;
-    }    
-
     @Override
     public String toString() {
-        return "Usuario{" + "codigo=" + codigo + ", codigodocumento=" + codigodocumento + ", tipodocumentocodigo=" + tipodocumentocodigo + ", perfilcodigo=" + perfilcodigo + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo + ", celular=" + celular + ", telefono=" + telefono + ", username=" + username + ", activo=" + activo + ", creacion=" + creacion + ", actualizacion=" + actualizacion + ", edad=" + edad + ", listaSeguridad=" + listaSeguridad + ", listaAutorizacion=" + listaAutorizacion + '}';
+        return "Usuario{" + "codigo=" + codigo + ", codigodocumento=" + codigodocumento + ", tipodocumentocodigo=" + tipodocumentocodigo + ", perfilcodigo=" + perfilcodigo + ", nombres=" + nombres + ", apellidos=" + apellidos + ", correo=" + correo + ", celular=" + celular + ", telefono=" + telefono + ", username=" + username + ", activo=" + activo + ", creacion=" + creacion + ", actualizacion=" + actualizacion + ", edad=" + edad + ", listaSeguridad=" + listaSeguridad + '}';
+    }
+
+    public Inmueble getInmueble() {
+        return inmueble;
+    }
+
+    public void setInmueble(Inmueble inmueble) {
+        this.inmueble = inmueble;
     }
     
 }
