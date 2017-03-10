@@ -54,7 +54,6 @@ public class ConstruyePaginacion extends HttpServlet {
             condicion.setTipo(codigoTipo);
             condicion.setUser(user);
             
-
             condicion.setComunidad(user.getPerfilCodigo().getComunidad());
             List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(condicion), rango);
             if (paginas.size() > 0) {

@@ -432,6 +432,7 @@ public class ClasificadoControlador extends HttpServlet {
                 jsArray.add(obj1);
             }
             JSONObject obj = new JSONObject();
+            System.out.println(art.toString2());
             obj.put("codigo", art.getCodigo());
             obj.put("usuario_codigo", art.getUsuario().getCodigo());
             obj.put("usuario_nombres", art.getUsuario().getNombres());
