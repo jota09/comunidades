@@ -51,8 +51,11 @@ public class ConstruyePaginacion extends HttpServlet {
             }
             int cont = 1;
             Usuario user = (Usuario) request.getSession().getAttribute("user");
+            if (request.getParameter("user").equals("false")) {
+            } else {                
+                condicion.setUser(user);
+            }            
             condicion.setTipo(codigoTipo);
-            condicion.setUser(user);
             
 
             condicion.setComunidad(user.getPerfilCodigo().getComunidad());
