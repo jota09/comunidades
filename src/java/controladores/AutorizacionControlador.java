@@ -120,9 +120,6 @@ public class AutorizacionControlador extends HttpServlet {
             JSONArray jsonArray = new JSONArray();
             for (Autorizacion auto : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
-                System.out.println("Entro a los registros");
-                System.out.println(auto);
-                System.out.println(((Usuario) request.getSession().getAttribute("user")));
                 if (((Usuario) request.getSession().getAttribute("user")).getCodigo() == auto.getUsuarioCodigo().getCodigo()) {
                     jsonObj.put("codigo", auto.getCodigo());
                     jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
@@ -173,16 +170,16 @@ public class AutorizacionControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estruFach = new EstructuraFachada();
             Estructura estruc = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoFinaliza")));
+            Estructura estruc2 = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoVencida")));
             AutorizacionFachada autoFachada = new AutorizacionFachada();
             Autorizacion autorizacion = new Autorizacion();
             autorizacion.setRango(request.getParameter("rango"));
-            autorizacion.setUsuarioCodigo((Usuario) request.getSession().getAttribute("user"));
             autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             List<Autorizacion> listArticulo = autoFachada.getListByPagination(autorizacion);
             JSONArray jsonArray = new JSONArray();
             for (Autorizacion auto : listArticulo) {
                 JSONObject jsonObj = new JSONObject(); 
-                    if(Integer.parseInt(estruc.getValor()) != auto.getEstado().getCodigo()){
+                    if(Integer.parseInt(estruc.getValor()) != auto.getEstado().getCodigo() && Integer.parseInt(estruc2.getValor()) != auto.getEstado().getCodigo()){
                     jsonObj.put("codigo", auto.getCodigo());
                     jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
                     jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
@@ -192,9 +189,8 @@ public class AutorizacionControlador extends HttpServlet {
                     jsonObj.put("codigo_estado", auto.getEstado().getCodigo());
                     jsonObj.put("estado", auto.getEstado().getNombre());
                     jsonObj.put("motivo", auto.getMotivo().getNombre());
-                    jsonArray.add(jsonObj);
-                    }
-                
+                    jsonArray.add(jsonObj);                 
+            }                
             }
             out.print(jsonArray);
         }
@@ -225,7 +221,6 @@ public class AutorizacionControlador extends HttpServlet {
             Autorizacion auto = new Autorizacion(Integer.parseInt(request.getParameter("cod")));
             auto.setEstado(new EstadoAutorizacion(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("autorizacionEstadoEspera"))).getValor())));
             AutorizacionFachada autoFach = new AutorizacionFachada();
-            System.out.println(auto);
             autoFach.updateObject(auto);
             out.print(1);
         }
@@ -239,7 +234,6 @@ public class AutorizacionControlador extends HttpServlet {
             Autorizacion auto = new Autorizacion(Integer.parseInt(request.getParameter("cod")));
             auto.setEstado(new EstadoAutorizacion(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("autorizacionEstadoFinaliza"))).getValor())));
             AutorizacionFachada autoFach = new AutorizacionFachada();
-            System.out.println(auto);
             autoFach.updateObject(auto);
             out.print(1);
         }

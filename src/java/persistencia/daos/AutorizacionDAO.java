@@ -183,7 +183,6 @@ public class AutorizacionDAO implements GestionDAO {
         Estructura est2 = (Estructura) estFach.getObject(new Estructura("autorizacionEstadoEspera"));
         Estructura est3 = (Estructura) estFach.getObject(new Estructura("autorizacionEstadoFinaliza"));
         int numfilas = 0;
-        System.out.println("Entro al update");
         try {
             con = ConexionBD.obtenerConexion();
             if (auto.getEstado().getCodigo() == Integer.parseInt(est.getValor())) {
@@ -209,7 +208,6 @@ public class AutorizacionDAO implements GestionDAO {
                 PreparedStatement pS = con.prepareStatement(sql);
                 pS.setInt(1, auto.getEstado().getCodigo());
                 pS.setInt(2, auto.getCodigo());
-                System.out.println(pS);
                 numfilas = pS.executeUpdate();
                 pS.close();
             }
@@ -311,11 +309,10 @@ public class AutorizacionDAO implements GestionDAO {
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM autorizacion WHERE usuario_codigo=? and comunidad_codigo=? "
+            String sql = "SELECT COUNT('codigo') FROM autorizacion WHERE "+((condicionPaginado.getUser() != null) ? " usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and" : "")+" comunidad_codigo=? "
                     + "" + ((condicionPaginado.getEstado() != null) ? " and estados_codigo=" + condicionPaginado.getEstado() : "") + " ";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, condicionPaginado.getUser().getCodigo());
-            pS.setInt(2, condicionPaginado.getComunidad().getCodigo());
+            pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -404,12 +401,12 @@ public class AutorizacionDAO implements GestionDAO {
                     + " JOIN usuario usr ON auto.usuario_codigo=usr.codigo"
                     + " JOIN comunidad c ON auto.comunidad_codigo=c.codigo"
                     + " JOIN inmueble i ON usr.codigo=i.usuario_codigo"
-                    + " WHERE (auto.fecha_autorizacion LIKE ? OR usr.nombres LIKE ?"
+                    + " WHERE "+ ((auto.getUsuarioCodigo()!= null) ? "usr.codigo=" + auto.getUsuarioCodigo().getCodigo()+" AND " : "") +"(auto.fecha_autorizacion LIKE ? OR usr.nombres LIKE ?"
                     + " OR usr.apellidos LIKE ? OR auto.persona_ingresa LIKE ?"
                     + " OR auto.documento_persona_ingresa LIKE ?"
                     + " OR i.ubicacion LIKE ? OR e.nombre LIKE ? OR m.nombre LIKE ?)"
                     + " and auto.COMUNIDAD_CODIGO = ?"
-                    + " ORDER BY auto.fecha_autorizacion ASC";
+                    + " ORDER BY auto.fecha_autorizacion ASC "+ ((auto.getRango() != null) ? "LIMIT " + auto.getRango() + " " : "")+ "";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setString(1, "%" + auto.getBusqueda() + "%");
             pS.setString(2, "%" + auto.getBusqueda() + "%");
@@ -494,7 +491,7 @@ public class AutorizacionDAO implements GestionDAO {
                     + " JOIN inmueble i ON usr.codigo=i.usuario_codigo"
                     + " " + ((auto.getComunidadcodigo() != null || auto.getEstado() != null) ? " WHERE " : "") + "" + ((auto.getComunidadcodigo() != null) ? "auto.comunidad_codigo=" + auto.getComunidadcodigo().getCodigo() + " " : "") + " "
                     + ((auto.getEstado() != null) ? " and e.codigo=" + auto.getEstado().getCodigo() + "" : "") + " "
-                    + ((auto.getEstado() != null) ? " and user.codigo=" + auto.getUsuarioCodigo().getCodigo() + "" : "") + " "
+                    + ((auto.getUsuarioCodigo() != null) ? " and usr.codigo=" + auto.getUsuarioCodigo().getCodigo() + "" : "") + " "
                     + "  ORDER BY auto.fecha_autorizacion ASC "
                     + " Limit " + auto.getRango();
             PreparedStatement pS = con.prepareStatement(sql);

@@ -167,7 +167,7 @@ public class ArticuloDAO implements GestionDAO {
             if (art.getTitulo() != null) {
                 String sql = "UPDATE articulo SET usuario_codigo=?, titulo=?, descripcion=?,"
                         + "fecha_publicacion=?, precio=?,fecha_fin_publicacion=?, prioridad_codigo=?,"
-                        + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=?,visibilidad=? "
+                        + "estados_codigo=?,tipo_articulo_codigo=?,categoria_codigo=?,visibilidad=?, actualizacion = now() "
                         + " WHERE codigo=? and comunidad_codigo=? ";
                 PreparedStatement pS = con.prepareStatement(sql);
                 pS.setInt(1, art.getUsuario().getCodigo());
@@ -186,7 +186,7 @@ public class ArticuloDAO implements GestionDAO {
                 numfilas = pS.executeUpdate();
                 pS.close();
             } else {
-                String sql = "UPDATE articulo SET fecha_publicacion=NOW(), estados_codigo=?,observaciones_admon = ?"
+                String sql = "UPDATE articulo SET fecha_publicacion=NOW(), estados_codigo=?,observaciones_admon = ?,actualizacion = now()"
                         + " WHERE codigo=?";
                 PreparedStatement pS = con.prepareStatement(sql);
                 pS.setInt(1, art.getEstado().getCodigo());
@@ -290,12 +290,11 @@ public class ArticuloDAO implements GestionDAO {
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and usuario_codigo=? and comunidad_codigo=? "
+            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and "+((condicionPaginado.getUser() != null) ? " usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and" : " and ")+"  comunidad_codigo=? "
                     + "" + ((condicionPaginado.getEstado() != null) ? " and estados_codigo=" + condicionPaginado.getEstado() : "") + " ";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, condicionPaginado.getTipo());
-            pS.setInt(2, condicionPaginado.getUser().getCodigo());
-            pS.setInt(3, condicionPaginado.getComunidad().getCodigo());
+            pS.setInt(2, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -383,8 +382,9 @@ public class ArticuloDAO implements GestionDAO {
                     + "    WHERE art.tipo_articulo_codigo=? " + ( (articulo.getUsuario() != null) ? "AND art.usuario_codigo="+articulo.getUsuario().getCodigo() : "" )
                     + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
-                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_fin_publicacion LIKE ? OR cat.nombre LIKE ?) and art.COMUNIDAD_CODIGO = ?";
+                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_fin_publicacion LIKE ? OR cat.nombre LIKE ?) and art.COMUNIDAD_CODIGO = ? "+ ((articulo.getRango() != null) ? "LIMIT " + articulo.getRango() + " " : "")+ "";
             PreparedStatement pS = con.prepareStatement(query);
+            System.out.println(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setString(2, "%" + articulo.getBusqueda() + "%");
             pS.setString(3, "%" + articulo.getBusqueda() + "%");
@@ -394,6 +394,7 @@ public class ArticuloDAO implements GestionDAO {
             pS.setString(7, "%" + articulo.getBusqueda() + "%");
             pS.setInt(8, articulo.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
+            System.out.println(pS);
             while (rS.next()) {
                 Articulo art = new Articulo();
                 Categoria cat = new Categoria();
@@ -472,6 +473,7 @@ public class ArticuloDAO implements GestionDAO {
                     + " Limit " + art.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
+            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo articulo = new Articulo();
