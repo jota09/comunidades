@@ -220,7 +220,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        // envioMail.sendEmail(mensaje, "Error " + fecha, correo);
+        envioMail.sendEmail(mensaje, "Error " + fecha, correo,null);
     }
 
     public static void enviarMailArticuloDevuelto(Object obj, String obs, String tit) {
@@ -240,7 +240,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        // envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo());
+        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo(),null);
     }
 
     public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) {
@@ -259,7 +259,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        //envioMail.sendEmail(mensaje, "Eliminación articulo " + tit, art.getUsuario().getCorreo());
+        envioMail.sendEmail("<p>"+mensaje+"</p>", "Eliminación articulo " + tit, art.getUsuario().getCorreo(),null);
     }
 
     public static void enviarMailArticuloAprobado(Object obj, String tit) {
@@ -281,7 +281,11 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        //envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo());
+        String mensaje=Utilitaria.leerPlantilla("2.html");
+        mensaje=mensaje.replace("<#titulo#>", titulo);
+        mensaje=mensaje.replace("<#comunidad#>", comunidad.getNombre());
+        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+comunidad.getCodigo()+".png"};
+        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo(),null);
     }
 
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {

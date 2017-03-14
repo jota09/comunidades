@@ -53,15 +53,18 @@ public class ServicioDeEnvioMail {
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setContent(mensaje, "text/html");
             multipart.addBodyPart(messageBodyPart);
-            int i = 1;
-            for (String img : rutasImagenes) {
-                messageBodyPart = new MimeBodyPart();
-                DataSource fds = new FileDataSource(img);
-                messageBodyPart.setDataHandler(new DataHandler(fds));
-                messageBodyPart.setHeader("Content-ID", "<image" + i + ">");
-                multipart.addBodyPart(messageBodyPart);
-                message.setContent(multipart);
-                i++;
+            message.setContent(multipart);
+            if (rutasImagenes != null) {
+                int i = 1;
+                for (String img : rutasImagenes) {
+                    messageBodyPart = new MimeBodyPart();
+                    DataSource fds = new FileDataSource(img);
+                    messageBodyPart.setDataHandler(new DataHandler(fds));
+                    messageBodyPart.setHeader("Content-ID", "<image" + i + ">");
+                    multipart.addBodyPart(messageBodyPart);
+                    message.setContent(multipart);
+                    i++;
+                }
             }
 
             Transport t = session.getTransport("smtp");
