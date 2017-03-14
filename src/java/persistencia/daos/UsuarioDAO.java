@@ -34,11 +34,10 @@ public class UsuarioDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT  usr.nombres,usr.apellidos,usr.correo,usr.celular,"
-                    + "usr.telefono,usr.codigo,usr.user_name"
+                    + "usr.telefono,usr.codigo,usr.user_name,usr.codigo_documento"
                     + " FROM usuario usr "
                     + "JOIN seguridad_usuario sgUsr ON sgUsr.usuario_codigo=usr.codigo "
                     + "WHERE ((usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1) or usr.codigo=?";
-
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setString(1, user.getUserName());
             pS.setString(2, user.getCorreo());
@@ -54,6 +53,7 @@ public class UsuarioDAO implements GestionDAO {
                 user.setTelefono(rS.getString(5));
                 user.setCodigo(rS.getInt(6));
                 user.setUserName(rS.getString(7));
+                user.setCodigoDocumento(rS.getInt(8));
             }
             rS.close();
             pS.close();
@@ -237,13 +237,16 @@ public class UsuarioDAO implements GestionDAO {
             String sql;
             PreparedStatement pS;
             if (user != null) {
-                sql = "Select count(codigo) from usuario where correo=?";
+                sql = "Select count(codigo) from usuario where correo=? or codigo_documento=? or user_name=?";
                 pS = con.prepareStatement(sql);
                 pS.setString(1, user.getCorreo());
+                pS.setInt(2, user.getCodigoDocumento());
+                pS.setString(3, user.getUserName());
             } else {
                 sql = "Select count(codigo) from usuario";
                 pS = con.prepareStatement(sql);
             }
+            System.out.println("QUERY:" + pS);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);

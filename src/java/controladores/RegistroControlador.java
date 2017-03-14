@@ -5,10 +5,12 @@
  */
 package controladores;
 
+import com.lowagie.text.DocumentException;
 import fachada.GestionFachada;
 import fachada.PerfilFachada;
 import fachada.RegistroFachada;
 import fachada.SeguridadUsuarioFachada;
+import fachada.TipoDocumentoFachada;
 import fachada.UsuarioFachada;
 import fachada.UsuarioPerfilFachada;
 import java.io.IOException;
@@ -16,6 +18,8 @@ import java.io.PrintWriter;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
@@ -26,9 +30,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.JRException;
 import persistencia.entidades.Perfil;
 import persistencia.entidades.Registro;
 import persistencia.entidades.SeguridadUsuario;
+import persistencia.entidades.TipoDocumento;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.UsuarioPerfil;
 import utilitarias.Cifrar;
@@ -53,6 +59,7 @@ public class RegistroControlador extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
         int op = Integer.parseInt(request.getParameter("op"));
         try {
             switch (op) {
@@ -64,8 +71,17 @@ public class RegistroControlador extends HttpServlet {
                     registrarUsuario(request, response);
                     break;
                 }
+                case 3: {
+                    validarDocumento(request, response);
+                    break;
+                }
+                case 4: {
+                    validarUsername(request, response);
+                    break;
+                }
             }
         } catch (IOException ex) {
+            
             ex.printStackTrace();
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(RegistroControlador.class.getName()).log(Level.SEVERE, null, ex);
@@ -76,6 +92,10 @@ public class RegistroControlador extends HttpServlet {
         } catch (IllegalBlockSizeException ex) {
             Logger.getLogger(RegistroControlador.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BadPaddingException ex) {
+            Logger.getLogger(RegistroControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JRException ex) {
+            Logger.getLogger(RegistroControlador.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DocumentException ex) {
             Logger.getLogger(RegistroControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -119,44 +139,56 @@ public class RegistroControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void validarCodigo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void validarCodigo(HttpServletRequest request, HttpServletResponse response) throws IOException, JRException, DocumentException {
         response.setContentType("text/html;charset=UTF-8");
         String codigoRegistro = request.getParameter("codigoRegistro");
         GestionFachada registroFachada = new RegistroFachada();
         Registro registro = new Registro();
         registro.setCodigoGenerado(codigoRegistro);
         registroFachada.getObject(registro);
-        PrintWriter out = response.getWriter();
-        if (registro.getComunidad() != null && registro.getFechaVencimiento().after(new Date())) {
-            construyeFormulario(out, codigoRegistro, registro.getCorreo());
-        } else {
-            out.print("<h2 class='text-center'>EL CODIGO NO ES VALIDO</h2>");
-        }
+//        PrintWriter out = response.getWriter();
+//        if (registro.getComunidad() != null && registro.getFechaVencimiento().after(new Date())) {
+//            construyeFormulario(out, codigoRegistro, registro.getCorreo());
+//        } else {
+//            out.print("<h2 class='text-center'>EL CODIGO NO ES VALIDO</h2>");
+//        }
+         Utilitaria.exportarPDF("report1.jasper",new HashMap<String,Object>(), response, "hola.pdf");
 
     }
 
     private void construyeFormulario(PrintWriter out, String codigo, String correo) {
-        String html = "<form action='RegistroControlador' method='post'> <label>Documento(*):</label>";
-        html += "<input type='text' id='documento' name='documento' class='form-control' required>";
+        GestionFachada tipoDocumentoFachada = new TipoDocumentoFachada();
+        String html = "<form action='RegistroControlador' method='post'> ";
+        html += "<label>Tipo Documento(*):</label>";
+        html += "<select class='form-control' id='tipoDocumento' name='tipoDocumento' required>";
+        for (TipoDocumento tipo : (List<TipoDocumento>) tipoDocumentoFachada.getListObject()) {
+            html += "<option value='" + tipo.getCodigo() + "'>" + tipo.getNombre() + "</option>";
+        }
+        html += "</select><label>Documento(*):</label>";
+        html += "<input type='text' onBlur='validarDocumento()' id='documento' minlength='8' maxlength='15' onKeyPress='return soloNumeros(event)' name='documento' class='form-control' required>";
+        html += "<div id='mensajeDocumento'/>";
         html += "<label>Nombre(*):</label>";
         html += "<input type='text' name='nombre' id='nombre' class='form-control margenTop' required>";
         html += "<label>Apellido(*):</label>";
         html += "<input type='text' name='apellido' id='apellido' class='form-control margenTop' required>";
         html += "<label>Correo(*):</label>";
-        html += "<input type='text' name='correo' value='" + correo + "' disabled id='correo' class='form-control margenTop' required>";
+        html += "<input type='text'  value='" + correo + "' disabled  class='form-control margenTop' required>";
         html += "<label>Celular(*):</label>";
         html += "<input type='text' name='celular' id='celular' class='form-control margenTop' required>";
         html += "<label>Telefono(*):</label>";
         html += "<input type='text' name='telefono' id='telefono' class='form-control margenTop' required>";
         html += "<label>Nombre de Usuario(*):</label>";
-        html += "<input type='text' id='username' name='username' class='form-control margenTop' required>";
+        html += "<input type='text' id='usern' onBlur='validarUserName()' minlength='5' maxlength='12' name='username' class='form-control margenTop' required>";
+        html += "<div id='mensajeUsuario'/>";
         html += "<label>Contraseña(*):</label>";
-        html += "<input type='password' name='contrasena' id='contrasena' class='form-control margenTop' required>";
+        html += "<input type='password' maxlength='20' minlength='6' name='contrasena' id='contrasena' class='form-control margenTop' required>";
         html += "<label>Confirmar Contraseña(*):</label>";
-        html += "<input type='password' name='confirmContrasena' id='confirmContrasena' class='form-control margenTop' required>";
+        html += "<input type='password' maxlength='20' minlength='6' onBlur='confirmarContrasena()' name='confirmContrasena' id='confirmContrasena' class='form-control margenTop' required>";
         html += "<input type='hidden' name='codigoRegistro' value='" + codigo + "' >";
         html += "<input type='hidden' name='op' value='2' >";
-        html += "<input type='submit' value='Registrar'style='margin-top:5px' class='btn btn-primary pull-right'></form>";
+        html += "<input type='submit' id='btnRegistro' value='Registrar'style='margin-top:5px' class='btn btn-primary pull-right'>"
+                + "<input type='hidden' value=\"" + correo + "\" id='email' name='email' />"
+                + "</form>";
 
         out.print(html);
     }
@@ -168,6 +200,7 @@ public class RegistroControlador extends HttpServlet {
         GestionFachada seguridadFachada = new SeguridadUsuarioFachada();
         Registro registro = new Registro();
         registro.setCodigoGenerado(codigoRegistro);
+        String key = LecturaConfig.getValue("key").trim();
         registroFachada.getObject(registro);
         if (registro.getComunidad() != null) {
             String userName = request.getParameter("username");
@@ -175,10 +208,10 @@ public class RegistroControlador extends HttpServlet {
             user.setCodigoDocumento(Integer.parseInt(request.getParameter("documento")));
             user.setNombres(request.getParameter("nombre"));
             user.setApellidos(request.getParameter("apellido"));
-            user.setCorreo(request.getParameter("correo"));
+            user.setCorreo(request.getParameter("email"));
             user.setCelular(request.getParameter("celular"));
             user.setTelefono(request.getParameter("telefono"));
-            user.setTipoDocumentoCodigo(1);
+            user.setTipoDocumentoCodigo(Integer.parseInt(request.getParameter("tipoDocumento")));
             user.setUserName(userName);
             if (usuarioFachada.insertObject(user) > 0) {
                 GestionFachada perfilFachada = new PerfilFachada();
@@ -194,7 +227,6 @@ public class RegistroControlador extends HttpServlet {
                 SeguridadUsuario seguridadUsuario = new SeguridadUsuario();
                 seguridadUsuario.setUsuarioCodigo(user.getCodigo());
                 seguridadUsuario.setIpUltimaSesion(request.getRemoteAddr());
-                String key = LecturaConfig.getValue("key").trim();
                 seguridadUsuario.setContrasena(Cifrar.setEncryp(key, request.getParameter("contrasena").trim()));
                 if (seguridadFachada.insertObject(seguridadUsuario) > 0) {
                     request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el usuario " + userName, "success"));
@@ -210,6 +242,23 @@ public class RegistroControlador extends HttpServlet {
 
     }
 
+    private void validarDocumento(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int documento = Integer.parseInt(request.getParameter("documento"));
+        GestionFachada usuarioFachada = new UsuarioFachada();
+        Usuario usuario = new Usuario();
+        usuario.setCodigoDocumento(documento);
+        PrintWriter out = response.getWriter();
+        out.print(usuarioFachada.getCount(usuario));
 
+    }
+
+    private void validarUsername(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userName = request.getParameter("username");
+        GestionFachada usuarioFachada = new UsuarioFachada();
+        Usuario usuario = new Usuario();
+        usuario.setUserName(userName);
+        PrintWriter out = response.getWriter();
+        out.print(usuarioFachada.getCount(usuario));
+    }
 
 }

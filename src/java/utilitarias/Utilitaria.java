@@ -5,16 +5,41 @@
  */
 package utilitarias;
 
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfStream;
+import com.lowagie.text.pdf.PdfWriter;
 import fachada.ErrorFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.OpcionesFiltroFachada;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -195,7 +220,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Error " + fecha, correo);
+        // envioMail.sendEmail(mensaje, "Error " + fecha, correo);
     }
 
     public static void enviarMailArticuloDevuelto(Object obj, String obs, String tit) {
@@ -215,7 +240,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo());
+        // envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo());
     }
 
     public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) {
@@ -234,7 +259,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Eliminación articulo " + tit, art.getUsuario().getCorreo());
+        //envioMail.sendEmail(mensaje, "Eliminación articulo " + tit, art.getUsuario().getCorreo());
     }
 
     public static void enviarMailArticuloAprobado(Object obj, String tit) {
@@ -256,7 +281,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo());
+        //envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo());
     }
 
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {
@@ -272,7 +297,7 @@ public class Utilitaria {
         return condicion;
     }
 
-    public static void borrarArchivos(String path, boolean borrarDir) {        
+    public static void borrarArchivos(String path, boolean borrarDir) {
         File file = new File(path);
         File[] files = file.listFiles();
         if (files.length > 0) {
@@ -292,6 +317,70 @@ public class Utilitaria {
             codigoGen += (char) ascii;
         }
         return codigoGen;
+    }
+
+    public static String leerPlantilla(String nombrePlantilla) throws FileNotFoundException, IOException {
+        File plantillaFile = new File(LecturaConfig.getValue("rutaPlantillaMail") + File.separator + nombrePlantilla);
+        FileReader fileReader = new FileReader(plantillaFile);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String plantilla = "";
+        while (bufferedReader.ready()) {
+            plantilla += bufferedReader.readLine();
+        }
+        bufferedReader.close();
+        fileReader.close();
+        return plantilla;
+    }
+
+    public static String leerPlantillaPDF(String nombrePlantilla) throws FileNotFoundException, IOException {
+        File plantillaFile = new File(LecturaConfig.getValue("rutaPlantillaPDF") + File.separator + nombrePlantilla);
+        FileReader fileReader = new FileReader(plantillaFile);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String plantilla = "";
+        while (bufferedReader.ready()) {
+            plantilla += bufferedReader.readLine();
+        }
+        bufferedReader.close();
+        fileReader.close();
+        return plantilla;
+    }
+
+    public static String generaPDFB64(String plantillaPdf, Map<String, Object> parametros) throws IOException {
+        JRDataSource datos = null;
+        JasperReport plantilla = null;
+        JasperPrint reporte = null;
+        ByteArrayOutputStream out = null;
+        String pdfBase64=null;
+        try {
+            String ruta = LecturaConfig.getValue("rutaPlantillaPDF") + plantillaPdf;
+            plantilla = (JasperReport) JRLoader.loadObjectFromFile(ruta);
+            datos = new JREmptyDataSource();
+            reporte = JasperFillManager.fillReport(plantilla, parametros, datos);
+            out = new ByteArrayOutputStream();
+            JasperExportManager.exportReportToPdfStream(reporte, out);
+            pdfBase64=DatatypeConverter.printBase64Binary(out.toByteArray());
+        } catch (JRException ex) {
+            Logger.getLogger(Utilitaria.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            out.flush();
+            out.close();
+        }
+
+        return pdfBase64;
+
+//        return DatatypeConverter.printBase64Binary(null);
+    }
+
+    public static void exportarPDF(String plantillaPdf, Map<String, Object> parametros, HttpServletResponse response, String nombrePDF) throws JRException, IOException {
+        File jasper = new File(LecturaConfig.getValue("rutaPlantillaPDF") + plantillaPdf);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasper.getPath(), parametros);
+        response.setContentType("application/x-download");
+        response.addHeader("Content-disposition", "attachment; filename=StatisticsrReport1.pdf");
+        try (ServletOutputStream stream = response.getOutputStream()) {
+            JasperExportManager.exportReportToPdfStream(jasperPrint, stream);
+
+            stream.flush();
+        }
     }
 
 }

@@ -1,7 +1,16 @@
 
-import persistencia.daos.GestionDAO;
-import persistencia.daos.UsuarioDAO;
-import persistencia.entidades.Usuario;
+import com.lowagie.text.DocumentException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
+import sun.misc.BASE64Decoder;
+import utilitarias.GeneraBarCode;
+import utilitarias.HTML_A_PDF;
+import utilitarias.LecturaConfig;
+import utilitarias.Utilitaria;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,11 +26,9 @@ public class prueba {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        GestionDAO usuarioDAO = new UsuarioDAO();
-        Usuario user = new Usuario();
-        user.setCorreo("alejoab12@hotmailcom");
-        System.out.println("EMAIL:" + usuarioDAO.getCount(user));
+    public static void main(String[] args) throws JRException, IOException, DocumentException {
+       
+        System.out.println("Base 64:"+Utilitaria.generaPDFB64("Factura Administración.jasper", null));
     }
-    
+
 }

@@ -9,6 +9,7 @@ import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.RegistroFachada;
 import fachada.UsuarioFachada;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
@@ -28,6 +29,7 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Registro;
 import persistencia.entidades.Usuario;
+import utilitarias.LecturaConfig;
 import utilitarias.ServicioDeEnvioMail;
 import utilitarias.Utilitaria;
 
@@ -129,7 +131,7 @@ public class GestionUsuarioControlador extends HttpServlet {
         out.print(arrayUsuarios);
     }
 
-    private void generarCodigo(HttpServletRequest request, HttpServletResponse response) {
+    private void generarCodigo(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada estructuraFachada = new EstructuraFachada();
         GestionFachada registroFachada = new RegistroFachada();
         String correo = request.getParameter("correo");
@@ -157,7 +159,11 @@ public class GestionUsuarioControlador extends HttpServlet {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correoSoporte, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail("Su codigo de seguridad es:" + registro.getCodigoGenerado(), "Generación de Codigo de Registro para la comunidad " + comunidad.getNombre(), correo);
+        String plantilla=Utilitaria.leerPlantilla("1.html");
+        plantilla=plantilla.replace("<#comunidad#>", comunidad.getNombre());
+        plantilla=plantilla.replace("<#codigoRegistro#>",registro.getCodigoGenerado());
+        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+comunidad.getCodigo()+".png"};
+        envioMail.sendEmail(plantilla, "Generación de Codigo de Registro para la comunidad " + comunidad.getNombre(), correo,rutaImg);
         tiempoInvalidacion.setTimeInMillis(tiempoEnMilis);
         if (tipo.equals("0")) {
             request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se genero el codigo para el correo " + correo, "success"));
