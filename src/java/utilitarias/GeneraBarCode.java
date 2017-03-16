@@ -27,7 +27,7 @@ public class GeneraBarCode {
         BufferedImage bufferedImage = barcode.draw(new BufferedImage(ancho, alto, BufferedImage.TYPE_INT_RGB));
         ByteArrayOutputStream ouput = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, extension, ouput);
-        return "data:image/"+extension+";base64,"+DatatypeConverter.printBase64Binary(ouput.toByteArray());
-
+//        return "data:image/"+extension+";base64,"+DatatypeConverter.printBase64Binary(ouput.toByteArray());
+    return DatatypeConverter.printBase64Binary(ouput.toByteArray());
     }
 }
