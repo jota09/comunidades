@@ -39,7 +39,7 @@ public class AutorizacionDAO implements GestionDAO {
 
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT auto.codigo,auto.usuario_codigo,auto.fecha_autorizacion,"
-                    + " auto.fecha_real_ingreso,"
+                    + " auto.fecha_real_ingreso,auto.descripcion,"
                     + " auto.persona_ingresa,auto.documento_persona_ingresa,auto.fecha_real_salida,"
                     + " auto.empresa_contratista, usr.nombres,usr.apellidos,"
                     + " e.codigo,e.nombre,m.codigo,m.nombre  "
@@ -52,25 +52,28 @@ public class AutorizacionDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, auto.getCodigo());
             ResultSet rS = pS.executeQuery();
+            System.out.println("Query de consulta: "+pS);
             if (rS.next()) {
                 autorizacion.setCodigo(rS.getInt(1));
                 autorizacion.setFechaautorizacion(rS.getDate(3));
                 autorizacion.setFechaRealIngreso(rS.getTimestamp(4));
-                autorizacion.setPersonaIngresa(rS.getString(5));
-                autorizacion.setDocumentoPersonaIngresa(rS.getString(6));
-                autorizacion.setFechaRealSalida(rS.getTimestamp(7));
-                autorizacion.setEmpresaContratista(rS.getString(8));
+                autorizacion.setDescripcion(rS.getString(5));
+                autorizacion.setPersonaIngresa(rS.getString(6));
+                autorizacion.setDocumentoPersonaIngresa(rS.getString(7));
+                autorizacion.setFechaRealSalida(rS.getTimestamp(8));
+                autorizacion.setEmpresaContratista(rS.getString(9));
                 Usuario usr = new Usuario();
                 usr.setCodigo(rS.getInt(2));
-                usr.setNombres(rS.getString(9));
-                usr.setApellidos(rS.getString(10));
+                usr.setNombres(rS.getString(10));
+                usr.setApellidos(rS.getString(11));
                 autorizacion.setUsuarioCodigo(usr);
-                EstadoAutorizacion estado = new EstadoAutorizacion(rS.getInt(11));
-                estado.setNombre(rS.getString(12));
+                EstadoAutorizacion estado = new EstadoAutorizacion(rS.getInt(12));
+                estado.setNombre(rS.getString(13));
                 autorizacion.setEstado(estado);
-                MotivoAutorizacion motivo = new MotivoAutorizacion(rS.getInt(13));
-                motivo.setNombre(rS.getString(14));
+                MotivoAutorizacion motivo = new MotivoAutorizacion(rS.getInt(14));
+                motivo.setNombre(rS.getString(15));
                 autorizacion.setMotivo(motivo);
+                System.out.println(autorizacion);
             }
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -189,6 +192,7 @@ public class AutorizacionDAO implements GestionDAO {
                 String sql = "UPDATE autorizacion SET persona_ingresa=?, "
                         + " " + (!auto.getDocumentoPersonaIngresa().equals('0') ? "documento_persona_ingresa='" + auto.getDocumentoPersonaIngresa() + "'," : "") + ""
                         + " " + (!auto.getEmpresaContratista().equals("") ? "empresa_contratista='" + auto.getEmpresaContratista() + "'," : "") + ""
+                        + " " + (!auto.getDescripcion().equals("") ? "descripcion='" + auto.getDescripcion()+ "'," : "") + ""
                         + " estado_autorizacion_codigo=?,"
                         + " fecha_autorizacion=?,"
                         + " motivo_autorizacion_codigo=?"
@@ -255,18 +259,19 @@ public class AutorizacionDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "INSERT INTO autorizacion( usuario_codigo, fecha_autorizacion,"
-                    + " persona_ingresa, documento_persona_ingresa,empresa_contratista,"
+                    + " persona_ingresa, documento_persona_ingresa,empresa_contratista,descripcion,"
                     + " estado_autorizacion_codigo, motivo_autorizacion_codigo,comunidad_codigo)"
-                    + " VALUES (?,?,?,?,?,?,?,?)";
+                    + " VALUES (?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement pS = con.prepareStatement(sql)) {
                 pS.setInt(1, auto.getUsuarioCodigo().getCodigo());
                 pS.setDate(2, auto.getFechaautorizacion());
                 pS.setString(3, auto.getPersonaIngresa());
                 pS.setString(4, auto.getDocumentoPersonaIngresa());
                 pS.setString(5, auto.getEmpresaContratista());
-                pS.setInt(6, auto.getEstado().getCodigo());
-                pS.setInt(7, auto.getMotivo().getCodigo());
-                pS.setInt(8, auto.getComunidadcodigo().getCodigo());
+                pS.setString(6, auto.getDescripcion());
+                pS.setInt(7, auto.getEstado().getCodigo());
+                pS.setInt(8, auto.getMotivo().getCodigo());
+                pS.setInt(9, auto.getComunidadcodigo().getCodigo());
                 result = pS.executeUpdate();
                 pS.close();
             }

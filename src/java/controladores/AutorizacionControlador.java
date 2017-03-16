@@ -8,7 +8,6 @@ package controladores;
 import fachada.ArticuloFachada;
 import fachada.AutorizacionFachada;
 import fachada.EstructuraFachada;
-import fachada.GestionFachada;
 import fachada.MotivoAutorizacionFachada;
 import fachada.MultimediaFachada;
 import fachada.UsuarioFachada;
@@ -26,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Articulo;
-import persistencia.entidades.ArticuloEstado;
 import persistencia.entidades.Autorizacion;
 import persistencia.entidades.EstadoAutorizacion;
 import persistencia.entidades.Estructura;
@@ -147,6 +145,7 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setPersonaIngresa(request.getParameter("nombre"));
             auto.setEmpresaContratista(request.getParameter("empresa"));
             auto.setDocumentoPersonaIngresa(request.getParameter("documento"));
+            auto.setDescripcion(request.getParameter("descr"));
             auto.setEstado(new EstadoAutorizacion(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("autorizacionEstadoInicial"))).getValor())));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("fechaAuto"));
@@ -155,6 +154,7 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setMotivo(new MotivoAutorizacion(Integer.parseInt(request.getParameter("motivo"))));
             auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             AutorizacionFachada autoFachada = new AutorizacionFachada();
+            System.out.println(auto);
             if (codigo.equals("")) {
                 autoFachada.insertObject(auto);
             } else {
@@ -200,6 +200,7 @@ public class AutorizacionControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             Autorizacion auto = new Autorizacion(Integer.parseInt(request.getParameter("cod")));
             AutorizacionFachada autoFach = new AutorizacionFachada();
+            System.out.println("entro a editar");
             auto = (Autorizacion) autoFach.getObject(auto);
             JSONObject obj = new JSONObject();
             obj.put("codigo", auto.getCodigo());
@@ -207,6 +208,7 @@ public class AutorizacionControlador extends HttpServlet {
             obj.put("documento", auto.getDocumentoPersonaIngresa());
             obj.put("empresaIngre", (auto.getEmpresaContratista()!=null?auto.getEmpresaContratista():""));
             obj.put("fechaAuto", auto.getFechaautorizacion().toString());
+            obj.put("descripcion", (auto.getDescripcion()!=null?auto.getDescripcion():"false"));
             obj.put("motivo", auto.getMotivo().getCodigo());
             obj.put("nombre_motivo", auto.getMotivo().getNombre());
             

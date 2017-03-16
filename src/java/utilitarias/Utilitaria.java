@@ -81,10 +81,11 @@ public class Utilitaria {
         for (Categoria cat : listCategoria) {
             imprime += "<option value='" + cat.getCodigo() + "'>"
                     + cat.getNombre() + "</option>";
-            if (cat.getListaCategorias().size() > 0) {
-                imprime += construirCategorias(cat.getListaCategorias());
-            }
+//            if (cat.getListaCategorias().size() > 0) {
+//                imprime += construirCategorias(cat.getListaCategorias());
+//            }
         }
+        System.out.println(imprime);
         return imprime;
     }
 
@@ -223,14 +224,12 @@ public class Utilitaria {
         envioMail.sendEmail(mensaje, "Error " + fecha, correo,null);
     }
 
-    public static void enviarMailArticuloDevuelto(Object obj, String obs, String tit) {
+    public static void enviarMailArticuloDevuelto(Object obj, String obs, String tit) throws IOException {
         Articulo art = (Articulo) obj;
         GestionFachada estructuraFachada = new EstructuraFachada();
         String titulo = ((Estructura) estructuraFachada.getObject(new Estructura("tituloAdminDevolucion"))).getValor();
         String cuerpo = ((Estructura) estructuraFachada.getObject(new Estructura("cuerpoAdminDevolucion"))).getValor();
         String firma = ((Estructura) estructuraFachada.getObject(new Estructura("firmaAdminDevolucion"))).getValor();
-        String mensaje = titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + " " + "\n\n\n" + cuerpo + "\n" + obs
-                + "\n\n\n" + firma;
         String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
         int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
         String correo = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
@@ -240,16 +239,23 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo(),null);
+        String mensaje=leerPlantilla("2.html");
+        mensaje=mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
+        mensaje=mensaje.replace("<#cuerpo#>", "\n\n\n" + cuerpo);
+        mensaje=mensaje.replace("<#tituloArti#>", "");
+        mensaje=mensaje.replace("<#observacion#>", "\n" + obs);
+        mensaje=mensaje.replace("<#fecha#>", "");
+        mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
+        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
+        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo(),rutaImg);
     }
 
-    public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) {
+    public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) throws IOException {
         Articulo art = (Articulo) obj;
         GestionFachada estructuraFachada = new EstructuraFachada();
         String titulo = ((Estructura) estructuraFachada.getObject(new Estructura("tituloAdminEliminacion"))).getValor();
         String cuerpo = ((Estructura) estructuraFachada.getObject(new Estructura("cuerpoAdminEliminacion"))).getValor();
         String firma = ((Estructura) estructuraFachada.getObject(new Estructura("firmaAdminEliminacion"))).getValor();
-        String mensaje = titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + " " + "\n\n\n" + cuerpo + "\n" + obs + "\n\n\n" + firma;
         String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
         int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
         String correo = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
@@ -259,10 +265,18 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail("<p>"+mensaje+"</p>", "Eliminación articulo " + tit, art.getUsuario().getCorreo(),null);
+        String mensaje=leerPlantilla("2.html");
+        mensaje=mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
+        mensaje=mensaje.replace("<#cuerpo#>", "\n\n\n" + cuerpo);
+        mensaje=mensaje.replace("<#tituloArti#>", "");
+        mensaje=mensaje.replace("<#observacion#>", "\n" + obs);
+        mensaje=mensaje.replace("<#fecha#>", "");
+        mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
+        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
+        envioMail.sendEmail("<p>"+mensaje+"</p>", "Eliminación articulo " + tit, art.getUsuario().getCorreo(),rutaImg);
     }
 
-    public static void enviarMailArticuloAprobado(Object obj, String tit) {
+    public static void enviarMailArticuloAprobado(Object obj, String tit) throws IOException {
         Articulo art = (Articulo) obj;
         Calendar calendar = Calendar.getInstance();
         String fecha = calendar.getTime().toString();
@@ -270,8 +284,6 @@ public class Utilitaria {
         String titulo = ((Estructura) estructuraFachada.getObject(new Estructura("tituloAdminAprobacion"))).getValor();
         String cuerpo = ((Estructura) estructuraFachada.getObject(new Estructura("cuerpoAdminAprobacion"))).getValor();
         String firma = ((Estructura) estructuraFachada.getObject(new Estructura("firmaAdminAprobacion"))).getValor();
-        String mensaje = titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos() + " " + "\n"
-                + "\n" + cuerpo + "\n" + tit + "\nPublicado " + fecha + "\n\n\n" + firma;
         String host = ((Estructura) estructuraFachada.getObject(new Estructura("hostServerSMTP"))).getValor();
         int puerto = (Integer.parseInt(((Estructura) estructuraFachada.getObject(new Estructura("puertoSMTP"))).getValor()));
         String correo = ((Estructura) estructuraFachada.getObject(new Estructura("correoSoporte"))).getValor();
@@ -281,11 +293,15 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        String mensaje=Utilitaria.leerPlantilla("2.html");
-        mensaje=mensaje.replace("<#titulo#>", titulo);
-        mensaje=mensaje.replace("<#comunidad#>", comunidad.getNombre());
-        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+comunidad.getCodigo()+".png"};
-        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo(),null);
+        String mensaje=leerPlantilla("2.html");
+        mensaje=mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
+        mensaje=mensaje.replace("<#cuerpo#>", "\n" + cuerpo);
+        mensaje=mensaje.replace("<#tituloArti#>", "\n" + tit);
+        mensaje=mensaje.replace("<#observacion#>", "");
+        mensaje=mensaje.replace("<#fecha#>", "\nPublicado " + fecha);
+        mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
+        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
+        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo(),rutaImg);
     }
 
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {

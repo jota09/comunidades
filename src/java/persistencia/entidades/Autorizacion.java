@@ -12,6 +12,7 @@ public class Autorizacion implements Serializable {
     private Timestamp fecharealingreso;
     private String personaingresa;
     private String documentopersonaingresa;
+    private String descripcion;
     private EstadoAutorizacion estado;
     private MotivoAutorizacion motivo;
     private Timestamp fecharealsalida;
@@ -140,9 +141,17 @@ public class Autorizacion implements Serializable {
         this.busqueda = busqueda;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     @Override
     public String toString() {
-        return "Autorizacion{" + "codigo=" + codigo + ", usuariocodigo=" + usuariocodigo + ", fechaautorizacion=" + fechaautorizacion + ", fecharealingreso=" + fecharealingreso + ", personaingresa=" + personaingresa + ", documentopersonaingresa=" + documentopersonaingresa + ", estado=" + estado + ", motivo=" + motivo + ", fecharealsalida=" + fecharealsalida + ", empresacontratista=" + empresacontratista + ", activo=" + activo + ", comunidadcodigo=" + comunidadcodigo + ", rango=" + rango + ", busqueda=" + busqueda + '}';
+        return "Autorizacion{" + "codigo=" + codigo + ", usuariocodigo=" + usuariocodigo + ", fechaautorizacion=" + fechaautorizacion + ", fecharealingreso=" + fecharealingreso + ", personaingresa=" + personaingresa + ", documentopersonaingresa=" + documentopersonaingresa + ", descripcion=" + descripcion + ", estado=" + estado + ", motivo=" + motivo + ", fecharealsalida=" + fecharealsalida + ", empresacontratista=" + empresacontratista + ", activo=" + activo + ", comunidadcodigo=" + comunidadcodigo + ", rango=" + rango + ", busqueda=" + busqueda + '}';
     }
 
 }
