@@ -250,27 +250,20 @@ public class ClasificadoControlador extends HttpServlet {
     private void crearRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
+            Articulo art = new Articulo();
+            ArticuloFachada artFach = new ArticuloFachada();
             response.setContentType("text/html;charset=UTF-8");
             String codArt = request.getParameter("codArt");
-            Articulo art = new Articulo();
             art.setTitulo(request.getParameter("titulo"));
             art.setDescripcion(request.getParameter("descripcion"));
             Usuario usr = (Usuario) request.getSession().getAttribute("user");
             art.setUsuario(usr);
             int cat;
             cat = Integer.parseInt(request.getParameter("categoria"));
-            ArticuloEstado artEstado = new ArticuloEstado();
-            String ref2 = "articuloEstadoInicial";
-            Estructura estruc3 = new Estructura(ref2);
-            estruc3 = (Estructura) estrucFachada.getObject(estruc3);
-            art.setEstado(new ArticuloEstado(Integer.parseInt(estruc3.getValor())));
+            art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoInicial"))).getValor())));
             art.setPrioridad(new Prioridad(Integer.parseInt(request.getParameter("prioridad"))));
             art.setPrecio(Double.parseDouble(request.getParameter("precio").replace(".","")));
-            ArticuloFachada artFach = new ArticuloFachada();
-            String ref = "tipoClasificado";
-            Estructura estruc2 = new Estructura(ref);
-            estruc2 = (Estructura) estrucFachada.getObject(estruc2);
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(estruc2.getValor())));
+            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
             art.setCategoria(categ);
@@ -478,8 +471,6 @@ public class ClasificadoControlador extends HttpServlet {
                 articulo.setBusqueda(request.getParameter("buscar"));
             }
             List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
-//            Estructura estruc = (Estructura) estFach.getObject(new Estructura("articuloEstadoAprobado"));
-//            Estructura estruc2 = (Estructura) estFach.getObject(new Estructura("articuloEstadoInicial"));
             JSONArray jsonArray = new JSONArray();
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
@@ -525,7 +516,6 @@ public class ClasificadoControlador extends HttpServlet {
             }
             List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
             JSONArray jsonArray = new JSONArray();
-            String estadoI = ((Estructura) estFach.getObject(new Estructura("articuloEstadoInicial"))).getValor();
             for (Articulo art : listArticulo) {
                 if (art.getFechaPublicacion() == null) {
                     JSONObject jsonObj = new JSONObject();
@@ -565,7 +555,6 @@ public class ClasificadoControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             Articulo art = new Articulo(Integer.parseInt(request.getParameter("cod").trim()));
-            System.out.println("borrar el clasificado ID: "+request.getParameter("cod"));
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             ArticuloFachada artFachada = new ArticuloFachada();
             Articulo art2 = (Articulo) artFachada.getObject(new Articulo(Integer.parseInt(request.getParameter("cod").trim())));
@@ -798,7 +787,15 @@ public class ClasificadoControlador extends HttpServlet {
             art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicioPublico"))).getValor());
             String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             ArticuloFachada artFachada = new ArticuloFachada();
-            art.setBusqueda(condicion);
+            if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) {
+                if (condicion != null && condicion != "") {
+                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%' or art.precio LIKE '%" + request.getParameter("busqueda") + "%') and " + condicion);
+                } else {
+                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%' or art.precio LIKE '%" + request.getParameter("busqueda") + "%')");
+                }
+            } else {
+                art.setBusqueda(condicion);
+            }
             ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor()));
             art.setEstado(estado);
             MultimediaFachada multFachada = new MultimediaFachada();
@@ -819,7 +816,7 @@ public class ClasificadoControlador extends HttpServlet {
                         String path = LecturaConfig.getValue("rutaVisualiza")  + art2.getCodigo() + "/" + mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
                     } else {
-                        String path = LecturaConfig.getValue("rutaImg")  + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
+                        String path = LecturaConfig.getValue("rutaImg") + "/" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
                         obj.put("imgDestacada", path);
                     }
                     obj.put("titulo", art2.getTitulo());

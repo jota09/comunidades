@@ -290,7 +290,7 @@ public class ArticuloDAO implements GestionDAO {
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=? and "+((condicionPaginado.getUser() != null) ? " usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and" : " and ")+"  comunidad_codigo=? "
+            String sql = "SELECT COUNT('codigo') FROM articulo WHERE tipo_articulo_codigo=?  "+((condicionPaginado.getUser() != null) ? "and usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and " : " and ")+"  comunidad_codigo=? "
                     + "" + ((condicionPaginado.getEstado() != null) ? " and estados_codigo=" + condicionPaginado.getEstado() : "") + " ";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, condicionPaginado.getTipo());
@@ -384,7 +384,6 @@ public class ArticuloDAO implements GestionDAO {
                     + "    (art.titulo LIKE ?"
                     + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_fin_publicacion LIKE ? OR cat.nombre LIKE ?) and art.COMUNIDAD_CODIGO = ? "+ ((articulo.getRango() != null) ? "LIMIT " + articulo.getRango() + " " : "")+ "";
             PreparedStatement pS = con.prepareStatement(query);
-            System.out.println(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setString(2, "%" + articulo.getBusqueda() + "%");
             pS.setString(3, "%" + articulo.getBusqueda() + "%");
@@ -394,7 +393,6 @@ public class ArticuloDAO implements GestionDAO {
             pS.setString(7, "%" + articulo.getBusqueda() + "%");
             pS.setInt(8, articulo.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
-            System.out.println(pS);
             while (rS.next()) {
                 Articulo art = new Articulo();
                 Categoria cat = new Categoria();
@@ -469,11 +467,10 @@ public class ArticuloDAO implements GestionDAO {
                     + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
                     + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and art.usuario_codigo=" + art.getUsuario().getCodigo() : "")
                     + " " + ((art.getComunidad().getVisibilidad() != null) ? "AND c.visibilidad=" + art.getComunidad().getVisibilidad().getVisibilidad(): "")
-                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= CURDATE() " : "") + ""
+                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= CURDATE() " : "") + " ORDER BY art.fecha_publicacion DESC"
                     + " Limit " + art.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
-            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo articulo = new Articulo();
