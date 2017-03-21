@@ -5,9 +5,6 @@
  */
 package utilitarias;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfStream;
-import com.lowagie.text.pdf.PdfWriter;
 import fachada.ErrorFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
@@ -16,10 +13,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -217,7 +212,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Error " + fecha, correo,null);
+        envioMail.sendEmail(mensaje, "Error " + fecha, correo,null,null,null);
     }
 
     public static void enviarMailArticuloDevuelto(Object obj, String obs, String tit) throws IOException {
@@ -243,7 +238,7 @@ public class Utilitaria {
         mensaje=mensaje.replace("<#fecha#>", "");
         mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
         String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
-        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo(),rutaImg);
+        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo(),rutaImg,null,null);
     }
 
     public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) throws IOException {
@@ -269,7 +264,7 @@ public class Utilitaria {
         mensaje=mensaje.replace("<#fecha#>", "");
         mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
         String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
-        envioMail.sendEmail("<p>"+mensaje+"</p>", "Eliminación articulo " + tit, art.getUsuario().getCorreo(),rutaImg);
+        envioMail.sendEmail("<p>"+mensaje+"</p>", "Eliminación articulo " + tit, art.getUsuario().getCorreo(),rutaImg,null,null);
     }
 
     public static void enviarMailArticuloAprobado(Object obj, String tit) throws IOException {
@@ -297,7 +292,7 @@ public class Utilitaria {
         mensaje=mensaje.replace("<#fecha#>", "\nPublicado " + fecha);
         mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
         String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
-        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo(),rutaImg);
+        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo(),rutaImg,null,null);
     }
 
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {

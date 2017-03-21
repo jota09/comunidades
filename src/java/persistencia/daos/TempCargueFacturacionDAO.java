@@ -51,17 +51,18 @@ public class TempCargueFacturacionDAO implements GestionDAO {
     public int insertObject(Object object) {
         TempCargueFacturacion temp = (TempCargueFacturacion) object;
         Connection con = null;
-        int tam=0;
+        int tam = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql="insert into temp_cargue_facturacion(documento,detalle,valor,fecha_vencimiento,proceso_codigo) values(?,?,?,?,?)";
-            PreparedStatement pS=con.prepareStatement(sql);
+            String sql = "insert into temp_cargue_facturacion(documento,detalle,valor,fecha_vencimiento,proceso_codigo) values(?,?,?,?,?)";
+            PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, temp.getDocumento());
-            pS.setString(2,temp.getDetalle());
+            pS.setString(2, temp.getDetalle());
             pS.setDouble(3, temp.getValor());
             pS.setDate(4, new Date(temp.getFecha_vencimiento().getTime()));
-            pS.setInt(5,temp.getProceso().getCodigo());
-            tam=pS.executeUpdate();
+            pS.setInt(5, temp.getProceso().getCodigo());
+            System.out.println("Proceso:" + pS);
+            tam = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TempCargueFacturacionDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -69,8 +70,7 @@ public class TempCargueFacturacionDAO implements GestionDAO {
             Logger.getLogger(TempCargueFacturacionDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(TempCargueFacturacionDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally{
+        } finally {
             ConexionBD.cerrarConexion(con);
         }
         return tam;

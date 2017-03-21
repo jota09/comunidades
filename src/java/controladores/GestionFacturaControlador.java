@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
+import persistencia.entidades.EventoProceso;
 import persistencia.entidades.Factura;
 import persistencia.entidades.Movimiento;
 import persistencia.entidades.PlantillaXComunidad;
@@ -201,6 +202,22 @@ public class GestionFacturaControlador extends HttpServlet {
     }
 
     private void valoraMuestra(HttpServletRequest request, HttpServletResponse response) {
+        boolean valoracion = Boolean.parseBoolean(request.getParameter("valoracion"));
+        int codProceso = Integer.parseInt(request.getParameter("codProceso"));
+        HttpSession sesion = request.getSession();
+        GestionFachada procesoFachada = new ProcesoFachada();
+        Proceso proceso = new Proceso(codProceso);
+        EventoProceso evento = new EventoProceso();
+        proceso.setEventoProceso(evento);
+        if (valoracion) {
+            evento.setCodigo(3);
+            sesion.setAttribute("message", Utilitaria.createAlert("Exito", "Se Aprobo la muestra del pdf", "success"));
+        } else {
+            evento.setCodigo(4);
+            sesion.setAttribute("message", Utilitaria.createAlert("Exito", "Se rechazo la muestra del pdf", "warning"));
+        }
+        procesoFachada.updateObject(proceso);
+        
 
     }
 
@@ -245,7 +262,7 @@ public class GestionFacturaControlador extends HttpServlet {
         if (tam > 0) {
             sesion.setAttribute("message", Utilitaria.createAlert("Exito", "Se proceso el Archivo Correctamente", "success"));
         } else {
-            sesion.setAttribute("message", Utilitaria.createAlert("Error", "Hubieron Fallos al Procesar el Archivo Correctamente", "success"));
+            sesion.setAttribute("message", Utilitaria.createAlert("Error", "Hubieron Fallos al Procesar el Archivo Correctamente", "danger"));
         }
 
     }

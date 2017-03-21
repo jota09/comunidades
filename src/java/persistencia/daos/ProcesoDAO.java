@@ -130,7 +130,27 @@ public class ProcesoDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        Proceso proceso = (Proceso) object;
+        int tam = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "update proceso set evento_proceso_codigo=? where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, proceso.getEventoProceso().getCodigo());
+            pS.setInt(2, proceso.getCodigo());
+            tam = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ProcesoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProcesoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ProcesoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return tam;
     }
 
     @Override
@@ -147,7 +167,9 @@ public class ProcesoDAO implements GestionDAO {
             pS.setInt(2, proceso.getComunidad().getCodigo());
             pS.setInt(3, proceso.getUsuarioResponsable().getCodigo());
             pS.setInt(4, proceso.getPlantillaXComunidad().getCodigo());
+            System.out.println("PROCESO SQL:" + pS);
             tam = pS.executeUpdate();
+
             pS.close();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ProcesoDAO.class.getName()).log(Level.SEVERE, null, ex);

@@ -163,7 +163,7 @@ public class GestionUsuarioControlador extends HttpServlet {
         plantilla=plantilla.replace("<#comunidad#>", comunidad.getNombre());
         plantilla=plantilla.replace("<#codigoRegistro#>",registro.getCodigoGenerado());
         String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+comunidad.getCodigo()+".png"};
-        envioMail.sendEmail(plantilla, "Generación de Codigo de Registro para la comunidad " + comunidad.getNombre(), correo,rutaImg);
+        envioMail.sendEmail(plantilla, "Generación de Codigo de Registro para la comunidad " + comunidad.getNombre(), correo,rutaImg,null,null);
         tiempoInvalidacion.setTimeInMillis(tiempoEnMilis);
         if (tipo.equals("0")) {
             request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se genero el codigo para el correo " + correo, "success"));

@@ -20,6 +20,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+import javax.xml.bind.DatatypeConverter;
 
 public class ServicioDeEnvioMail {
 
@@ -43,7 +45,7 @@ public class ServicioDeEnvioMail {
         //session.setDebug(true);
     }
 
-    public void sendEmail(String mensaje, String sujeto, String destinatario, String[] rutasImagenes) {
+    public void sendEmail(String mensaje, String sujeto, String destinatario, String[] rutasImagenes,String pdfB64,String nombrePdf) {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress((String) properties.get("mail.smtp.mail.sender")));
@@ -65,6 +67,14 @@ public class ServicioDeEnvioMail {
                     message.setContent(multipart);
                     i++;
                 }
+            }
+            if(pdfB64!=null){
+                messageBodyPart = new MimeBodyPart();
+                DataSource pdfds = new ByteArrayDataSource(DatatypeConverter.parseBase64Binary(pdfB64), "application/pdf");
+                messageBodyPart.setDataHandler(new DataHandler(pdfds));
+                messageBodyPart.setFileName(nombrePdf);
+                multipart.addBodyPart(messageBodyPart);
+                message.setContent(multipart);
             }
 
             Transport t = session.getTransport("smtp");
