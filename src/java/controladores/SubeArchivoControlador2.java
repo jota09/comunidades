@@ -77,7 +77,6 @@ public class SubeArchivoControlador2 extends HttpServlet {
     private void crearMultimedia(HttpServletRequest request, HttpServletResponse response, String id) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             short destacada = Short.parseShort(request.getParameter("destacada"));
-            System.out.println(request.getParameter("file"));
             String encoded[] = request.getParameter("file").split(",");
             String ext = (encoded[0].split(";")[0]);
             ext = ext.split("/")[1];

@@ -431,6 +431,7 @@ public class AutorizacionDAO implements GestionDAO {
             pS.setString(8, "%" + auto.getBusqueda() + "%");
             pS.setInt(9, auto.getComunidadcodigo().getCodigo());
             ResultSet rS = pS.executeQuery();
+            System.out.println(pS);
             while (rS.next()) {
                 Autorizacion autorizacion = new Autorizacion();
                 autorizacion.setCodigo(rS.getInt(1));
@@ -509,7 +510,6 @@ public class AutorizacionDAO implements GestionDAO {
                     + " Limit " + auto.getRango();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
-            System.out.println("Consulta: "+pS);
             while (rS.next()) {
                 Autorizacion autorizacion = new Autorizacion();
                 autorizacion.setCodigo(rS.getInt(1));

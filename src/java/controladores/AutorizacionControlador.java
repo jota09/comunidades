@@ -93,6 +93,9 @@ public class AutorizacionControlador extends HttpServlet {
                     case 11:
                         registrarAprobado(request, response);
                         break;
+                    case 12:
+                        buscarRegistrosAdmin(request, response);
+                        break;
                 }
             }
         } catch (IOException ex) {
@@ -159,7 +162,6 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setMotivo(new MotivoAutorizacion(Integer.parseInt(request.getParameter("motivo"))));
             auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             AutorizacionFachada autoFachada = new AutorizacionFachada();
-            System.out.println(auto);
             if (codigo.equals("")) {
                 autoFachada.insertObject(auto);
             } else {
@@ -272,6 +274,8 @@ public class AutorizacionControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             Autorizacion auto = new Autorizacion(Integer.parseInt(request.getParameter("cod").trim()));
             AutorizacionFachada autoFacha = new AutorizacionFachada();
+            MultimediaAutorizacionFachada multiFacha = new MultimediaAutorizacionFachada();
+            multiFacha.deleteObject(new MultimediaAutorizacion(auto));
             autoFacha.deleteObject(auto);
             out.print(1);
         }
@@ -341,6 +345,38 @@ public class AutorizacionControlador extends HttpServlet {
             for (Autorizacion auto : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
                 if (((Usuario) request.getSession().getAttribute("user")).getCodigo() == auto.getUsuarioCodigo().getCodigo()) {
+                    jsonObj.put("codigo", auto.getCodigo());
+                    jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
+                    jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
+                    jsonObj.put("fecha_autorizacion", auto.getFechaautorizacion().toString());
+                    jsonObj.put("autoriza", auto.getUsuarioCodigo().getNombres() + " " + auto.getUsuarioCodigo().getApellidos());
+                    jsonObj.put("direccion", auto.getUsuarioCodigo().getInmueble().getUbicacion());
+                    jsonObj.put("codigo_estado", auto.getEstado().getCodigo());
+                    jsonObj.put("estado", auto.getEstado().getNombre());
+                    jsonObj.put("motivo", auto.getMotivo().getNombre());
+                    jsonArray.add(jsonObj);
+                }
+            }
+            out.print(jsonArray);
+        }
+    }
+    
+    private void buscarRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            AutorizacionFachada autoFachada = new AutorizacionFachada();
+            Autorizacion autorizacion = new Autorizacion();
+            EstructuraFachada estruFach = new EstructuraFachada();
+            Estructura estruc = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoInicial")));
+            Estructura estruc2 = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoFinaliza")));
+            Estructura estruc3 = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoVencida")));
+            autorizacion.setRango(request.getParameter("rango"));
+            autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            autorizacion.setBusqueda(request.getParameter("buscar"));
+            List<Autorizacion> listArticulo = autoFachada.getListByCondition(autorizacion);
+            JSONArray jsonArray = new JSONArray();
+            for (Autorizacion auto : listArticulo) {
+                JSONObject jsonObj = new JSONObject();
+                if (Integer.parseInt(estruc.getValor()) != auto.getEstado().getCodigo() && Integer.parseInt(estruc2.getValor()) != auto.getEstado().getCodigo() && Integer.parseInt(estruc3.getValor()) != auto.getEstado().getCodigo()) {
                     jsonObj.put("codigo", auto.getCodigo());
                     jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
                     jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
