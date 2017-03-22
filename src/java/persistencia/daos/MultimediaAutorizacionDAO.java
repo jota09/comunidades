@@ -15,7 +15,8 @@ import java.util.Calendar;
 import java.util.List;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Articulo;
-import persistencia.entidades.Multimedia;
+import persistencia.entidades.Autorizacion;
+import persistencia.entidades.MultimediaAutorizacion;
 import persistencia.entidades.TipoError;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
@@ -24,7 +25,7 @@ import persistencia.entidades.Error;
  *
  * @author manuel.alcala
  */
-public class MultimediaDAO implements GestionDAO {
+public class MultimediaAutorizacionDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
@@ -33,15 +34,15 @@ public class MultimediaDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        Multimedia mult = (Multimedia) object;
+        Autorizacion auto = (Autorizacion) object;
+        MultimediaAutorizacion mult = new MultimediaAutorizacion();
         Connection con = null;
         try {
 
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM multimedia AS m INNER JOIN tipo_multimedia AS tm ON m.tipo_multimedia_codigo = tm.codigo WHERE m.articulo_codigo=? AND m.destacada = ? AND m.activo = 1";
+            String query = "SELECT * FROM multimedia_autorizacion AS m INNER JOIN tipo_multimedia AS tm ON m.tipo_multimedia_codigo = tm.codigo WHERE m.autorizacion_codigo=?";
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, mult.getArticulocodigo().getCodigo());
-            pS.setShort(2, mult.getDestacada());
+            pS.setInt(1, auto.getCodigo());
             ResultSet rS = pS.executeQuery();
             while(rS.next()){
                 mult.setCodigo(rS.getLong("m.codigo"));
@@ -79,17 +80,17 @@ public class MultimediaDAO implements GestionDAO {
     @Override
     public List getListObject(Object object) {
         Articulo art = (Articulo) object;
-        ArrayList<Multimedia> listMult = new ArrayList<Multimedia>();
+        ArrayList<MultimediaAutorizacion> listMult = new ArrayList<MultimediaAutorizacion>();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT mult.*,tpMult.extension FROM multimedia mult "
-                    + "INNER JOIN tipo_multimedia tpMult ON mult.tipo_multimedia_codigo=tpMult.codigo WHERE mult.articulo_codigo=?";
+            String query = "SELECT mult.*,tpMult.extension FROM multimedia_autorizacion mult "
+                    + "INNER JOIN tipo_multimedia tpMult ON mult.tipo_multimedia_codigo=tpMult.codigo WHERE mult.autorizacion_codigo=?";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
-                Multimedia mult = new Multimedia();
+                MultimediaAutorizacion mult = new MultimediaAutorizacion();
                 mult.setCodigo(rS.getLong("codigo"));
                 mult.setTipoMultimediaCodigo(rS.getInt("tipo_multimedia_codigo"));
                 mult.setActivo(rS.getShort("activo"));
@@ -138,18 +139,18 @@ public class MultimediaDAO implements GestionDAO {
 
     @Override
     public synchronized int insertObject(Object object) {
-        Multimedia multimedia = (Multimedia) object;
+        MultimediaAutorizacion multimedia = (MultimediaAutorizacion) object;
         Connection con = null;
         int tamano = 0;
         try {
             int numeroAleatorio = (int) (Math.random() * 9999 + 1000);
             con = ConexionBD.obtenerConexion();
             Calendar calendar = Calendar.getInstance();
-            String sql = "INSERT INTO multimedia (CODIGO,ARTICULO_CODIGO, TIPO_MULTIMEDIA_CODIGO, DESTACADA) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO multimedia_autorizacion (CODIGO,AUTORIZACION_CODIGO, TIPO_MULTIMEDIA_CODIGO, DESTACADA) VALUES (?,?,?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
             multimedia.setCodigo(calendar.getTimeInMillis() + numeroAleatorio);
             pS.setLong(1, multimedia.getCodigo());
-            pS.setInt(2, multimedia.getArticulocodigo().getCodigo());
+            pS.setInt(2, multimedia.getAutorizacioncodigo().getCodigo());
             pS.setInt(3, multimedia.getTipoMultimediaCodigo());
             pS.setShort(4, multimedia.getDestacada());
             tamano = pS.executeUpdate();
@@ -183,13 +184,13 @@ public class MultimediaDAO implements GestionDAO {
 
     @Override
     public void deleteObject(Object object) {
-        Multimedia mult = (Multimedia) object;
+        MultimediaAutorizacion mult = (MultimediaAutorizacion) object;
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "DELETE FROM multimedia WHERE articulo_codigo=?";
+            String sql = "DELETE FROM multimedia_autorizacion WHERE autorizacion_codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);            
-            pS.setInt(1, mult.getArticulocodigo().getCodigo());
+            pS.setInt(1, mult.getAutorizacioncodigo().getCodigo());
             pS.execute();
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -234,7 +235,7 @@ public class MultimediaDAO implements GestionDAO {
         int cont = 1;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT MAX(codigo)+1 codigo FROM multimedia ";
+            String sql = "SELECT MAX(codigo)+1 codigo FROM multimedia_autorizacion ";
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {

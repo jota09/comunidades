@@ -6,6 +6,7 @@
 package controladores;
 
 import fachada.GestionFachada;
+import fachada.MultimediaAutorizacionFachada;
 import fachada.MultimediaFachada;
 import fachada.TipoMultimediaFachada;
 import java.io.BufferedOutputStream;
@@ -23,8 +24,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import persistencia.entidades.Articulo;
-import persistencia.entidades.Multimedia;
+import persistencia.entidades.Autorizacion;
+import persistencia.entidades.MultimediaAutorizacion;
 import persistencia.entidades.TipoMultimedia;
 import utilitarias.LecturaConfig;
 import persistencia.entidades.Error;
@@ -35,8 +36,8 @@ import utilitarias.Utilitaria;
  *
  * @author manuel.alcala
  */
-@WebServlet(name = "SubeArchivoControlador", urlPatterns = {"/SubeArchivoControlador"})
-public class SubeArchivoControlador extends HttpServlet {
+@WebServlet(name = "SubeArchivoControlador2", urlPatterns = {"/SubeArchivoControlador2"})
+public class SubeArchivoControlador2 extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -54,12 +55,13 @@ public class SubeArchivoControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             int opcion = Integer.parseInt(request.getParameter("op"));
             String codArticulo = request.getParameter("codArt");
+            System.out.println("Id del articulo: "+codArticulo);
             switch (opcion) {
                 case 1:
                     crearMultimedia(request, response, codArticulo);
                     break;
                 case 2:
-                    borrarMultimedia(request, response, codArticulo.trim());
+                    borrarMultimedia(request, response);
                     break;
             }
         } catch (IOException ex) {
@@ -75,42 +77,32 @@ public class SubeArchivoControlador extends HttpServlet {
     private void crearMultimedia(HttpServletRequest request, HttpServletResponse response, String id) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             short destacada = Short.parseShort(request.getParameter("destacada"));
-            //System.out.println("imprimiendo subeArchivoFile:" + request.getParameter("file"));
             String encoded[] = request.getParameter("file").split(",");
             String ext = (encoded[0].split(";")[0]);
             ext = ext.split("/")[1];
             ext = ((ext.equals("vnd.openxmlformats-officedocument.wordprocessingml.document")) ? "docx" : ext);
             ext = ((ext.equals("plain")) ? "txt" : ext);
             GestionFachada tipoMultimediaFachada = new TipoMultimediaFachada();
-            GestionFachada multimediaFachada = new MultimediaFachada();
+            GestionFachada multimediaFachada = new MultimediaAutorizacionFachada();
             TipoMultimedia tipoMultimedia = new TipoMultimedia();
             tipoMultimedia.setExtension(ext);
             tipoMultimediaFachada.getObject(tipoMultimedia);
-            Multimedia multimedia = new Multimedia();
+            MultimediaAutorizacion multimedia = new MultimediaAutorizacion();
             multimedia.setTipoMultimediaCodigo(tipoMultimedia.getCodigo());
-            multimedia.setArticulocodigo(new Articulo(Integer.parseInt(id)));
+            multimedia.setAutorizacioncodigo(new Autorizacion(Integer.parseInt(id)));
             multimedia.setDestacada(destacada);
             multimediaFachada.insertObject(multimedia);
             String content = encoded[1];
             byte[] decoded = Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8));
-            //String path = "c:/files/" + multimedia.getCodigo() + ".txt" ;
-            String path = LecturaConfig.getValue("rutaUploadArticulo") + id + File.separator;
+            String path = LecturaConfig.getValue("rutaUploadAutorizacion") + id + File.separator;
             String file = multimedia.getCodigo() + "." + ext;
             generaArchivo(path, file, decoded);
-            //generarArchivoBase64(path,request.getParameter("file"));
-            //System.out.println("Decodificacion:"+request.getParameter("file"));
-        }
 
+        }
     }
 
-    private void borrarMultimedia(HttpServletRequest request, HttpServletResponse response, String codArticulo) {
-        GestionFachada tipoMultimediaFachada = new TipoMultimediaFachada();
-        GestionFachada multimediaFachada = new MultimediaFachada();
-        Multimedia multimedia = new Multimedia();
-        multimedia.setArticulocodigo(new Articulo(Integer.parseInt(codArticulo)));
-        multimediaFachada.deleteObject(multimedia);
-        String path = LecturaConfig.getValue("rutaUploadArticulo") + codArticulo + File.separator;        
-        Utilitaria.borrarArchivos(path, false);
+    private void borrarMultimedia(HttpServletRequest request, HttpServletResponse response) {
+
     }
 
     private void generarArchivoBase64(String ruta, String base64) throws IOException {

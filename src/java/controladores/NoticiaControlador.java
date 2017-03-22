@@ -284,7 +284,7 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
             obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
             obj.put("Imagenes", jsArray);
-            obj.put("Directorio", LecturaConfig.getValue("rutaVisualiza") + art.getCodigo() + "/");
+            obj.put("Directorio", LecturaConfig.getValue("rutaVisualizaArticulo") + art.getCodigo() + "/");
             out.print(obj);
         }
     }
@@ -303,7 +303,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setTipoArticulo(tpArt);
             ArticuloFachada artFachada = new ArticuloFachada();
             artFachada.deleteObject(art);
-            Utilitaria.borrarArchivos(LecturaConfig.getValue("rutaUpload") + art.getCodigo(), true);
+            Utilitaria.borrarArchivos(LecturaConfig.getValue("rutaUploadArticulo") + art.getCodigo(), true);
         }
     }
 
@@ -558,7 +558,7 @@ public class NoticiaControlador extends HttpServlet {
                     mult.setDestacada(Short.parseShort("1"));
                     mult = (Multimedia) multFachada.getObject(mult);
                     if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
-                        String path = LecturaConfig.getValue("rutaVisualiza") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
+                        String path = LecturaConfig.getValue("rutaVisualizaArticulo") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
                         obj.put("imgDestacada", path);
                     } else {
                         String path = LecturaConfig.getValue("rutaImg") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();

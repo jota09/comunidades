@@ -52,7 +52,6 @@ public class AutorizacionDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, auto.getCodigo());
             ResultSet rS = pS.executeQuery();
-            System.out.println("Query de consulta: "+pS);
             if (rS.next()) {
                 autorizacion.setCodigo(rS.getInt(1));
                 autorizacion.setFechaautorizacion(rS.getDate(3));
@@ -73,7 +72,6 @@ public class AutorizacionDAO implements GestionDAO {
                 MotivoAutorizacion motivo = new MotivoAutorizacion(rS.getInt(14));
                 motivo.setNombre(rS.getString(15));
                 autorizacion.setMotivo(motivo);
-                System.out.println(autorizacion);
             }
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -185,6 +183,7 @@ public class AutorizacionDAO implements GestionDAO {
         Estructura est = (Estructura) estFach.getObject(new Estructura("autorizacionEstadoInicial"));
         Estructura est2 = (Estructura) estFach.getObject(new Estructura("autorizacionEstadoEspera"));
         Estructura est3 = (Estructura) estFach.getObject(new Estructura("autorizacionEstadoFinaliza"));
+        Estructura est4 = (Estructura) estFach.getObject(new Estructura("autorizacionEstadoAprobado"));
         int numfilas = 0;
         try {
             con = ConexionBD.obtenerConexion();
@@ -217,6 +216,15 @@ public class AutorizacionDAO implements GestionDAO {
             }
             if (auto.getEstado().getCodigo() == Integer.parseInt(est3.getValor())) {
                 String sql = "UPDATE autorizacion SET fecha_real_salida=now(),estado_autorizacion_codigo=?"
+                        + " WHERE codigo=?";
+                PreparedStatement pS = con.prepareStatement(sql);
+                pS.setInt(1, auto.getEstado().getCodigo());
+                pS.setInt(2, auto.getCodigo());
+                numfilas = pS.executeUpdate();
+                pS.close();
+            }
+            if (auto.getEstado().getCodigo() == Integer.parseInt(est4.getValor())) {
+                String sql = "UPDATE autorizacion SET estado_autorizacion_codigo=?"
                         + " WHERE codigo=?";
                 PreparedStatement pS = con.prepareStatement(sql);
                 pS.setInt(1, auto.getEstado().getCodigo());
@@ -423,6 +431,7 @@ public class AutorizacionDAO implements GestionDAO {
             pS.setString(8, "%" + auto.getBusqueda() + "%");
             pS.setInt(9, auto.getComunidadcodigo().getCodigo());
             ResultSet rS = pS.executeQuery();
+            System.out.println(pS);
             while (rS.next()) {
                 Autorizacion autorizacion = new Autorizacion();
                 autorizacion.setCodigo(rS.getInt(1));

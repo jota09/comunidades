@@ -76,11 +76,7 @@ public class Utilitaria {
         for (Categoria cat : listCategoria) {
             imprime += "<option value='" + cat.getCodigo() + "'>"
                     + cat.getNombre() + "</option>";
-//            if (cat.getListaCategorias().size() > 0) {
-//                imprime += construirCategorias(cat.getListaCategorias());
-//            }
         }
-        System.out.println(imprime);
         return imprime;
     }
 
