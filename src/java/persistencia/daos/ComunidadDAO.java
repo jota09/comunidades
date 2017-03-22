@@ -33,7 +33,7 @@ public class ComunidadDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select nombre,direccion,telefono from comunidad where codigo=?";
+            String sql = "Select nombre,direccion,telefono,nit,id_barcode from comunidad where codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, comunidad.getCodigo());
             ResultSet rS = pS.executeQuery();
@@ -41,6 +41,8 @@ public class ComunidadDAO implements GestionDAO {
                 comunidad.setNombre(rS.getString(1));
                 comunidad.setDireccion(rS.getString(2));
                 comunidad.setTelefono(rS.getString(3));
+                comunidad.setNit(rS.getString(4));
+                comunidad.setIdBarCode(rS.getString(5));
             }
             rS.close();
             pS.close();

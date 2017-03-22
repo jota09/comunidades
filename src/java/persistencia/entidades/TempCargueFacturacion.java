@@ -18,16 +18,18 @@ public class TempCargueFacturacion {
     private double valor;
     private Date fecha_vencimiento;
     private Proceso proceso;
+    private String num_Factura;
 
     public TempCargueFacturacion() {
     }
 
-    public TempCargueFacturacion(int documento, String detalle, double valor, Date fecha_vencimiento, Proceso proceso) {
+    public TempCargueFacturacion(int documento, String detalle, double valor, Date fecha_vencimiento, Proceso proceso, String num_Factura) {
         this.documento = documento;
         this.detalle = detalle;
         this.valor = valor;
         this.fecha_vencimiento = fecha_vencimiento;
         this.proceso = proceso;
+        this.num_Factura = num_Factura;
     }
 
     public int getDocumento() {
@@ -64,6 +66,14 @@ public class TempCargueFacturacion {
 
     public Proceso getProceso() {
         return proceso;
+    }
+
+    public String getNum_Factura() {
+        return num_Factura;
+    }
+
+    public void setNum_Factura(String num_Factura) {
+        this.num_Factura = num_Factura;
     }
 
     public void setProceso(Proceso proceso) {

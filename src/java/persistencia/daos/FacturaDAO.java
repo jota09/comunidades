@@ -42,7 +42,7 @@ public class FacturaDAO implements GestionDAO {
         List<Factura> facturas = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "select codigo,usuario_codigo from factura where proceso_codigo=?";
+            String sql = "select codigo,usuario_codigo,num_factura from factura where proceso_codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, proceso.getCodigo());
             ResultSet rS = pS.executeQuery();
@@ -52,6 +52,7 @@ public class FacturaDAO implements GestionDAO {
                 Usuario user = new Usuario();
                 user.setCodigo(rS.getInt(2));
                 factura.setUsuario(user);
+                factura.setNumFactura(rS.getString(3));
                 facturas.add(factura);
             }
             rS.close();

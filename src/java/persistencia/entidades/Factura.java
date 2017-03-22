@@ -16,6 +16,7 @@ public class Factura {
     private int codigo;
     private Proceso proceso;
     private Usuario usuario;
+    private String numFactura;
 
     public Factura() {
     }
@@ -24,10 +25,11 @@ public class Factura {
         this.codigo = codigo;
     }
 
-    public Factura(int codigo, Proceso proceso, Usuario usuario) {
+    public Factura(int codigo, Proceso proceso, Usuario usuario,String numFactura) {
         this.codigo = codigo;
         this.proceso = proceso;
         this.usuario = usuario;
+        this.numFactura=numFactura;
       
     }
 
@@ -53,6 +55,14 @@ public class Factura {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public String getNumFactura() {
+        return numFactura;
+    }
+
+    public void setNumFactura(String numFactura) {
+        this.numFactura = numFactura;
     }
 
 }

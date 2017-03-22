@@ -6,6 +6,7 @@
 package controladores;
 
 import fachada.ComunidadFachada;
+import fachada.EstructuraFachada;
 import fachada.FacturaFachada;
 import fachada.GestionFachada;
 import fachada.MovimientoFachada;
@@ -18,6 +19,7 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
+import persistencia.entidades.Estructura;
 import persistencia.entidades.EventoProceso;
 import persistencia.entidades.Factura;
 import persistencia.entidades.Movimiento;
@@ -41,6 +44,7 @@ import persistencia.entidades.TempCargueFacturacion;
 import persistencia.entidades.Usuario;
 import utilitarias.DatosJasper;
 import utilitarias.EjecutaProcedimiento;
+import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 
 /**
@@ -88,6 +92,9 @@ public class GestionFacturaControlador extends HttpServlet {
                 case 6: {
                     poblarTablas(request, response);
                     break;
+                }
+                case 7: {
+                    valorMuestraEnvio(request, response);
                 }
 
             }
@@ -164,6 +171,8 @@ public class GestionFacturaControlador extends HttpServlet {
         GestionFachada facturaFachada = new FacturaFachada();
         GestionFachada movimientoFachada = new MovimientoFachada();
         GestionFachada comunidadFachada = new ComunidadFachada();
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        Estructura estructura = new Estructura();
         GestionFachada usuarioFachada = new UsuarioFachada();
         procesoFachada.getObject(proceso);
         comunidadFachada.getObject(proceso.getComunidad());
@@ -174,31 +183,64 @@ public class GestionFacturaControlador extends HttpServlet {
         usuarioFachada.getObject(factura.getUsuario());
         List<Movimiento> movimientos = movimientoFachada.getListObject(factura);
         Comunidad comunidad = proceso.getComunidad();
-        Map<String, Object> propiedades = new HashMap();
-        propiedades.put("nombre_comunidad", comunidad.getNombre());
-        propiedades.put("nit_comunidad", "11");
-        propiedades.put("telefono_comunidad", comunidad.getTelefono());
-        propiedades.put("direccion_comunidad", comunidad.getDireccion());
-        propiedades.put("nombre_factura", "Factura de Venta");
-        propiedades.put("numero_factura", String.valueOf(factura.getCodigo()));
-        propiedades.put("imagen_comunidad", "C:\\configComunidades\\2.png");
+        Map<String, Object> parametros = new HashMap();
+        parametros = new HashMap<>();
         List datos_Factura = new ArrayList();
         List datos_Cliente = new ArrayList();
         double total = 0;
+        Date fechaVencimiento = null;
         for (Movimiento m : movimientos) {
             DatosJasper datos = new DatosJasper(m.getDetalle(), "$" + m.getValor());
             total += m.getValor();
             datos_Factura.add(datos);
+            if (fechaVencimiento==null || fechaVencimiento.after(m.getFechaVencimiento())) {
+                fechaVencimiento = m.getFechaVencimiento();
+            }
         }
         datos_Factura.add(new DatosJasper("TOTAL", "$" + total));
         datos_Cliente.add(new DatosJasper("Nombres del cliente", factura.getUsuario().getNombres() + " " + factura.getUsuario().getApellidos()));
         datos_Cliente.add(new DatosJasper("Documento", String.valueOf(factura.getUsuario().getCodigoDocumento())));
         datos_Cliente.add(new DatosJasper("Correo", factura.getUsuario().getCorreo()));
-
-        propiedades.put("datos_factura", datos_Factura);
-        propiedades.put("datos_cliente", datos_Cliente);
+        parametros.put("imagen_comunidad", LecturaConfig.getValue("rutaImg") + "logo/" + comunidad.getCodigo() + ".png");
+        parametros.put("nombre_comunidad", comunidad.getNombre());
+        parametros.put("nit_comunidad", comunidad.getNit());
+        parametros.put("direccion_comunidad", comunidad.getDireccion());
+        parametros.put("telefono_comunidad", comunidad.getTelefono());
+        estructura.setReferencia("tituloFactura");
+        estructuraFachada.getObject(estructura);
+        parametros.put("nombre_factura", estructura.getValor());
+        parametros.put("numero_factura", factura.getNumFactura());
+        parametros.put("datos_cliente", datos_Cliente);
+        parametros.put("datos_factura", datos_Factura);
+        estructura = new Estructura();
+        estructura.setReferencia("resolucionDian");
+        estructuraFachada.getObject(estructura);
+        parametros.put("datos_dian", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("datosLegales");
+        estructuraFachada.getObject(estructura);
+        parametros.put("datos_legal", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("imgPSE");
+        estructuraFachada.getObject(estructura);
+        parametros.put("imagen_pse", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("datosPSE");
+        estructuraFachada.getObject(estructura);
+        parametros.put("datos_pse", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("enlacePSE");
+        estructuraFachada.getObject(estructura);
+        parametros.put("enlace_pse", estructura.getValor());
+        String valor415 = agregarCero(comunidad.getIdBarCode(), 13);
+        String valor8020 = String.valueOf(factura.getUsuario().getCodigoDocumento());
+        valor8020 = agregarCero(valor8020, 12);
+        String valor3900 = String.valueOf((int) total);
+        valor3900 = agregarCero(valor3900, 10);
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        parametros.put("codigo_barras", "415" + valor415+ "8020" + valor8020 + "3900" + valor3900 + "96" + format.format(fechaVencimiento));
         PrintWriter out = response.getWriter();
-        out.print(Utilitaria.generaPDFB64(proceso.getPlantillaXComunidad().getPlantilla().getCodigo() + ".jasper", propiedades));
+        out.print(Utilitaria.generaPDFB64(proceso.getPlantillaXComunidad().getPlantilla().getCodigo() + ".jasper", parametros));
     }
 
     private void valoraMuestra(HttpServletRequest request, HttpServletResponse response) {
@@ -217,7 +259,6 @@ public class GestionFacturaControlador extends HttpServlet {
             sesion.setAttribute("message", Utilitaria.createAlert("Exito", "Se rechazo la muestra del pdf", "warning"));
         }
         procesoFachada.updateObject(proceso);
-        
 
     }
 
@@ -232,9 +273,11 @@ public class GestionFacturaControlador extends HttpServlet {
             temp.setDetalle(columnas[1]);
             temp.setProceso(proceso);
             temp.setValor(Double.parseDouble(columnas[2]));
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY");
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             temp.setFecha_vencimiento(format.parse(columnas[3]));
+            temp.setNum_Factura(columnas[4].replace("\r", ""));
             tempFachada.insertObject(temp);
+
         }
     }
 
@@ -265,6 +308,17 @@ public class GestionFacturaControlador extends HttpServlet {
             sesion.setAttribute("message", Utilitaria.createAlert("Error", "Hubieron Fallos al Procesar el Archivo Correctamente", "danger"));
         }
 
+    }
+
+    private void valorMuestraEnvio(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+
+    private String agregarCero(String valor, int tamano) {
+        for (int i = valor.length(); i < tamano; i++) {
+            valor = "0" + valor;
+        }
+        return valor;
     }
 
 }

@@ -18,6 +18,8 @@ public class Comunidad implements Serializable {
     private short eliminado;
     private Timestamp creacion;
     private Visibilidad visibilidad;
+    private String idBarCode;
+    private String nit;
 
     public Comunidad() {
     }
@@ -26,9 +28,11 @@ public class Comunidad implements Serializable {
         this.codigo = codigo;
     }
 
-    public Comunidad(int codigo,String nombre) {
+    public Comunidad(int codigo,String nombre,String nit,String idBarCode) {
         this.codigo = codigo;
         this.nombre = nombre;
+        this.nit=nit;
+        this.idBarCode=idBarCode;
 
     }
 
@@ -120,6 +124,22 @@ public class Comunidad implements Serializable {
         this.visibilidad = visibilidad;
     }
 
+    public String getNit() {
+        return nit;
+    }
+
+    public void setNit(String nit) {
+        this.nit = nit;
+    }
+
+    public String getIdBarCode() {
+        return idBarCode;
+    }
+
+    public void setIdBarCode(String idBarCode) {
+        this.idBarCode = idBarCode;
+    }
+    
     @Override
     public String toString() {
         JSONObject obj = new JSONObject();

@@ -167,7 +167,6 @@ public class ProcesoDAO implements GestionDAO {
             pS.setInt(2, proceso.getComunidad().getCodigo());
             pS.setInt(3, proceso.getUsuarioResponsable().getCodigo());
             pS.setInt(4, proceso.getPlantillaXComunidad().getCodigo());
-            System.out.println("PROCESO SQL:" + pS);
             tam = pS.executeUpdate();
 
             pS.close();

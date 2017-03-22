@@ -54,14 +54,15 @@ public class TempCargueFacturacionDAO implements GestionDAO {
         int tam = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "insert into temp_cargue_facturacion(documento,detalle,valor,fecha_vencimiento,proceso_codigo) values(?,?,?,?,?)";
+            String sql = "insert into temp_cargue_facturacion(documento,detalle,valor,fecha_vencimiento,proceso_codigo,num_factura) values(?,?,?,?,?,?)";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, temp.getDocumento());
             pS.setString(2, temp.getDetalle());
             pS.setDouble(3, temp.getValor());
             pS.setDate(4, new Date(temp.getFecha_vencimiento().getTime()));
             pS.setInt(5, temp.getProceso().getCodigo());
-            System.out.println("Proceso:" + pS);
+            pS.setString(6, temp.getNum_Factura());
+            System.out.println("Temporal:" + pS);
             tam = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {

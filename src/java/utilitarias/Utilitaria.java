@@ -377,7 +377,6 @@ public class Utilitaria {
         } catch (JRException ex) {
             Logger.getLogger(Utilitaria.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            out.flush();
             out.close();
         }
 

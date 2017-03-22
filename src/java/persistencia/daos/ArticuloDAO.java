@@ -44,7 +44,11 @@ public class ArticuloDAO implements GestionDAO {
         try {
 
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT * FROM articulo AS art JOIN usuario AS u ON art.USUARIO_CODIGO = u.CODIGO JOIN prioridad AS p ON p.CODIGO = art.PRIORIDAD_CODIGO JOIN comunidad AS c ON art.COMUNIDAD_CODIGO = c.CODIGO JOIN ciudad AS ciu ON c.CIUDAD_CODIGO = ciu.CODIGO JOIN departamento AS d ON ciu.departamento_CODIGO = d.CODIGO JOIN pais ON d.pais_CODIGO = pais.CODIGO WHERE art.codigo=?";
+            String query = "SELECT * FROM articulo AS art JOIN usuario AS u ON art.USUARIO_CODIGO = u.CODIGO "
+                    + "JOIN prioridad AS p ON p.CODIGO = art.PRIORIDAD_CODIGO JOIN comunidad AS c "
+                    + "ON art.COMUNIDAD_CODIGO = c.CODIGO JOIN ciudad AS ciu ON c.CIUDAD_CODIGO = ciu.CODIGO "
+                    + "JOIN departamento AS d ON ciu.departamento_CODIGO = d.CODIGO JOIN pais ON "
+                    + "d.pais_CODIGO = pais.CODIGO WHERE art.codigo=?";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getCodigo());
             ResultSet rS = pS.executeQuery();
@@ -66,7 +70,7 @@ public class ArticuloDAO implements GestionDAO {
                 art.setPrecio(rS.getDouble("art.precio"));
                 art.setPrioridad(new Prioridad(rS.getInt("p.codigo"), rS.getString("p.nombre"), rS.getInt("p.valor")));
                 art.setVisibilidad(new Visibilidad(rS.getShort("visibilidad")));
-                Comunidad comunidad = new Comunidad(rS.getInt("c.CODIGO"),rS.getString("c.nombre"));
+                Comunidad comunidad = new Comunidad(rS.getInt("c.CODIGO"),rS.getString("c.nombre"),rS.getString("c.nit"),rS.getString("c.id_barcode"));
                 comunidad.setCiudadCodigo(new Ciudad(rS.getInt("ciu.codigo"),rS.getString("ciu.nombre")));
                 comunidad.setPaisCodigo(new Pais(rS.getInt("pais.codigo"),rS.getString("pais.nombre")));
                 comunidad.setDepartamentoCodigo(new Departamento(rS.getInt("d.codigo"),rS.getString("d.nombre")));
