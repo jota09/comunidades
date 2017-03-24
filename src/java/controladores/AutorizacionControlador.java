@@ -58,7 +58,6 @@ public class AutorizacionControlador extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             if (request.getParameter("opc") != null) {
                 int opcion = Integer.parseInt(request.getParameter("opc"));
-                System.out.println(opcion);
                 switch (opcion) {
                     case 1:
                         tablaRegistros(request, response);
@@ -172,12 +171,9 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setMotivo(new MotivoAutorizacion(Integer.parseInt(request.getParameter("motivo"))));
             auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             AutorizacionFachada autoFachada = new AutorizacionFachada();
-            System.out.println(auto);
             if (codigo.equals("")) {
-                System.out.println("Entro a insertar");
                 autoFachada.insertObject(auto);                
             } else {
-                System.out.println("Entro a actualizar");
                 auto.setCodigo(Integer.parseInt(codigo));
                 autoFachada.updateObject(auto);
             }

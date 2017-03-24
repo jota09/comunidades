@@ -188,7 +188,6 @@ public class AutorizacionDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             if (auto.getEstado().getCodigo() == Integer.parseInt(est.getValor())) {
-                System.out.println("Entro a actualizar por estado inicial");
                 String sql = "UPDATE autorizacion SET persona_ingresa=?, "
                         + " " + (!auto.getDocumentoPersonaIngresa().equals('0') ? "documento_persona_ingresa='" + auto.getDocumentoPersonaIngresa() + "'," : "") + ""
                         + " " + (!auto.getEmpresaContratista().equals("") ? "empresa_contratista='" + auto.getEmpresaContratista() + "'," : "") + ""
@@ -432,7 +431,6 @@ public class AutorizacionDAO implements GestionDAO {
             pS.setString(8, "%" + auto.getBusqueda() + "%");
             pS.setInt(9, auto.getComunidadcodigo().getCodigo());
             ResultSet rS = pS.executeQuery();
-            System.out.println(pS);
             while (rS.next()) {
                 Autorizacion autorizacion = new Autorizacion();
                 autorizacion.setCodigo(rS.getInt(1));
