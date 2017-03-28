@@ -58,7 +58,6 @@ public class AutorizacionControlador extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             if (request.getParameter("opc") != null) {
                 int opcion = Integer.parseInt(request.getParameter("opc"));
-                System.out.println(opcion);
                 switch (opcion) {
                     case 1:
                         tablaRegistros(request, response);
@@ -95,6 +94,12 @@ public class AutorizacionControlador extends HttpServlet {
                         break;
                     case 12:
                         buscarRegistrosAdmin(request, response);
+                        break;
+                    case 13:
+                        buscarRegistrosUser(request, response);
+                        break;
+                    case 14:
+                        crearRegistrosSinUsuario(request, response);
                         break;
                 }
             }
@@ -153,7 +158,11 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setPersonaIngresa(request.getParameter("nombre"));
             auto.setEmpresaContratista(request.getParameter("empresa"));
             auto.setDocumentoPersonaIngresa(request.getParameter("documento"));
-            auto.setDescripcion(request.getParameter("descr"));
+            if (!request.getParameter("descr").equals("0")) {
+                auto.setDescripcion(request.getParameter("descr"));
+            } else {
+                auto.setDescripcion(null);
+            }
             auto.setEstado(new EstadoAutorizacion(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("autorizacionEstadoInicial"))).getValor())));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("fechaAuto"));
@@ -163,11 +172,36 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             AutorizacionFachada autoFachada = new AutorizacionFachada();
             if (codigo.equals("")) {
-                autoFachada.insertObject(auto);
+                autoFachada.insertObject(auto);                
             } else {
                 auto.setCodigo(Integer.parseInt(codigo));
                 autoFachada.updateObject(auto);
             }
+            out.print(1);
+        }
+        request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
+    }
+
+    private void crearRegistrosSinUsuario(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
+        try (PrintWriter out = response.getWriter()) {
+            EstructuraFachada estrucFachada = new EstructuraFachada();
+            response.setContentType("text/html;charset=UTF-8");
+            String codigo = request.getParameter("codigo");
+            Autorizacion auto = new Autorizacion();
+            auto.setUsuarioCodigo(new Usuario(Integer.parseInt(request.getParameter("usuario"))));
+            auto.setPersonaIngresa(request.getParameter("nombre"));
+            auto.setEmpresaContratista(request.getParameter("empresa"));
+            auto.setDocumentoPersonaIngresa(request.getParameter("documento"));
+            auto.setDescripcion(request.getParameter("descr"));
+            auto.setEstado(new EstadoAutorizacion(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("autorizacionEstadoInicial"))).getValor())));
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date parsed = format.parse(request.getParameter("fechaAuto"));
+            java.sql.Date date = new java.sql.Date(parsed.getTime());
+            auto.setFechaautorizacion(date);
+            auto.setMotivo(new MotivoAutorizacion(Integer.parseInt(request.getParameter("motivo"))));
+            auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            AutorizacionFachada autoFachada = new AutorizacionFachada();
+            autoFachada.insertObject(auto);
             out.print(1);
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se creo el clasificado", "success"));
@@ -243,7 +277,7 @@ public class AutorizacionControlador extends HttpServlet {
         }
         request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se registro la entrada", "success"));
     }
-    
+
     private void registrarAprobado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
@@ -360,7 +394,7 @@ public class AutorizacionControlador extends HttpServlet {
             out.print(jsonArray);
         }
     }
-    
+
     private void buscarRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             AutorizacionFachada autoFachada = new AutorizacionFachada();
@@ -388,6 +422,24 @@ public class AutorizacionControlador extends HttpServlet {
                     jsonObj.put("motivo", auto.getMotivo().getNombre());
                     jsonArray.add(jsonObj);
                 }
+            }
+            out.print(jsonArray);
+        }
+    }
+
+    private void buscarRegistrosUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (PrintWriter out = response.getWriter()) {
+            UsuarioFachada userFachada = new UsuarioFachada();
+            Usuario usuario = new Usuario();
+            usuario.setBusqueda(request.getParameter("buscar"));
+            usuario.setPerfilCodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo());
+            List<Usuario> listArticulo = userFachada.getListByCondition(usuario);
+            JSONArray jsonArray = new JSONArray();
+            for (Usuario user : listArticulo) {
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("codigo", user.getCodigo());
+                jsonObj.put("user", user.getUserName());
+                jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
         }
