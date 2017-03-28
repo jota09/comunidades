@@ -191,7 +191,7 @@ public class AutorizacionDAO implements GestionDAO {
                 String sql = "UPDATE autorizacion SET persona_ingresa=?, "
                         + " " + (!auto.getDocumentoPersonaIngresa().equals('0') ? "documento_persona_ingresa='" + auto.getDocumentoPersonaIngresa() + "'," : "") + ""
                         + " " + (!auto.getEmpresaContratista().equals("") ? "empresa_contratista='" + auto.getEmpresaContratista() + "'," : "") + ""
-                        + " " + (!auto.getDescripcion().equals("") ? "descripcion='" + auto.getDescripcion()+ "'," : "") + ""
+                        + " " + (auto.getDescripcion() != null ? "descripcion='" + auto.getDescripcion()+ "'," : "descripcion=null,") + ""
                         + " estado_autorizacion_codigo=?,"
                         + " fecha_autorizacion=?,"
                         + " motivo_autorizacion_codigo=?"
@@ -431,7 +431,6 @@ public class AutorizacionDAO implements GestionDAO {
             pS.setString(8, "%" + auto.getBusqueda() + "%");
             pS.setInt(9, auto.getComunidadcodigo().getCodigo());
             ResultSet rS = pS.executeQuery();
-            System.out.println(pS);
             while (rS.next()) {
                 Autorizacion autorizacion = new Autorizacion();
                 autorizacion.setCodigo(rS.getInt(1));

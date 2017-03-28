@@ -246,7 +246,6 @@ public class UsuarioDAO implements GestionDAO {
                 sql = "Select count(codigo) from usuario";
                 pS = con.prepareStatement(sql);
             }
-            System.out.println("QUERY:" + pS);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -272,7 +271,54 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Usuario user = (Usuario) object;
+        ArrayList<Usuario> listUser = new ArrayList<Usuario>();
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String query = "SELECT *"
+                    + "    FROM usuario AS user "
+                    + "    inner join usuario_perfil on user.codigo = usuario_perfil.usuario_codigo "
+                    + "    inner join perfil on usuario_perfil.perfil_CODIGO = perfil.codigo"
+                    + "    WHERE user.user_name LIKE ? AND perfil.comunidad_CODIGO = ?"
+                    + "    LIMIT 10";
+            PreparedStatement pS = con.prepareStatement(query);
+            pS.setString(1, "%"+user.getBusqueda()+"%");
+            pS.setInt(2, user.getPerfilCodigo().getComunidad().getCodigo());
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Usuario usr = new Usuario();
+                usr.setCodigo(rS.getInt("codigo"));
+                usr.setUserName(rS.getString("user_name"));  
+                listUser.add(usr);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getListByCondition");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return listUser;
     }
 
     @Override

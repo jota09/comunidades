@@ -7,62 +7,59 @@ package fachada;
 
 import java.util.List;
 import persistencia.daos.GestionDAO;
-import persistencia.daos.UsuarioDAO;
+import persistencia.daos.LogXProcesoDAO;
 
 /**
  *
- * @author ferney.medina
+ * @author manuel.alcala
  */
-public class UsuarioFachada implements GestionFachada {
-    
-    public Object getObject(Object obj) {
-        GestionDAO usr = new UsuarioDAO();
-        return usr.getObject(obj);
-    }
-    
+public class LogXProcesoFachada implements GestionFachada {
+
     @Override
-    public int insertObject(Object object) {
-        GestionDAO userDAO = new UsuarioDAO();
-        return userDAO.insertObject(object);
-    }
-    
-    @Override
-    public List getListObject(Object object) {
-        GestionDAO userDAO = new UsuarioDAO();
-        return userDAO.getListObject(object);
-    }
-    
-    @Override
-    public int updateObject(Object obj) {
+    public int getCount(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
-    public int getCount(Object obj) {
-        GestionDAO userDAO = new UsuarioDAO();
-        return userDAO.getCount(obj);
+    public Object getObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
+    public int insertObject(Object object) {
+        GestionDAO logDAO = new LogXProcesoDAO();
+        return logDAO.insertObject(object);
+    }
+
+    @Override
+    public List getListObject(Object object) {
+        GestionDAO logDAO = new LogXProcesoDAO();
+        return logDAO.getListObject(object);
+    }
+
+    @Override
+    public List getListObject() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int updateObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Override
     public void deleteObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    @Override
-    public List getListObject() {
-        GestionDAO userDAO = new UsuarioDAO();
-        return userDAO.getListObject();
-    }
-    
+
     @Override
     public List getListByCondition(Object object) {
-        GestionDAO userDAO = new UsuarioDAO();
-        return userDAO.getListByCondition(object);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

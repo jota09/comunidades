@@ -21,6 +21,7 @@ public class Usuario implements Serializable {
     private int edad;
     private SeguridadUsuario listaSeguridad;
     private Inmueble inmueble;
+    private String busqueda;
 
     public Usuario() {
     }
@@ -29,7 +30,7 @@ public class Usuario implements Serializable {
         this.codigo = codigo;
     }
 
-    public Usuario(int codigo, int codigodocumento, int tipodocumentocodigo, Perfil perfilcodigo, String nombres, String apellidos, String correo, String celular, String telefono, String username, short activo, Timestamp creacion, Timestamp actualizacion, int edad, SeguridadUsuario listaSeguridad, Autorizacion listaAutorizacion) {
+    public Usuario(int codigo, int codigodocumento, int tipodocumentocodigo, Perfil perfilcodigo, String nombres, String apellidos, String correo, String celular, String telefono, String username, short activo, Timestamp creacion, Timestamp actualizacion, int edad, SeguridadUsuario listaSeguridad, Inmueble inmueble, String busqueda) {
         this.codigo = codigo;
         this.codigodocumento = codigodocumento;
         this.tipodocumentocodigo = tipodocumentocodigo;
@@ -45,8 +46,9 @@ public class Usuario implements Serializable {
         this.actualizacion = actualizacion;
         this.edad = edad;
         this.listaSeguridad = listaSeguridad;
-    } 
-
+        this.inmueble = inmueble;
+        this.busqueda = busqueda;
+    }
     
     public int getCodigo() {
         return this.codigo;
@@ -179,6 +181,14 @@ public class Usuario implements Serializable {
 
     public void setInmueble(Inmueble inmueble) {
         this.inmueble = inmueble;
+    }
+
+    public String getBusqueda() {
+        return busqueda;
+    }
+
+    public void setBusqueda(String busqueda) {
+        this.busqueda = busqueda;
     }
     
 }
