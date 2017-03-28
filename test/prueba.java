@@ -37,18 +37,8 @@ public class prueba {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws JRException, DocumentException, IOException, Exception {
-        EAN128Bean bean = new EAN128Bean();
-        final int dpi = 250;
-        bean.setModuleWidth(UnitConv.in2mm(1.0f / dpi));
-        bean.setModuleWidth(0.1);
-        bean.setTemplate("(415)n13(8020)n12(3900)n10(96)n8");
-        bean.doQuietZone(false);
-        File file = new File("c:/PDF/prueba.png");
-        OutputStream os = new FileOutputStream(file);
-        BitmapCanvasProvider canvas = new BitmapCanvasProvider(os, "image/x-png", dpi, BufferedImage.TYPE_BYTE_BINARY, false, 0);
-        bean.generateBarcode(canvas, "41577099981457408020002019400060390000006326509620170306");
-        canvas.finish();
-        os.close();
+        ServicioDeEnvioMail servicio=new ServicioDeEnvioMail("98.76.54.4",25, "alejoab12@comunidades.com", "alejoab12", "m22102013", "false", "false", "false");
+        servicio.sendEmail("hola mundo", "prueba envio", "malejoab1990@gmail.com", null, null, null);
     }
 
 }
