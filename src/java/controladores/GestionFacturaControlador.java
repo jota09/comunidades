@@ -113,6 +113,14 @@ public class GestionFacturaControlador extends HttpServlet {
                     visualizarProceso(request, response);
                     break;
                 }
+                case 11: {
+                    cargarMisFacturas(request, response);
+                    break;
+                }
+                case 12: {
+                    visualizaFactura(request, response);
+                    break;
+                }
 
             }
         } catch (IOException ex) {
@@ -196,6 +204,7 @@ public class GestionFacturaControlador extends HttpServlet {
         GestionFachada estructuraFachada = new EstructuraFachada();
         Estructura estructura = new Estructura();
         GestionFachada usuarioFachada = new UsuarioFachada();
+        proceso.setActivo(1);
         procesoFachada.getObject(proceso);
         comunidadFachada.getObject(proceso.getComunidad());
         List<Factura> facturas = facturaFachada.getListObject(proceso);
@@ -210,6 +219,7 @@ public class GestionFacturaControlador extends HttpServlet {
         List datos_Factura = new ArrayList();
         List datos_Cliente = new ArrayList();
         double total = 0;
+        
         Date fechaVencimiento = null;
         for (Movimiento m : movimientos) {
             DatosJasper datos = new DatosJasper(m.getDetalle(), "$" + m.getValor());
@@ -367,6 +377,7 @@ public class GestionFacturaControlador extends HttpServlet {
         GestionFachada estructuraFachada = new EstructuraFachada();
         Estructura estructura = new Estructura();
         GestionFachada usuarioFachada = new UsuarioFachada();
+        proceso.setActivo(1);
         procesoFachada.getObject(proceso);
         comunidadFachada.getObject(proceso.getComunidad());
         List<Factura> facturas = facturaFachada.getListObject(proceso);
@@ -485,6 +496,7 @@ public class GestionFacturaControlador extends HttpServlet {
         GestionFachada estructuraFachada = new EstructuraFachada();
         Estructura estructura = new Estructura();
         GestionFachada usuarioFachada = new UsuarioFachada();
+        proceso.setActivo(1);
         procesoFachada.getObject(proceso);
         comunidadFachada.getObject(proceso.getComunidad());
         List<Factura> facturas = facturaFachada.getListObject(proceso);
@@ -507,9 +519,9 @@ public class GestionFacturaControlador extends HttpServlet {
         ServicioDeEnvioMail servicioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
         procesoFachada.updateObject(proceso);
         for (Factura factura : facturas) {
+            usuarioFachada.getObject(factura.getUsuario());
             log.setDescripcion("Mail enviado, al correo " + factura.getUsuario().getCorreo());
             logProcesoFachada.insertObject(log);
-            usuarioFachada.getObject(factura.getUsuario());
             List<Movimiento> movimientos = movimientoFachada.getListObject(factura);
             Comunidad comunidad = proceso.getComunidad();
             Map<String, Object> parametros = new HashMap();
@@ -607,6 +619,97 @@ public class GestionFacturaControlador extends HttpServlet {
         }
         PrintWriter out = response.getWriter();
         out.print(array);
+    }
+
+    private void cargarMisFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada facturaFachada = new FacturaFachada();
+        HttpSession session = request.getSession();
+        Usuario user = (Usuario) session.getAttribute("user");
+        List<Factura> facturas = facturaFachada.getListByCondition(user);
+        JSONArray arrayJSON = new JSONArray();
+        for (Factura fac : facturas) {
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", fac.getCodigo());
+            obj.put("numFactura", fac.getNumFactura());
+            arrayJSON.add(obj);
+        }
+        PrintWriter out = response.getWriter();
+        out.print(arrayJSON);
+    }
+
+    private void visualizaFactura(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession sesion = request.getSession();
+        Usuario user = (Usuario) sesion.getAttribute("user");
+        Comunidad comunidad = user.getPerfilCodigo().getComunidad();
+        Factura factura = new Factura(Integer.parseInt(request.getParameter("codigoFactura")));
+        GestionFachada facturaFachada = new FacturaFachada();
+        GestionFachada movimientoFachada = new MovimientoFachada();
+        GestionFachada comunidadFachada = new ComunidadFachada();
+        GestionFachada procesoFachada = new ProcesoFachada();
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        Estructura estructura = new Estructura();
+        comunidadFachada.getObject(comunidad);
+        facturaFachada.getObject(factura);
+        procesoFachada.getObject(factura.getProceso());
+        List<Movimiento> movimientos = movimientoFachada.getListObject(factura);
+        Map<String, Object> parametros = new HashMap();
+        parametros = new HashMap<>();
+        List datos_Factura = new ArrayList();
+        List datos_Cliente = new ArrayList();
+        double total = 0;
+        Date fechaVencimiento = null;
+        for (Movimiento m : movimientos) {
+            DatosJasper datos = new DatosJasper(m.getDetalle(), "$" + m.getValor());
+            total += m.getValor();
+            datos_Factura.add(datos);
+            if (fechaVencimiento == null || fechaVencimiento.after(m.getFechaVencimiento())) {
+                fechaVencimiento = m.getFechaVencimiento();
+            }
+        }
+        datos_Factura.add(new DatosJasper("TOTAL", "$" + total));
+        datos_Cliente.add(new DatosJasper("Nombres del cliente", user.getNombres() + " " + user.getApellidos()));
+        datos_Cliente.add(new DatosJasper("Documento", String.valueOf(user.getCodigoDocumento())));
+        datos_Cliente.add(new DatosJasper("Correo", user.getCorreo()));
+        parametros.put("imagen_comunidad", LecturaConfig.getValue("rutaImg") + "logo/" + comunidad.getCodigo() + ".png");
+        parametros.put("nombre_comunidad", comunidad.getNombre());
+        parametros.put("nit_comunidad", comunidad.getNit());
+        parametros.put("direccion_comunidad", comunidad.getDireccion());
+        parametros.put("telefono_comunidad", comunidad.getTelefono());
+        estructura.setReferencia("tituloFactura");
+        estructuraFachada.getObject(estructura);
+        parametros.put("nombre_factura", estructura.getValor());
+        parametros.put("numero_factura", factura.getNumFactura());
+        parametros.put("datos_cliente", datos_Cliente);
+        parametros.put("datos_factura", datos_Factura);
+        estructura = new Estructura();
+        estructura.setReferencia("resolucionDian");
+        estructuraFachada.getObject(estructura);
+        parametros.put("datos_dian", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("datosLegales");
+        estructuraFachada.getObject(estructura);
+        parametros.put("datos_legal", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("imgPSE");
+        estructuraFachada.getObject(estructura);
+        parametros.put("imagen_pse", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("datosPSE");
+        estructuraFachada.getObject(estructura);
+        parametros.put("datos_pse", estructura.getValor());
+        estructura = new Estructura();
+        estructura.setReferencia("enlacePSE");
+        estructuraFachada.getObject(estructura);
+        parametros.put("enlace_pse", estructura.getValor());
+        String valor415 = agregarCero(comunidad.getIdBarCode(), 13);
+        String valor8020 = String.valueOf(user.getCodigoDocumento());
+        valor8020 = agregarCero(valor8020, 12);
+        String valor3900 = String.valueOf((int) total);
+        valor3900 = agregarCero(valor3900, 10);
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        parametros.put("codigo_barras", "415" + valor415 + "8020" + valor8020 + "3900" + valor3900 + "96" + format.format(fechaVencimiento));
+        PrintWriter out = response.getWriter();
+        out.print(Utilitaria.generaPDFB64(factura.getProceso().getPlantillaXComunidad().getPlantilla().getCodigo() + ".jasper", parametros));
     }
 
 }

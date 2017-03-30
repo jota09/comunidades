@@ -43,7 +43,7 @@ public class ProcesoDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "Select pro.fecha_inicio,pro.fecha_fin,pro.comunidad_codigo,pro.evento_proceso_codigo,"
                     + "pro.usuario_responsable,pro.plantilla_x_comunidad_codigo,pxc.plantilla_pdf_codigo from proceso pro join plantilla_x_comunidad pxc"
-                    + " on pxc.codigo=pro.plantilla_x_comunidad_codigo where pro.codigo=? and pxc.activo=1";
+                    + " on pxc.codigo=pro.plantilla_x_comunidad_codigo where pro.codigo=? "+((proceso.getActivo()==1)?"and pxc.activo=1":"");
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, proceso.getCodigo());
             ResultSet rS = pS.executeQuery();

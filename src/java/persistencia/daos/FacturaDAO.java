@@ -32,7 +32,35 @@ public class FacturaDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Factura factura = (Factura) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select num_factura,proceso_codigo from factura  where codigo=?  ";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, factura.getCodigo());
+            System.out.println("Factura SQL:" + pS);
+            ResultSet rS = pS.executeQuery();
+
+            if (rS.next()) {
+                Proceso proceso = new Proceso();
+                factura.setNumFactura(rS.getString(1));
+                proceso.setCodigo(rS.getInt(2));
+                proceso.setActivo(0);
+                factura.setProceso(proceso);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FacturaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(FacturaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FacturaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return factura;
     }
 
     @Override
@@ -92,7 +120,37 @@ public class FacturaDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Usuario user = (Usuario) object;
+        Connection con = null;
+        List<Factura> facturas = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select fac.codigo,fac.num_factura from factura fac "
+                    + "join proceso pr on fac.proceso_codigo=pr.codigo "
+                    + "where fac.usuario_codigo=? and pr.comunidad_codigo=? and pr.evento_proceso_codigo=8";
+            PreparedStatement pS = con.prepareStatement(sql);
+
+            pS.setInt(1, user.getCodigo());
+            pS.setInt(2, user.getPerfilCodigo().getComunidad().getCodigo());
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Factura factura = new Factura();
+                factura.setCodigo(rS.getInt(1));
+                factura.setNumFactura(rS.getString(2));
+                facturas.add(factura);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FacturaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(FacturaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FacturaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return facturas;
     }
 
     @Override

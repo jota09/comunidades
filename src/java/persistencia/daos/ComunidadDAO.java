@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +38,7 @@ public class ComunidadDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, comunidad.getCodigo());
             ResultSet rS = pS.executeQuery();
-            if(rS.next()){
+            if (rS.next()) {
                 comunidad.setNombre(rS.getString(1));
                 comunidad.setDireccion(rS.getString(2));
                 comunidad.setTelefono(rS.getString(3));
@@ -52,9 +53,9 @@ public class ComunidadDAO implements GestionDAO {
             Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             ConexionBD.cerrarConexion(con);
-        }  
+        }
         return comunidad;
     }
 
@@ -65,7 +66,35 @@ public class ComunidadDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        List<Comunidad> comunidades = new ArrayList();
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select nombre,direccion,telefono,nit,id_barcode,codigo from comunidad ";
+            PreparedStatement pS = con.prepareStatement(sql);
+            ResultSet rS = pS.executeQuery();
+            while (rS.next()) {
+                Comunidad comunidad = new Comunidad();
+                comunidad.setCodigo(rS.getInt(6));
+                comunidad.setNombre(rS.getString(1));
+                comunidad.setDireccion(rS.getString(2));
+                comunidad.setTelefono(rS.getString(3));
+                comunidad.setNit(rS.getString(4));
+                comunidad.setIdBarCode(rS.getString(5));
+                comunidades.add(comunidad);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ComunidadDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return comunidades;
     }
 
     @Override

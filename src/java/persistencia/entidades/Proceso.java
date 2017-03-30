@@ -20,6 +20,7 @@ public class Proceso {
     private EventoProceso eventoProceso;
     private Usuario usuarioResponsable;
     private PlantillaXComunidad plantillaXComunidad;
+    private int activo;
 
     public Proceso() {
     }
@@ -28,7 +29,7 @@ public class Proceso {
         this.codigo = codigo;
     }
 
-    public Proceso(int codigo, Timestamp fechaInicio, Timestamp fechaFin, Comunidad comunidad, EventoProceso eventoProceso, Usuario usuarioResponsable, PlantillaXComunidad plantillaXComunidad) {
+    public Proceso(int codigo, Timestamp fechaInicio, Timestamp fechaFin, Comunidad comunidad, EventoProceso eventoProceso, Usuario usuarioResponsable, PlantillaXComunidad plantillaXComunidad,int activo) {
         this.codigo = codigo;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
@@ -36,6 +37,7 @@ public class Proceso {
         this.eventoProceso = eventoProceso;
         this.usuarioResponsable = usuarioResponsable;
         this.plantillaXComunidad = plantillaXComunidad;
+        this.activo=activo;
     }
 
     public int getCodigo() {
@@ -93,5 +95,14 @@ public class Proceso {
     public void setPlantillaXComunidad(PlantillaXComunidad plantillaXComunidad) {
         this.plantillaXComunidad = plantillaXComunidad;
     }
+
+    public int getActivo() {
+        return activo;
+    }
+
+    public void setActivo(int activo) {
+        this.activo = activo;
+    }
+    
 
 }

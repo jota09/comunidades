@@ -13,6 +13,7 @@ public class PlantillaXComunidad {
     private int codigo;
     private PlantillaPDF plantilla;
     private Comunidad comunidad;
+    private int activo;
 
     public PlantillaXComunidad() {
     }
@@ -50,5 +51,14 @@ public class PlantillaXComunidad {
     public void setComunidad(Comunidad comunidad) {
         this.comunidad = comunidad;
     }
+
+    public int getActivo() {
+        return activo;
+    }
+
+    public void setActivo(int activo) {
+        this.activo = activo;
+    }
+    
     
 }

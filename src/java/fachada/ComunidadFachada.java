@@ -5,7 +5,6 @@
  */
 package fachada;
 
-
 import java.util.List;
 import persistencia.daos.ComunidadDAO;
 import persistencia.daos.GestionDAO;
@@ -39,7 +38,8 @@ public class ComunidadFachada implements GestionFachada {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO comunidadDAO = new ComunidadDAO();
+       return  comunidadDAO.getListObject();
     }
 
     @Override
