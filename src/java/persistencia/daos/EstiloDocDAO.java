@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Jesus.Ramos
  */
-public class TipoDocumentoDocumentalDAO implements GestionDAO{
+public class EstiloDocDAO implements GestionDAO{
 
     @Override
     public int getCount(Object object) {

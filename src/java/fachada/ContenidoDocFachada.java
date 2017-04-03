@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package persistencia.daos;
+package fachada;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Jesus.Ramos
  */
-public class DocumentoBorradorDAO implements GestionDAO {
+public class ContenidoDocFachada implements GestionFachada{
 
     @Override
     public int getCount(Object object) {
@@ -20,6 +20,11 @@ public class DocumentoBorradorDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int insertObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -35,11 +40,6 @@ public class DocumentoBorradorDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int insertObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -64,7 +64,6 @@ public class ClasificadoControlador extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             if (request.getParameter("opc") != null) {
                 int opcion = Integer.parseInt(request.getParameter("opc"));
-                System.out.println(opcion);
                 switch (opcion) {
                     case 1:
                         recuperarCategorias(request, response);
