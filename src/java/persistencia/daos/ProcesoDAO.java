@@ -135,7 +135,7 @@ public class ProcesoDAO implements GestionDAO {
         int tam = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "update proceso set evento_proceso_codigo=? where codigo=?";
+            String sql = "update proceso set evento_proceso_codigo=?"+((proceso.getEventoProceso().getCodigo()==8 || proceso.getEventoProceso().getCodigo()==4)?",fecha_fin=now()":"")+" where codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, proceso.getEventoProceso().getCodigo());
             pS.setInt(2, proceso.getCodigo());

@@ -586,6 +586,7 @@ public class GestionFacturaControlador extends HttpServlet {
         logProcesoFachada.insertObject(log);
         evento.setCodigo(8);
         proceso.setEventoProceso(evento);
+        
         if (procesoFachada.updateObject(proceso) > 0) {
             sesion.setAttribute("message", Utilitaria.createAlert("Exito", "Se Enviaron Mail Correctamente", "success"));
         } else {
