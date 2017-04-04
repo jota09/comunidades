@@ -14,7 +14,8 @@ public class ComponenteDoc {
     private String nombre;
     private String referencia;
     private String html;
-    private DocumentoDoc documento;
+    private DocumentoDoc documento;    
+    private TipoDocumento tipoD;
     private ComponenteDoc componente;
     private EstadoCompDoc estado;
 
@@ -25,12 +26,13 @@ public class ComponenteDoc {
         this.id = id;
     }
 
-    public ComponenteDoc(int id, String nombre, String referencia, String html, DocumentoDoc documento, ComponenteDoc componente, EstadoCompDoc estado) {
+    public ComponenteDoc(int id, String nombre, String referencia, String html, DocumentoDoc documento, TipoDocumento tipoD, ComponenteDoc componente, EstadoCompDoc estado) {
         this.id = id;
         this.nombre = nombre;
         this.referencia = referencia;
         this.html = html;
         this.documento = documento;
+        this.tipoD = tipoD;
         this.componente = componente;
         this.estado = estado;
     }
@@ -91,9 +93,17 @@ public class ComponenteDoc {
         this.estado = estado;
     }
 
+    public TipoDocumento getTipoD() {
+        return tipoD;
+    }
+
+    public void setTipoD(TipoDocumento tipoD) {
+        this.tipoD = tipoD;
+    }
+
     @Override
     public String toString() {
-        return "ComponenteDoc{" + "id=" + id + ", nombre=" + nombre + ", referencia=" + referencia + ", html=" + html + ", documento=" + documento + ", componente=" + componente + ", estado=" + estado + '}';
+        return "ComponenteDoc{" + "id=" + id + ", nombre=" + nombre + ", referencia=" + referencia + ", html=" + html + ", documento=" + documento + ", tipoD=" + tipoD + ", componente=" + componente + ", estado=" + estado + '}';
     }
     
 }
