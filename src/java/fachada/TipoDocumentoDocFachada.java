@@ -13,7 +13,7 @@ import persistencia.daos.TipoDocumentoDocDAO;
  *
  * @author Jesus.Ramos
  */
-public class TipoDocumentoDocFachada implements GestionFachada{
+public class TipoDocumentoDocFachada implements GestionFachada {
 
     @Override
     public int getCount(Object object) {
@@ -23,7 +23,7 @@ public class TipoDocumentoDocFachada implements GestionFachada{
 
     @Override
     public Object getObject(Object object) {
-        GestionDAO tdd= new TipoDocumentoDocDAO();
+        GestionDAO tdd = new TipoDocumentoDocDAO();
         return tdd.getObject(object);
     }
 
@@ -34,7 +34,8 @@ public class TipoDocumentoDocFachada implements GestionFachada{
 
     @Override
     public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO tdd = new TipoDocumentoDocDAO();
+        return tdd.getListObject(object);
     }
 
     @Override
@@ -61,5 +62,5 @@ public class TipoDocumentoDocFachada implements GestionFachada{
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

@@ -16,7 +16,6 @@ public class DocumentoDoc {
     private String version;
     private Date publicado;
     private TipoDocumento tipoD;
-    private Comunidad comunidad;
     private Usuario user;
     private EstadoDoc estado;
     private EstiloDoc estilo;
@@ -28,12 +27,11 @@ public class DocumentoDoc {
         this.id = id;
     }
 
-    public DocumentoDoc(int id, String version, Date publicado, TipoDocumento tipoD, Comunidad comunidad, Usuario user, EstadoDoc estado, EstiloDoc estilo) {
+    public DocumentoDoc(int id, String version, Date publicado, TipoDocumento tipoD, Usuario user, EstadoDoc estado, EstiloDoc estilo) {
         this.id = id;
         this.version = version;
         this.publicado = publicado;
         this.tipoD = tipoD;
-        this.comunidad = comunidad;
         this.user = user;
         this.estado = estado;
         this.estilo = estilo;
@@ -71,14 +69,6 @@ public class DocumentoDoc {
         this.tipoD = tipoD;
     }
 
-    public Comunidad getComunidad() {
-        return comunidad;
-    }
-
-    public void setComunidad(Comunidad comunidad) {
-        this.comunidad = comunidad;
-    }
-
     public Usuario getUser() {
         return user;
     }
@@ -105,7 +95,7 @@ public class DocumentoDoc {
 
     @Override
     public String toString() {
-        return "DocumentoDoc{" + "id=" + id + ", version=" + version + ", publicado=" + publicado + ", tipoD=" + tipoD + ", comunidad=" + comunidad + ", user=" + user + ", estado=" + estado + ", estilo=" + estilo + '}';
+        return "DocumentoDoc{" + "id=" + id + ", version=" + version + ", publicado=" + publicado + ", tipoD=" + tipoD + ", user=" + user + ", estado=" + estado + ", estilo=" + estilo + '}';
     }
     
 }
