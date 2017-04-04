@@ -9,28 +9,28 @@ package persistencia.entidades;
  *
  * @author Jesus.Ramos
  */
-public class TipoDocumentoDocumental {
-    private int codigo;
+public class EstadoCompDoc {
+    private int id;
     private String nombre;
 
-    public TipoDocumentoDocumental() {
+    public EstadoCompDoc() {
     }
 
-    public TipoDocumentoDocumental(int codigo) {
-        this.codigo = codigo;
+    public EstadoCompDoc(int id) {
+        this.id = id;
     }
 
-    public TipoDocumentoDocumental(int codigo, String nombre) {
-        this.codigo = codigo;
+    public EstadoCompDoc(int id, String nombre) {
+        this.id = id;
         this.nombre = nombre;
     }
 
-    public int getCodigo() {
-        return codigo;
+    public int getId() {
+        return id;
     }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -43,7 +43,7 @@ public class TipoDocumentoDocumental {
 
     @Override
     public String toString() {
-        return "TipoDocumentoDocumental{" + "codigo=" + codigo + ", nombre=" + nombre + '}';
+        return "EstadoCompDoc{" + "id=" + id + ", nombre=" + nombre + '}';
     }
     
 }
