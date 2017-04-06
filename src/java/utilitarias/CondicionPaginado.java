@@ -14,31 +14,18 @@ import persistencia.entidades.Usuario;
  */
 public class CondicionPaginado {
 
-    private int tipo;
     private Usuario user;
     private Comunidad comunidad;
-    private String estado;
+    private String condicion;
 
     public CondicionPaginado() {
     }
 
-    public CondicionPaginado(int tipo) {
-        this.tipo = tipo;
-    }
+    public CondicionPaginado(int tipo, Usuario user, Comunidad comunidad, String condicion) {
 
-    public CondicionPaginado(int tipo, Usuario user, Comunidad comunidad, String estado) {
-        this.tipo = tipo;
         this.user = user;
         this.comunidad = comunidad;
-        this.estado = estado;
-    }
-
-    public int getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
+        this.condicion = condicion;
     }
 
     public Usuario getUser() {
@@ -57,12 +44,12 @@ public class CondicionPaginado {
         this.comunidad = comunidad;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getCondicion() {
+        return condicion;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setCondicion(String condicion) {
+        this.condicion = condicion;
     }
 
 }

@@ -5,13 +5,21 @@
  */
 package controladores;
 
+import fachada.ComunidadFachada;
+import fachada.GestionFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import persistencia.entidades.Comunidad;
 
 /**
  *
@@ -32,17 +40,18 @@ public class EstructuraDoController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet EstructuraDoController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet EstructuraDoController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        int op = Integer.parseInt(request.getParameter("op"));
+        try {
+            switch (op) {
+
+                case 1: {
+                    cargarComunidad(request, response);
+                    break;
+                }
+  
+            }
+        } catch (IOException ex) {
+           
         }
     }
 
@@ -85,4 +94,17 @@ public class EstructuraDoController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void cargarComunidad(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada comunidadFachada = new ComunidadFachada();
+        List<Comunidad> comunidades = comunidadFachada.getListObject();
+        JSONArray array = new JSONArray();
+        for (Comunidad comunidad : comunidades) {
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", comunidad.getCodigo());
+            obj.put("nombre", comunidad.getNombre());
+            array.add(obj);
+        }
+        PrintWriter out = response.getWriter();
+        out.print(array);
+    }
 }
