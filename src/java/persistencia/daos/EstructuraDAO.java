@@ -16,6 +16,7 @@ import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -72,12 +73,12 @@ public class EstructuraDAO implements GestionDAO {
     }
 
     @Override
-    public List getListObject(Object object) {
+    public List getListObject() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List getListObject() {
+    public List getListObject(Object object) {
         ArrayList<Estructura> listEstructura = new ArrayList<Estructura>();
         Connection con = null;
         try {
@@ -203,10 +204,11 @@ public class EstructuraDAO implements GestionDAO {
     @Override
     public int getCount(Object obj) {
         Connection con = null;
+        CondicionPaginado condicion = (CondicionPaginado) obj;
         int tamano = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select count(codigo) from estructura";
+            String sql = "Select count(codigo) from estructura " + condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
@@ -280,7 +282,7 @@ public class EstructuraDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        String condicion = String.valueOf(object);
+        CondicionPaginado condicion=(CondicionPaginado)object;
         ArrayList<Estructura> listEstructura = new ArrayList<Estructura>();
         Connection con = null;
         try {
@@ -326,12 +328,12 @@ public class EstructuraDAO implements GestionDAO {
 
     @Override
     public List getListByPagination(Object object) {
-        String limit = String.valueOf(object);
+        String condicion = String.valueOf(object);
         ArrayList<Estructura> listEstructura = new ArrayList<Estructura>();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT codigo,referencia,valor,descripcion FROM estructura limit " + limit;
+            String query = "SELECT codigo,referencia,valor,descripcion FROM estructura "+condicion;
             PreparedStatement pS = con.prepareStatement(query);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -26,7 +28,46 @@ public class ErrorDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CondicionPaginado condicion = (CondicionPaginado) object;
+        Connection con = null;
+        int cont = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+                        String sql = "Select count(er.codigo) from error er join tipo_error ter"
+                    + " on er.tipo_error_codigo=ter.codigo  " + condicion.getCondicion();
+            PreparedStatement pS = con.prepareStatement(sql);
+            System.out.println("Consulta getcount Error:" + pS);
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                cont = rS.getInt(1);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return cont;
     }
 
     @Override
@@ -35,18 +76,19 @@ public class ErrorDAO implements GestionDAO {
     }
 
     @Override
-    public List getListObject(Object object) {
+    public List getListObject() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List getListObject() {
+    public List getListObject(Object object) {
+        CondicionPaginado condicion = (CondicionPaginado) object;
         Connection con = null;
         List<Error> errores = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select er.codigo,er.clase,er.metodo,er.fecha,ter.codigo,ter.tipo,er.descripcion from error er join tipo_error ter"
-                    + " on er.tipo_error_codigo=ter.codigo order by fecha desc ";
+                    + " on er.tipo_error_codigo=ter.codigo  " + condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

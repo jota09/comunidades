@@ -38,7 +38,7 @@ public class ConstruyePaginacion extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String obj = request.getParameter("obj");
         String condicionesPag = request.getParameter("condicionesPag");
-        String busqueda=request.getParameter("busqueda");
+        String busqueda = request.getParameter("busqueda");
         int rango = Integer.parseInt(request.getParameter("rango"));
         try (PrintWriter out = response.getWriter()) {
             Class clase = Class.forName("fachada." + obj + "Fachada");
@@ -55,7 +55,9 @@ public class ConstruyePaginacion extends HttpServlet {
                 Usuario user = (Usuario) request.getSession().getAttribute("user");
                 condicion.setComunidad(user.getPerfilCodigo().getComunidad());
             }
+
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda));
+
             List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(condicion), rango);
             int cont = 1;
             if (paginas.size() > 0) {
