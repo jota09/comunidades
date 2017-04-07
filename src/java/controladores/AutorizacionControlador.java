@@ -135,6 +135,7 @@ public class AutorizacionControlador extends HttpServlet {
             condicionFachada.getObject(condicionPaginacion);
             CondicionPaginado condicion = new CondicionPaginado();
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
+            condicion.setUser(((Usuario) request.getSession().getAttribute("user")));
             condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             List<Autorizacion> listArticulo = autoFachada.getListByPagination(condicion);
             JSONArray jsonArray = new JSONArray();
