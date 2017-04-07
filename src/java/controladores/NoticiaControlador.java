@@ -282,6 +282,11 @@ public class NoticiaControlador extends HttpServlet {
             obj.put("estados_codigo", art.getEstado().getCodigo());
             obj.put("tipo_articulo_codigo", art.getTipoArticulo().getCodigo());
             obj.put("categoria_codigo", art.getCategoria().getCodigo());
+            if (art.getObservacionesAdmon() != null && !art.getObservacionesAdmon().isEmpty()) {
+                obj.put("observacionAdmin", art.getObservacionesAdmon());
+            } else {
+                obj.put("observacionAdmin", "Sin observacion");
+            }
             obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
             obj.put("Imagenes", jsArray);
             obj.put("Directorio", LecturaConfig.getValue("rutaVisualizaArticulo") + art.getCodigo() + "/");

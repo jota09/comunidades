@@ -14,6 +14,8 @@ public class ContenidoDoc {
     private String valor;
     private short activo;
     private ComponenteDoc componente;
+    private DocumentoDoc documento;
+    private Usuario user;
 
     public ContenidoDoc() {
     }
@@ -22,11 +24,13 @@ public class ContenidoDoc {
         this.id = id;
     }
 
-    public ContenidoDoc(int id, String valor, short activo, ComponenteDoc componente) {
+    public ContenidoDoc(int id, String valor, short activo, ComponenteDoc componente, DocumentoDoc documento, Usuario user) {
         this.id = id;
         this.valor = valor;
         this.activo = activo;
         this.componente = componente;
+        this.documento = documento;
+        this.user = user;
     }
 
     public int getId() {
@@ -61,9 +65,25 @@ public class ContenidoDoc {
         this.componente = componente;
     }
 
+    public DocumentoDoc getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(DocumentoDoc documento) {
+        this.documento = documento;
+    }
+
+    public Usuario getUser() {
+        return user;
+    }
+
+    public void setUser(Usuario user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
-        return "ContenidoDoc{" + "id=" + id + ", valor=" + valor + ", activo=" + activo + ", componente=" + componente + '}';
+        return "ContenidoDoc{" + "id=" + id + ", valor=" + valor + ", activo=" + activo + ", componente=" + componente + ", documento=" + documento + ", user=" + user + '}';
     }
 
 }

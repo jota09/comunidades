@@ -13,11 +13,9 @@ public class ComponenteDoc {
     private int id;
     private String nombre;
     private String referencia;
-    private String html;
-    private DocumentoDoc documento;    
-    private TipoDocumento tipoD;
     private ComponenteDoc componente;
-    private EstadoCompDoc estado;
+    private TipoDocumentoDoc tipoD;
+    private TipoCompDoc tipo;
 
     public ComponenteDoc() {
     }
@@ -26,15 +24,13 @@ public class ComponenteDoc {
         this.id = id;
     }
 
-    public ComponenteDoc(int id, String nombre, String referencia, String html, DocumentoDoc documento, TipoDocumento tipoD, ComponenteDoc componente, EstadoCompDoc estado) {
+    public ComponenteDoc(int id, String nombre, String referencia, TipoDocumentoDoc tipoD, ComponenteDoc componente, TipoCompDoc tipo) {
         this.id = id;
         this.nombre = nombre;
         this.referencia = referencia;
-        this.html = html;
-        this.documento = documento;
         this.tipoD = tipoD;
         this.componente = componente;
-        this.estado = estado;
+        this.tipo = tipo;
     }
 
     public int getId() {
@@ -61,20 +57,12 @@ public class ComponenteDoc {
         this.referencia = referencia;
     }
 
-    public String getHtml() {
-        return html;
+    public TipoDocumentoDoc getTipoD() {
+        return tipoD;
     }
 
-    public void setHtml(String html) {
-        this.html = html;
-    }
-
-    public DocumentoDoc getDocumento() {
-        return documento;
-    }
-
-    public void setDocumento(DocumentoDoc documento) {
-        this.documento = documento;
+    public void setTipoD(TipoDocumentoDoc tipoD) {
+        this.tipoD = tipoD;
     }
 
     public ComponenteDoc getComponente() {
@@ -85,25 +73,17 @@ public class ComponenteDoc {
         this.componente = componente;
     }
 
-    public EstadoCompDoc getEstado() {
-        return estado;
+    public TipoCompDoc getTipo() {
+        return tipo;
     }
 
-    public void setEstado(EstadoCompDoc estado) {
-        this.estado = estado;
-    }
-
-    public TipoDocumento getTipoD() {
-        return tipoD;
-    }
-
-    public void setTipoD(TipoDocumento tipoD) {
-        this.tipoD = tipoD;
+    public void setTipo(TipoCompDoc tipo) {
+        this.tipo = tipo;
     }
 
     @Override
     public String toString() {
-        return "ComponenteDoc{" + "id=" + id + ", nombre=" + nombre + ", referencia=" + referencia + ", html=" + html + ", documento=" + documento + ", tipoD=" + tipoD + ", componente=" + componente + ", estado=" + estado + '}';
+        return "ComponenteDoc{" + "id=" + id + ", nombre=" + nombre + ", referencia=" + referencia + ", tipoD=" + tipoD + ", componente=" + componente + ", tipo=" + tipo + '}';
     }
-    
+
 }

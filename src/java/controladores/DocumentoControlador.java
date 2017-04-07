@@ -5,6 +5,8 @@
  */
 package controladores;
 
+import fachada.ComponenteDocFachada;
+import fachada.DocumentoDocFachada;
 import fachada.GestionFachada;
 import fachada.TipoDocumentoDocFachada;
 import java.io.IOException;
@@ -20,6 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import persistencia.entidades.ComponenteDoc;
+import persistencia.entidades.DocumentoDoc;
+import persistencia.entidades.EstiloDoc;
 import persistencia.entidades.TipoDocumentoDoc;
 import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
@@ -51,6 +56,12 @@ public class DocumentoControlador extends HttpServlet {
                     case 1:
                         recuperaTipoDocumento(request, response);
                         break;
+                    case 2:
+                        recuperarComponentes(request,response);
+                        break;
+                    case 3:
+                        crearDocumento(request,response);
+                        break;
                 }
             }
             /* TODO output your page here. You may use following sample code. */
@@ -79,6 +90,37 @@ public class DocumentoControlador extends HttpServlet {
                 array.add(obj);
             }
             out.print(array);
+        }
+    }
+    
+    public void recuperarComponentes(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        try(PrintWriter out = response.getWriter()){
+            GestionFachada compFach = new ComponenteDocFachada();
+            ComponenteDoc comp = new ComponenteDoc();
+            comp.setTipoD(new TipoDocumentoDoc(Integer.parseInt(request.getParameter("tipo"))));
+            List<ComponenteDoc> listComp = compFach.getListObject(comp);
+            JSONArray array = new JSONArray();
+            for( ComponenteDoc comp2 : listComp){
+                JSONObject obj = new JSONObject();
+                obj.put("id",comp2.getId());
+                obj.put("nombre",comp2.getNombre());
+                obj.put("padre",comp2.getComponente().getId());
+                obj.put("tipo",comp2.getTipo().getId());
+                array.add(obj);
+            }
+            out.print(array);
+        }
+    }
+    
+    public void crearDocumento(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        try(PrintWriter out = response.getWriter()){
+            GestionFachada docFachada = new DocumentoDocFachada();
+            DocumentoDoc doc = new DocumentoDoc();
+            doc.setTipo(new TipoDocumentoDoc(Integer.parseInt(request.getParameter("tipo"))));
+            doc.setEstilo(new EstiloDoc(Integer.parseInt(request.getParameter("estilo"))));
+            doc.setUser((Usuario) request.getSession().getAttribute("user"));
+            docFachada.insertObject(doc);
+            out.print(doc.getId());
         }
     }
 

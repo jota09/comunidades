@@ -265,6 +265,7 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
             Categoria categ = new Categoria();
             categ.setCodigo(cat);
+            System.out.println(cat);
             art.setCategoria(categ);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date parsed = format.parse(request.getParameter("finPublicacion"));

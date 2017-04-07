@@ -6,6 +6,8 @@
 package fachada;
 
 import java.util.List;
+import persistencia.daos.DocumentoDocDAO;
+import persistencia.daos.GestionDAO;
 
 /**
  *
@@ -25,7 +27,8 @@ public class DocumentoDocFachada implements GestionFachada{
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO docDAO = new DocumentoDocDAO();
+        return docDAO.insertObject(object);
     }
 
     @Override
