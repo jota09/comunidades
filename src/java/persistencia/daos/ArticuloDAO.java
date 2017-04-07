@@ -124,6 +124,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
+            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
