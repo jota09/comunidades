@@ -7,7 +7,9 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.AutorizacionFachada;
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
+import fachada.GestionFachada;
 import fachada.MotivoAutorizacionFachada;
 import fachada.MultimediaAutorizacionFachada;
 import fachada.UsuarioFachada;
@@ -26,6 +28,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.Autorizacion;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.EstadoAutorizacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.MotivoAutorizacion;
@@ -33,6 +36,7 @@ import persistencia.entidades.Multimedia;
 import persistencia.entidades.MultimediaAutorizacion;
 import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 
@@ -124,9 +128,16 @@ public class AutorizacionControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             AutorizacionFachada autoFachada = new AutorizacionFachada();
             Autorizacion autorizacion = new Autorizacion();
-            autorizacion.setRango(request.getParameter("rango"));
-            autorizacion.setUsuarioCodigo((Usuario) request.getSession().getAttribute("user"));
-            autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            String rango = request.getParameter("rango");
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setUser((Usuario) request.getSession().getAttribute("user"));
+            condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
             List<Autorizacion> listArticulo = autoFachada.getListByPagination(autorizacion);
             JSONArray jsonArray = new JSONArray();
             for (Autorizacion auto : listArticulo) {
@@ -172,7 +183,7 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             AutorizacionFachada autoFachada = new AutorizacionFachada();
             if (codigo.equals("")) {
-                autoFachada.insertObject(auto);                
+                autoFachada.insertObject(auto);
             } else {
                 auto.setCodigo(Integer.parseInt(codigo));
                 autoFachada.updateObject(auto);
