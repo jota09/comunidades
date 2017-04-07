@@ -22,6 +22,7 @@ import persistencia.entidades.PlantillaXComunidad;
 import persistencia.entidades.Proceso;
 import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -32,7 +33,48 @@ public class ProcesoDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        CondicionPaginado condicion = (CondicionPaginado) object;
+        int tamano = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "select count(p.codigo) from proceso p "
+                    + "join evento_proceso ep on p.evento_proceso_codigo=ep.codigo join usuario usr "
+                    + "on p.usuario_responsable=usr.codigo where comunidad_codigo=? " + condicion.getCondicion();
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, condicion.getComunidad().getCodigo());
+            System.out.println("GetCount Proceso:" + pS);
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                tamano = rS.getInt(1);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return tamano;
     }
 
     @Override
@@ -43,7 +85,7 @@ public class ProcesoDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "Select pro.fecha_inicio,pro.fecha_fin,pro.comunidad_codigo,pro.evento_proceso_codigo,"
                     + "pro.usuario_responsable,pro.plantilla_x_comunidad_codigo,pxc.plantilla_pdf_codigo from proceso pro join plantilla_x_comunidad pxc"
-                    + " on pxc.codigo=pro.plantilla_x_comunidad_codigo where pro.codigo=? "+((proceso.getActivo()==1)?"and pxc.activo=1":"");
+                    + " on pxc.codigo=pro.plantilla_x_comunidad_codigo where pro.codigo=? " + ((proceso.getActivo() == 1) ? "and pxc.activo=1" : "");
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, proceso.getCodigo());
             ResultSet rS = pS.executeQuery();
@@ -82,16 +124,16 @@ public class ProcesoDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object object) {
-        Comunidad com = (Comunidad) object;
+        CondicionPaginado condicion = (CondicionPaginado) object;
         List<Proceso> procesos = new ArrayList();
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "select p.codigo,p.fecha_inicio,p.fecha_fin,p.evento_proceso_codigo,ep.nombre,p.usuario_responsable,usr.user_name from proceso p "
                     + "join evento_proceso ep on p.evento_proceso_codigo=ep.codigo join usuario usr "
-                    + "on p.usuario_responsable=usr.codigo where comunidad_codigo=?";
+                    + "on p.usuario_responsable=usr.codigo where comunidad_codigo=? "+condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, com.getCodigo());
+            pS.setInt(1, condicion.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Proceso pro = new Proceso();
@@ -135,7 +177,7 @@ public class ProcesoDAO implements GestionDAO {
         int tam = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "update proceso set evento_proceso_codigo=?"+((proceso.getEventoProceso().getCodigo()==8 || proceso.getEventoProceso().getCodigo()==4)?",fecha_fin=now()":"")+" where codigo=?";
+            String sql = "update proceso set evento_proceso_codigo=?" + ((proceso.getEventoProceso().getCodigo() == 8 || proceso.getEventoProceso().getCodigo() == 4) ? ",fecha_fin=now()" : "") + " where codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, proceso.getEventoProceso().getCodigo());
             pS.setInt(2, proceso.getCodigo());

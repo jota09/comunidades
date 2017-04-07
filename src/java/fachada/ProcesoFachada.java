@@ -17,7 +17,8 @@ public class ProcesoFachada implements GestionFachada {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO procesoDAO = new ProcesoDAO();
+        return procesoDAO.getCount(object);
     }
 
     @Override

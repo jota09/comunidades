@@ -5,6 +5,7 @@
  */
 package controladores;
 
+import fachada.CondicionPaginacionFachada;
 import fachada.ErrorFachada;
 import fachada.GestionFachada;
 import java.io.IOException;
@@ -17,8 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -58,9 +61,16 @@ public class GestionErroresControlador extends HttpServlet {
     }
 
     private void cargarErrores(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String rango = request.getParameter("rango");
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        CondicionPaginado condicion=new CondicionPaginado();
+        condicion.setCondicion( condicionPaginacion.getCondicion().replace("<?>", busqueda)+" limit " + rango);
         GestionFachada errorFachada = new ErrorFachada();
-        System.out.println("ErrorFachada");
-        List<Error> errores = errorFachada.getListObject();
+        List<Error> errores = errorFachada.getListObject(condicion);
         JSONArray array = new JSONArray();
         for (Error e : errores) {
             JSONObject obj = new JSONObject();

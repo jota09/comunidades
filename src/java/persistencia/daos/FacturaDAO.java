@@ -17,7 +17,10 @@ import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Factura;
 import persistencia.entidades.Proceso;
+import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
+import utilitarias.Utilitaria;
 
 /**
  *
@@ -27,7 +30,48 @@ public class FacturaDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CondicionPaginado condicion = (CondicionPaginado) object;
+        Connection con = null;
+        int cont = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+              String sql = "Select count(fac.codigo) from factura fac "
+                    + "join proceso pr on fac.proceso_codigo=pr.codigo "
+                    + "where fac.usuario_codigo=? and pr.comunidad_codigo=? "+condicion.getCondicion();
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1,condicion.getUser().getCodigo());
+            pS.setInt(2, condicion.getComunidad().getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                cont = rS.getInt(1);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return cont;
     }
 
     @Override
@@ -120,18 +164,17 @@ public class FacturaDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        Usuario user = (Usuario) object;
+        CondicionPaginado condicion = (CondicionPaginado) object;
         Connection con = null;
         List<Factura> facturas = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select fac.codigo,fac.num_factura from factura fac "
                     + "join proceso pr on fac.proceso_codigo=pr.codigo "
-                    + "where fac.usuario_codigo=? and pr.comunidad_codigo=? and pr.evento_proceso_codigo=8";
+                    + "where fac.usuario_codigo=? and pr.comunidad_codigo=? "+condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-
-            pS.setInt(1, user.getCodigo());
-            pS.setInt(2, user.getPerfilCodigo().getComunidad().getCodigo());
+            pS.setInt(1, condicion.getUser().getCodigo());
+            pS.setInt(2, condicion.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Factura factura = new Factura();

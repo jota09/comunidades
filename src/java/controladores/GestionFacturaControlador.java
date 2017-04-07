@@ -6,6 +6,7 @@
 package controladores;
 
 import fachada.ComunidadFachada;
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
 import fachada.FacturaFachada;
 import fachada.GestionFachada;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.EventoProceso;
 import persistencia.entidades.Factura;
@@ -45,6 +47,7 @@ import persistencia.entidades.PlantillaXComunidad;
 import persistencia.entidades.Proceso;
 import persistencia.entidades.TempCargueFacturacion;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 import utilitarias.DatosJasper;
 import utilitarias.EjecutaProcedimiento;
 import utilitarias.LecturaConfig;
@@ -170,11 +173,19 @@ public class GestionFacturaControlador extends HttpServlet {
     }// </editor-fold>
 
     private void getProcesos(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String rango = request.getParameter("rango");
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        CondicionPaginado condicion = new CondicionPaginado();
+        condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
         GestionFachada procesoFachada = new ProcesoFachada();
         HttpSession sesion = request.getSession();
         Usuario user = (Usuario) sesion.getAttribute("user");
-        Comunidad comunidad = user.getPerfilCodigo().getComunidad();
-        List<Proceso> procesos = procesoFachada.getListObject(comunidad);
+        condicion.setComunidad(user.getPerfilCodigo().getComunidad());
+        List<Proceso> procesos = procesoFachada.getListObject(condicion);
         JSONArray array = new JSONArray();
         for (Proceso p : procesos) {
             JSONObject obj = new JSONObject();
@@ -219,7 +230,7 @@ public class GestionFacturaControlador extends HttpServlet {
         List datos_Factura = new ArrayList();
         List datos_Cliente = new ArrayList();
         double total = 0;
-        
+
         Date fechaVencimiento = null;
         for (Movimiento m : movimientos) {
             DatosJasper datos = new DatosJasper(m.getDetalle(), "$" + m.getValor());
@@ -586,7 +597,7 @@ public class GestionFacturaControlador extends HttpServlet {
         logProcesoFachada.insertObject(log);
         evento.setCodigo(8);
         proceso.setEventoProceso(evento);
-        
+
         if (procesoFachada.updateObject(proceso) > 0) {
             sesion.setAttribute("message", Utilitaria.createAlert("Exito", "Se Enviaron Mail Correctamente", "success"));
         } else {
@@ -625,8 +636,18 @@ public class GestionFacturaControlador extends HttpServlet {
     private void cargarMisFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada facturaFachada = new FacturaFachada();
         HttpSession session = request.getSession();
+        String rango = request.getParameter("rango");
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        CondicionPaginado condicion = new CondicionPaginado();
+        condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
         Usuario user = (Usuario) session.getAttribute("user");
-        List<Factura> facturas = facturaFachada.getListByCondition(user);
+        condicion.setUser((Usuario) session.getAttribute("user"));
+        condicion.setComunidad(user.getPerfilCodigo().getComunidad());
+        List<Factura> facturas = facturaFachada.getListByCondition(condicion);
         JSONArray arrayJSON = new JSONArray();
         for (Factura fac : facturas) {
             JSONObject obj = new JSONObject();

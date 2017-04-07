@@ -5,6 +5,7 @@
  */
 package controladores;
 
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import java.io.IOException;
@@ -17,10 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 
 /**
  *
@@ -117,7 +120,13 @@ public class EstructuraControlador extends HttpServlet {
     private void getListEstructura(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada estructuraFachada = new EstructuraFachada();
         String rango = request.getParameter("rango");
-        List<Estructura> estructuras = estructuraFachada.getListByPagination(rango);
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        String condicion = condicionPaginacion.getCondicion().replace("<?>", busqueda) + " Limit " + rango;
+        List<Estructura> estructuras = estructuraFachada.getListByPagination(condicion);
         JSONArray array = new JSONArray();
         for (Estructura e : estructuras) {
             JSONObject object = new JSONObject();

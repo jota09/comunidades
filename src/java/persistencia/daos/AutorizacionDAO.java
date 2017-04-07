@@ -322,10 +322,15 @@ public class AutorizacionDAO implements GestionDAO {
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM autorizacion WHERE "+((condicionPaginado.getUser() != null) ? " usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and" : "")+" comunidad_codigo=? "
-                    + "" + ((condicionPaginado.getEstado() != null) ? " and estados_codigo=" + condicionPaginado.getEstado() : "") + " ";
+            String sql = "SELECT COUNT(auto.codigo) FROM autorizacion auto join usuario usr on auto.usuario_codigo=usr.codigo"
+                    + " join estado_autorizacion esauto on auto.estado_autorizacion_codigo=esauto.codigo join "
+                    + " motivo_autorizacion mauto on auto.motivo_autorizacion_codigo=mauto.codigo  WHERE "+((condicionPaginado.getUser() != null) ? " "
+                    + "auto.usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and" : "")+" auto.comunidad_codigo=? "
+                    +condicionPaginado.getCondicion() ;
             PreparedStatement pS = con.prepareStatement(sql);
+           
             pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
+             System.out.println("Imprimiendo getcount Autorizacion:"+pS);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);

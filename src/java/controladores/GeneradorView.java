@@ -1,6 +1,7 @@
 package controladores;
 
 import fachada.AtributoFachada;
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MenuFachada;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Atributo;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Menu;
 import persistencia.entidades.Perfil;
@@ -107,6 +109,17 @@ public class GeneradorView extends HttpServlet {
                 List<Menu> menus = menFac.getListObject(pf);
                 pagina = pagina.replace("<@menus@>", Utilitaria.construirMenu(menus));
 
+            }
+            if(pagina.contains("<@condicionPaginado@>")){
+                System.out.println("Vista:"+vista.getCodigo());
+                GestionFachada condicionesFachada=new CondicionPaginacionFachada();
+                String condicionesPaginacion="<div id='condicionesPaginacion'>";
+                List<CondicionPaginacion> condiciones=condicionesFachada.getListObject(vista);
+                for(CondicionPaginacion condicion:condiciones){
+                    condicionesPaginacion+="<input type='hidden' id='condicionesPag' value='"+condicion.getCodigo()+"' >";
+                }
+                condicionesPaginacion+="</div>";
+                pagina=pagina.replace("<@condicionPaginado@>", condicionesPaginacion);
             }
 
             if (pagina.contains("<@rangoPagina@>")) {
