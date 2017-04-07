@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import persistencia.entidades.Comunidad;
 import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
@@ -39,6 +40,7 @@ public class ConstruyePaginacion extends HttpServlet {
         String obj = request.getParameter("obj");
         String condicionesPag = request.getParameter("condicionesPag");
         String busqueda = request.getParameter("busqueda");
+        String codigoComunidad = request.getParameter("codComunidad");
         int rango = Integer.parseInt(request.getParameter("rango"));
         try (PrintWriter out = response.getWriter()) {
             Class clase = Class.forName("fachada." + obj + "Fachada");
@@ -53,11 +55,14 @@ public class ConstruyePaginacion extends HttpServlet {
             }
             if (condicionPaginacion.getActivaComunidad() == 1) {
                 Usuario user = (Usuario) request.getSession().getAttribute("user");
-                condicion.setComunidad(user.getPerfilCodigo().getComunidad());
-            }
-
+                if (codigoComunidad == null) {
+                    condicion.setComunidad(user.getPerfilCodigo().getComunidad());
+                } else {
+                    Comunidad comunidad = new Comunidad(Integer.parseInt(codigoComunidad));
+                    condicion.setComunidad(comunidad);
+                }
+            }     
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda));
-
             List<String> paginas = Utilitaria.getPaginacion(gestionFachada.getCount(condicion), rango);
             int cont = 1;
             if (paginas.size() > 0) {

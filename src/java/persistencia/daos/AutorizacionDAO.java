@@ -191,7 +191,7 @@ public class AutorizacionDAO implements GestionDAO {
                 String sql = "UPDATE autorizacion SET persona_ingresa=?, "
                         + " " + (!auto.getDocumentoPersonaIngresa().equals('0') ? "documento_persona_ingresa='" + auto.getDocumentoPersonaIngresa() + "'," : "") + ""
                         + " " + (!auto.getEmpresaContratista().equals("") ? "empresa_contratista='" + auto.getEmpresaContratista() + "'," : "") + ""
-                        + " " + (auto.getDescripcion() != null ? "descripcion='" + auto.getDescripcion()+ "'," : "descripcion=null,") + ""
+                        + " " + (auto.getDescripcion() != null ? "descripcion='" + auto.getDescripcion() + "'," : "descripcion=null,") + ""
                         + " estado_autorizacion_codigo=?,"
                         + " fecha_autorizacion=?,"
                         + " motivo_autorizacion_codigo=?"
@@ -324,13 +324,11 @@ public class AutorizacionDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT COUNT(auto.codigo) FROM autorizacion auto join usuario usr on auto.usuario_codigo=usr.codigo"
                     + " join estado_autorizacion esauto on auto.estado_autorizacion_codigo=esauto.codigo join "
-                    + " motivo_autorizacion mauto on auto.motivo_autorizacion_codigo=mauto.codigo  WHERE "+((condicionPaginado.getUser() != null) ? " "
-                    + "auto.usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and" : "")+" auto.comunidad_codigo=? "
-                    +condicionPaginado.getCondicion() ;
+                    + " motivo_autorizacion mauto on auto.motivo_autorizacion_codigo=mauto.codigo  WHERE " + ((condicionPaginado.getUser() != null) ? " "
+                            + "auto.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " auto.comunidad_codigo=? "
+                    + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-           
             pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
-             System.out.println("Imprimiendo getcount Autorizacion:"+pS);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -419,12 +417,12 @@ public class AutorizacionDAO implements GestionDAO {
                     + " JOIN usuario usr ON auto.usuario_codigo=usr.codigo"
                     + " JOIN comunidad c ON auto.comunidad_codigo=c.codigo"
                     + " JOIN inmueble i ON usr.codigo=i.usuario_codigo"
-                    + " WHERE "+ ((auto.getUsuarioCodigo()!= null) ? "usr.codigo=" + auto.getUsuarioCodigo().getCodigo()+" AND " : "") +"(auto.fecha_autorizacion LIKE ? OR usr.nombres LIKE ?"
+                    + " WHERE " + ((auto.getUsuarioCodigo() != null) ? "usr.codigo=" + auto.getUsuarioCodigo().getCodigo() + " AND " : "") + "(auto.fecha_autorizacion LIKE ? OR usr.nombres LIKE ?"
                     + " OR usr.apellidos LIKE ? OR auto.persona_ingresa LIKE ?"
                     + " OR auto.documento_persona_ingresa LIKE ?"
                     + " OR i.ubicacion LIKE ? OR e.nombre LIKE ? OR m.nombre LIKE ?)"
                     + " and auto.COMUNIDAD_CODIGO = ?"
-                    + " ORDER BY auto.fecha_autorizacion ASC "+ ((auto.getRango() != null) ? "LIMIT " + auto.getRango() + " " : "")+ "";
+                    + " ORDER BY auto.fecha_autorizacion ASC " + ((auto.getRango() != null) ? "LIMIT " + auto.getRango() + " " : "") + "";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setString(1, "%" + auto.getBusqueda() + "%");
             pS.setString(2, "%" + auto.getBusqueda() + "%");
@@ -491,28 +489,21 @@ public class AutorizacionDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         Connection con = null;
-        Autorizacion auto = (Autorizacion) object;
+        CondicionPaginado condicionPaginado = (CondicionPaginado) object;
         List<Autorizacion> autorizaciones = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-
             String sql = "SELECT auto.codigo,auto.usuario_codigo,auto.fecha_autorizacion,"
                     + " auto.fecha_real_ingreso,"
                     + " auto.persona_ingresa,auto.documento_persona_ingresa,auto.fecha_real_salida,"
                     + " auto.empresa_contratista, usr.nombres,usr.apellidos,i.codigo,i.ubicacion,"
-                    + " e.codigo,e.nombre,m.codigo,m.nombre  "
-                    + " FROM autorizacion auto "
-                    + " JOIN motivo_autorizacion m ON auto.motivo_autorizacion_codigo=m.codigo "
-                    + " JOIN estado_autorizacion e ON auto.estado_autorizacion_codigo=e.codigo "
-                    + " JOIN usuario usr ON auto.usuario_codigo=usr.codigo"
-                    + " JOIN comunidad c ON auto.comunidad_codigo=c.codigo"
-                    + " JOIN inmueble i ON usr.codigo=i.usuario_codigo"
-                    + " " + ((auto.getComunidadcodigo() != null || auto.getEstado() != null) ? " WHERE " : "") + "" + ((auto.getComunidadcodigo() != null) ? "auto.comunidad_codigo=" + auto.getComunidadcodigo().getCodigo() + " " : "") + " "
-                    + ((auto.getEstado() != null) ? " and e.codigo=" + auto.getEstado().getCodigo() + "" : "") + " "
-                    + ((auto.getUsuarioCodigo() != null) ? " and usr.codigo=" + auto.getUsuarioCodigo().getCodigo() + "" : "") + " "
-                    + "  ORDER BY auto.fecha_autorizacion ASC "
-                    + " Limit " + auto.getRango();
+                    + " esauto.codigo,esauto.nombre,mauto.codigo,mauto.nombre   FROM autorizacion auto join usuario usr on auto.usuario_codigo=usr.codigo"
+                    + " join estado_autorizacion esauto on auto.estado_autorizacion_codigo=esauto.codigo join "
+                    + " motivo_autorizacion mauto on auto.motivo_autorizacion_codigo=mauto.codigo join inmueble i on usr.codigo=i.usuario_codigo  WHERE " + ((condicionPaginado.getUser() != null) ? " "
+                            + "auto.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " auto.comunidad_codigo=? "
+                    + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Autorizacion autorizacion = new Autorizacion();
@@ -566,7 +557,7 @@ public class AutorizacionDAO implements GestionDAO {
         return autorizaciones;
     }
 
-    private synchronized int getMaxCodigo() {
+    private int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
         try {

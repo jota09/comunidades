@@ -5,6 +5,7 @@
  */
 package controladores;
 
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.RegistroFachada;
@@ -26,9 +27,11 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Registro;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 import utilitarias.LecturaConfig;
 import utilitarias.ServicioDeEnvioMail;
 import utilitarias.Utilitaria;
@@ -115,8 +118,17 @@ public class GestionUsuarioControlador extends HttpServlet {
     private void getUsuarios(HttpServletRequest request, HttpServletResponse response) throws IOException {
         JSONArray arrayUsuarios = new JSONArray();
         GestionFachada usuarioFachada = new UsuarioFachada();
+        String rango = request.getParameter("rango");
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        CondicionPaginado condicion=new CondicionPaginado();
         Usuario user = (Usuario) request.getSession().getAttribute("user");
-        List<Usuario> usuarios = usuarioFachada.getListObject(user.getPerfilCodigo().getComunidad());
+        condicion.setComunidad(user.getPerfilCodigo().getComunidad());
+        condicion.setCondicion( condicionPaginacion.getCondicion().replace("<?>", busqueda)+" limit " + rango);
+        List<Usuario> usuarios = usuarioFachada.getListObject(condicion);
         PrintWriter out = response.getWriter();
         for (Usuario u : usuarios) {
             JSONObject obj = new JSONObject();
@@ -178,8 +190,10 @@ public class GestionUsuarioControlador extends HttpServlet {
         GestionFachada usuarioFachada = new UsuarioFachada();
         Usuario user = new Usuario();
         user.setCorreo(correo);
+        CondicionPaginado condicion=new CondicionPaginado();
+        condicion.setUser(user);
         PrintWriter out = response.getWriter();
-        if (usuarioFachada.getCount(user) > 0) {
+        if (usuarioFachada.getCount(condicion) > 0) {
             out.print(1);
         } else {
             out.print(0);

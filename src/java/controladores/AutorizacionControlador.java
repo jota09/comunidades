@@ -7,7 +7,9 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.AutorizacionFachada;
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
+import fachada.GestionFachada;
 import fachada.MotivoAutorizacionFachada;
 import fachada.MultimediaAutorizacionFachada;
 import fachada.UsuarioFachada;
@@ -26,6 +28,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Articulo;
 import persistencia.entidades.Autorizacion;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.EstadoAutorizacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.MotivoAutorizacion;
@@ -33,6 +36,7 @@ import persistencia.entidades.Multimedia;
 import persistencia.entidades.MultimediaAutorizacion;
 import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 
@@ -172,7 +176,7 @@ public class AutorizacionControlador extends HttpServlet {
             auto.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             AutorizacionFachada autoFachada = new AutorizacionFachada();
             if (codigo.equals("")) {
-                autoFachada.insertObject(auto);                
+                autoFachada.insertObject(auto);
             } else {
                 auto.setCodigo(Integer.parseInt(codigo));
                 autoFachada.updateObject(auto);
@@ -209,19 +213,20 @@ public class AutorizacionControlador extends HttpServlet {
 
     private void tablaRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
-            EstructuraFachada estruFach = new EstructuraFachada();
-            Estructura estruc = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoInicial")));
-            Estructura estruc2 = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoFinaliza")));
-            Estructura estruc3 = ((Estructura) estruFach.getObject(new Estructura("autorizacionEstadoVencida")));
             AutorizacionFachada autoFachada = new AutorizacionFachada();
-            Autorizacion autorizacion = new Autorizacion();
-            autorizacion.setRango(request.getParameter("rango"));
-            autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
-            List<Autorizacion> listArticulo = autoFachada.getListByPagination(autorizacion);
+            String rango = request.getParameter("rango");
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
+            condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            List<Autorizacion> listArticulo = autoFachada.getListByPagination(condicion);
             JSONArray jsonArray = new JSONArray();
             for (Autorizacion auto : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
-                if (Integer.parseInt(estruc.getValor()) != auto.getEstado().getCodigo() && Integer.parseInt(estruc2.getValor()) != auto.getEstado().getCodigo() && Integer.parseInt(estruc3.getValor()) != auto.getEstado().getCodigo()) {
                     jsonObj.put("codigo", auto.getCodigo());
                     jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
                     jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
@@ -232,7 +237,6 @@ public class AutorizacionControlador extends HttpServlet {
                     jsonObj.put("estado", auto.getEstado().getNombre());
                     jsonObj.put("motivo", auto.getMotivo().getNombre());
                     jsonArray.add(jsonObj);
-                }
             }
             out.print(jsonArray);
         }

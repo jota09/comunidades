@@ -38,6 +38,7 @@ import persistencia.entidades.TipoDocumento;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.UsuarioPerfil;
 import utilitarias.Cifrar;
+import utilitarias.CondicionPaginado;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 
@@ -247,8 +248,10 @@ public class RegistroControlador extends HttpServlet {
         GestionFachada usuarioFachada = new UsuarioFachada();
         Usuario usuario = new Usuario();
         usuario.setCodigoDocumento(documento);
+        CondicionPaginado condicion=new CondicionPaginado();
+        condicion.setUser(usuario);
         PrintWriter out = response.getWriter();
-        out.print(usuarioFachada.getCount(usuario));
+        out.print(usuarioFachada.getCount(condicion));
 
     }
 
@@ -257,8 +260,10 @@ public class RegistroControlador extends HttpServlet {
         GestionFachada usuarioFachada = new UsuarioFachada();
         Usuario usuario = new Usuario();
         usuario.setUserName(userName);
+        CondicionPaginado condicion=new CondicionPaginado();
+        condicion.setUser(usuario);
         PrintWriter out = response.getWriter();
-        out.print(usuarioFachada.getCount(usuario));
+        out.print(usuarioFachada.getCount(condicion));
     }
 
 }

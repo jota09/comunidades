@@ -17,7 +17,8 @@ public class PlantillaXComunidadFachada implements GestionFachada {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO pxComunidadDAO = new PlantillaXComunidadDAO();
+        return pxComunidadDAO.getCount(object);
     }
 
     @Override

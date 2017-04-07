@@ -6,6 +6,7 @@
 package controladores;
 
 import fachada.ComunidadFachada;
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.PlantillaPDFFachada;
@@ -35,10 +36,12 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.PlantillaPDF;
 import persistencia.entidades.PlantillaXComunidad;
 import persistencia.entidades.Usuario;
+import utilitarias.CondicionPaginado;
 import utilitarias.DatosJasper;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
@@ -136,8 +139,17 @@ public class AdminPlantillasPDFControlador extends HttpServlet {
 
     private void cargarPlantillaXComunidad(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Comunidad comunidad = new Comunidad(Integer.parseInt(request.getParameter("codigoComunidad")));
+        String rango = request.getParameter("rango");
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        CondicionPaginado condicion = new CondicionPaginado();
+        condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
+        condicion.setComunidad(comunidad);
         GestionFachada pxcFachada = new PlantillaXComunidadFachada();
-        List<PlantillaXComunidad> plantillas = pxcFachada.getListByCondition(comunidad);
+        List<PlantillaXComunidad> plantillas = pxcFachada.getListByCondition(condicion);
         JSONArray array = new JSONArray();
         for (PlantillaXComunidad pxc : plantillas) {
             JSONObject obj = new JSONObject();
@@ -182,7 +194,7 @@ public class AdminPlantillasPDFControlador extends HttpServlet {
     private void visualizarPlantilla(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession sesion = request.getSession();
         Usuario user = (Usuario) sesion.getAttribute("user");
-         
+
         String codigoPlantilla = request.getParameter("codigoPlantilla");
         Comunidad comunidad = new Comunidad(Integer.parseInt(request.getParameter("comunidadCodigo")));
         GestionFachada comunidadFachada = new ComunidadFachada();
@@ -246,7 +258,7 @@ public class AdminPlantillasPDFControlador extends HttpServlet {
         parametros.put("codigo_barras", "415" + valor415 + "8020" + valor8020 + "3900" + valor3900 + "96" + format.format(fechaVencimiento));
         PrintWriter out = response.getWriter();
         out.print(Utilitaria.generaPDFB64(codigoPlantilla + ".jasper", parametros));
-        
+
     }
 
     private String agregarCero(String valor, int tamano) {
