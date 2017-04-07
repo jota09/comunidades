@@ -19,6 +19,7 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -86,7 +87,7 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public List getListObject(Object object) {
-        Comunidad comunidad = (Comunidad) object;
+        CondicionPaginado condicion = (CondicionPaginado) object;
         ArrayList<Usuario> listUsuario = new ArrayList();
         Connection con = null;
         try {
@@ -94,9 +95,9 @@ public class UsuarioDAO implements GestionDAO {
             String query = "SELECT usr.codigo,usr.codigo_documento,usr.nombres,"
                     + " usr.apellidos,usr.correo,usr.celular,usr.telefono,usr.user_name FROM usuario usr"
                     + " join usuario_perfil usrpf on usrpf.usuario_codigo=usr.codigo "
-                    + " join perfil pf on usrpf.perfil_codigo=pf.codigo WHERE usr.activo=1 and pf.comunidad_codigo=?";
+                    + " join perfil pf on usrpf.perfil_codigo=pf.codigo WHERE  pf.comunidad_codigo=? " + condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setInt(1, comunidad.getCodigo());
+            pS.setInt(1, condicion.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Usuario user = new Usuario();
@@ -229,23 +230,27 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public int getCount(Object obj) {
-        Usuario user = (Usuario) obj;
+        CondicionPaginado condicion = (CondicionPaginado) obj;
         Connection con = null;
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
             String sql;
             PreparedStatement pS;
-            if (user != null) {
+            if (condicion.getUser() != null) {
                 sql = "Select count(codigo) from usuario where correo=? or codigo_documento=? or user_name=?";
                 pS = con.prepareStatement(sql);
-                pS.setString(1, user.getCorreo());
-                pS.setInt(2, user.getCodigoDocumento());
-                pS.setString(3, user.getUserName());
+                pS.setString(1, condicion.getUser().getCorreo());
+                pS.setInt(2, condicion.getUser().getCodigoDocumento());
+                pS.setString(3, condicion.getUser().getUserName());
             } else {
-                sql = "Select count(codigo) from usuario";
+                sql = "SELECT count(usr.codigo) FROM usuario usr"
+                        + " join usuario_perfil usrpf on usrpf.usuario_codigo=usr.codigo "
+                        + " join perfil pf on usrpf.perfil_codigo=pf.codigo WHERE  pf.comunidad_codigo=? " + condicion.getCondicion();
                 pS = con.prepareStatement(sql);
+                pS.setInt(1, condicion.getComunidad().getCodigo());
             }
+            System.out.println("getCount Usuario:" + pS);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -283,13 +288,13 @@ public class UsuarioDAO implements GestionDAO {
                     + "    WHERE user.user_name LIKE ? AND perfil.comunidad_CODIGO = ?"
                     + "    LIMIT 10";
             PreparedStatement pS = con.prepareStatement(query);
-            pS.setString(1, "%"+user.getBusqueda()+"%");
+            pS.setString(1, "%" + user.getBusqueda() + "%");
             pS.setInt(2, user.getPerfilCodigo().getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Usuario usr = new Usuario();
                 usr.setCodigo(rS.getInt("codigo"));
-                usr.setUserName(rS.getString("user_name"));  
+                usr.setUserName(rS.getString("user_name"));
                 listUser.add(usr);
             }
             rS.close();

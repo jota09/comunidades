@@ -19,6 +19,7 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.PlantillaPDF;
 import persistencia.entidades.PlantillaXComunidad;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -29,7 +30,46 @@ public class PlantillaXComunidadDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CondicionPaginado condicionPaginado = (CondicionPaginado) object;
+        Connection con = null;
+        int cont = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select count(pxc.codigo) from plantilla_x_comunidad pxc "
+                    + " join plantilla_pdf pd on pxc.plantilla_pdf_codigo=pd.codigo where pxc.comunidad_codigo=? " + condicionPaginado.getCondicion();
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                cont = rS.getInt(1);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("getCount");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return cont;
     }
 
     @Override
@@ -110,9 +150,9 @@ public class PlantillaXComunidadDAO implements GestionDAO {
             PreparedStatement pS = con.prepareStatement(sql);
             plantilla.setCodigo(getMaxCodigo());
             pS.setInt(1, plantilla.getCodigo());
-            pS.setInt(2,plantilla.getPlantilla().getCodigo());
-            pS.setInt(3,plantilla.getComunidad().getCodigo());
-            pS.setInt(4,0);
+            pS.setInt(2, plantilla.getPlantilla().getCodigo());
+            pS.setInt(3, plantilla.getComunidad().getCodigo());
+            pS.setInt(4, 0);
             tam = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -134,15 +174,15 @@ public class PlantillaXComunidadDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        Comunidad comunidad = (Comunidad) object;
+        CondicionPaginado condicionPaginado = (CondicionPaginado) object;
         Connection con = null;
         List<PlantillaXComunidad> plantillas = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select pxc.codigo,pd.codigo,pd.nombre,pxc.activo from plantilla_x_comunidad pxc "
-                    + " join plantilla_pdf pd on pxc.plantilla_pdf_codigo=pd.codigo where pxc.comunidad_codigo=? order by pxc.codigo desc";
+                    + " join plantilla_pdf pd on pxc.plantilla_pdf_codigo=pd.codigo where pxc.comunidad_codigo=? " + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, comunidad.getCodigo());
+            pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 PlantillaXComunidad pxc = new PlantillaXComunidad();
@@ -167,7 +207,8 @@ public class PlantillaXComunidadDAO implements GestionDAO {
         }
         return plantillas;
     }
-        private int getMaxCodigo() {
+
+    private int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
         try {
