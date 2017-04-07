@@ -127,7 +127,6 @@ public class AutorizacionControlador extends HttpServlet {
     private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             AutorizacionFachada autoFachada = new AutorizacionFachada();
-            Autorizacion autorizacion = new Autorizacion();
             String rango = request.getParameter("rango");
             String condicionesPag = request.getParameter("condicionesPag");
             String busqueda = request.getParameter("busqueda");
@@ -135,25 +134,22 @@ public class AutorizacionControlador extends HttpServlet {
             CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
             condicionFachada.getObject(condicionPaginacion);
             CondicionPaginado condicion = new CondicionPaginado();
-            condicion.setUser((Usuario) request.getSession().getAttribute("user"));
-            condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
-            List<Autorizacion> listArticulo = autoFachada.getListByPagination(autorizacion);
+            condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            List<Autorizacion> listArticulo = autoFachada.getListByPagination(condicion);
             JSONArray jsonArray = new JSONArray();
             for (Autorizacion auto : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
-                if (((Usuario) request.getSession().getAttribute("user")).getCodigo() == auto.getUsuarioCodigo().getCodigo()) {
-                    jsonObj.put("codigo", auto.getCodigo());
-                    jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
-                    jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
-                    jsonObj.put("fecha_autorizacion", auto.getFechaautorizacion().toString());
-                    jsonObj.put("autoriza", auto.getUsuarioCodigo().getNombres() + " " + auto.getUsuarioCodigo().getApellidos());
-                    jsonObj.put("direccion", auto.getUsuarioCodigo().getInmueble().getUbicacion());
-                    jsonObj.put("codigo_estado", auto.getEstado().getCodigo());
-                    jsonObj.put("estado", auto.getEstado().getNombre());
-                    jsonObj.put("motivo", auto.getMotivo().getNombre());
-                    jsonArray.add(jsonObj);
-                }
+                jsonObj.put("codigo", auto.getCodigo());
+                jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
+                jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
+                jsonObj.put("fecha_autorizacion", auto.getFechaautorizacion().toString());
+                jsonObj.put("autoriza", auto.getUsuarioCodigo().getNombres() + " " + auto.getUsuarioCodigo().getApellidos());
+                jsonObj.put("direccion", auto.getUsuarioCodigo().getInmueble().getUbicacion());
+                jsonObj.put("codigo_estado", auto.getEstado().getCodigo());
+                jsonObj.put("estado", auto.getEstado().getNombre());
+                jsonObj.put("motivo", auto.getMotivo().getNombre());
+                jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
         }
@@ -234,16 +230,16 @@ public class AutorizacionControlador extends HttpServlet {
             JSONArray jsonArray = new JSONArray();
             for (Autorizacion auto : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("codigo", auto.getCodigo());
-                    jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
-                    jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
-                    jsonObj.put("fecha_autorizacion", auto.getFechaautorizacion().toString());
-                    jsonObj.put("autoriza", auto.getUsuarioCodigo().getNombres() + " " + auto.getUsuarioCodigo().getApellidos());
-                    jsonObj.put("direccion", auto.getUsuarioCodigo().getInmueble().getUbicacion());
-                    jsonObj.put("codigo_estado", auto.getEstado().getCodigo());
-                    jsonObj.put("estado", auto.getEstado().getNombre());
-                    jsonObj.put("motivo", auto.getMotivo().getNombre());
-                    jsonArray.add(jsonObj);
+                jsonObj.put("codigo", auto.getCodigo());
+                jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
+                jsonObj.put("documento_ingreso", auto.getDocumentoPersonaIngresa());
+                jsonObj.put("fecha_autorizacion", auto.getFechaautorizacion().toString());
+                jsonObj.put("autoriza", auto.getUsuarioCodigo().getNombres() + " " + auto.getUsuarioCodigo().getApellidos());
+                jsonObj.put("direccion", auto.getUsuarioCodigo().getInmueble().getUbicacion());
+                jsonObj.put("codigo_estado", auto.getEstado().getCodigo());
+                jsonObj.put("estado", auto.getEstado().getNombre());
+                jsonObj.put("motivo", auto.getMotivo().getNombre());
+                jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
         }
