@@ -9,19 +9,20 @@ package persistencia.entidades;
  *
  * @author Jesus.Ramos
  */
-public class EstiloDoc {
+public class TipoCompDoc {
     private int id;
     private String nombre;
-    private String style;
 
-    public EstiloDoc(int id) {
+    public TipoCompDoc() {
+    }
+
+    public TipoCompDoc(int id) {
         this.id = id;
     }
 
-    public EstiloDoc(int id, String nombre, String style) {
+    public TipoCompDoc(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
-        this.style = style;
     }
 
     public int getId() {
@@ -30,14 +31,6 @@ public class EstiloDoc {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getStyle() {
-        return style;
-    }
-
-    public void setStyle(String style) {
-        this.style = style;
     }
 
     public String getNombre() {
@@ -50,7 +43,7 @@ public class EstiloDoc {
 
     @Override
     public String toString() {
-        return "EstiloDoc{" + "id=" + id + ", nombre=" + nombre + ", style=" + style + '}';
+        return "TipoCompDoc{" + "id=" + id + ", nombre=" + nombre + '}';
     }
     
 }

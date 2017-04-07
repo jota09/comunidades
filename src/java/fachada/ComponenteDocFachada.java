@@ -6,6 +6,8 @@
 package fachada;
 
 import java.util.List;
+import persistencia.daos.ComponenteDocDAO;
+import persistencia.daos.GestionDAO;
 
 /**
  *
@@ -30,7 +32,8 @@ public class ComponenteDocFachada implements GestionFachada{
 
     @Override
     public List getListObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO compDAO = new ComponenteDocDAO();
+        return compDAO.getListObject(object);
     }
 
     @Override
