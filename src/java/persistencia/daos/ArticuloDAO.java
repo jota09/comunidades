@@ -70,10 +70,10 @@ public class ArticuloDAO implements GestionDAO {
                 art.setPrecio(rS.getDouble("art.precio"));
                 art.setPrioridad(new Prioridad(rS.getInt("p.codigo"), rS.getString("p.nombre"), rS.getInt("p.valor")));
                 art.setVisibilidad(new Visibilidad(rS.getShort("visibilidad")));
-                Comunidad comunidad = new Comunidad(rS.getInt("c.CODIGO"),rS.getString("c.nombre"),rS.getString("c.nit"),rS.getString("c.id_barcode"));
-                comunidad.setCiudadCodigo(new Ciudad(rS.getInt("ciu.codigo"),rS.getString("ciu.nombre")));
-                comunidad.setPaisCodigo(new Pais(rS.getInt("pais.codigo"),rS.getString("pais.nombre")));
-                comunidad.setDepartamentoCodigo(new Departamento(rS.getInt("d.codigo"),rS.getString("d.nombre")));
+                Comunidad comunidad = new Comunidad(rS.getInt("c.CODIGO"), rS.getString("c.nombre"), rS.getString("c.nit"), rS.getString("c.id_barcode"));
+                comunidad.setCiudadCodigo(new Ciudad(rS.getInt("ciu.codigo"), rS.getString("ciu.nombre")));
+                comunidad.setPaisCodigo(new Pais(rS.getInt("pais.codigo"), rS.getString("pais.nombre")));
+                comunidad.setDepartamentoCodigo(new Departamento(rS.getInt("d.codigo"), rS.getString("d.nombre")));
                 art.setComunidad(comunidad);
             }
             pS.close();
@@ -119,7 +119,7 @@ public class ArticuloDAO implements GestionDAO {
                     + " " + ((art.getEstado() != null) ? " AND art.ESTADOS_CODIGO = " + art.getEstado().getCodigo() : "")
                     + " " + ((art.getVisibilidad() != null) ? " AND art.VISIBILIDAD=" + art.getVisibilidad().getVisibilidad() : "")
                     + " " + ((art.getComunidad() != null && art.getComunidad().getCodigo() != anonimo) ? "AND art.COMUNIDAD_CODIGO=" + art.getComunidad().getCodigo() : "")
-                    + " " + ((art.getComunidad().getVisibilidad() != null) ? "AND c.VISIBILIDAD=" + art.getComunidad().getVisibilidad().getVisibilidad(): "")
+                    + " " + ((art.getComunidad().getVisibilidad() != null) ? "AND c.VISIBILIDAD=" + art.getComunidad().getVisibilidad().getVisibilidad() : "")
                     + " ORDER BY art.FECHA_PUBLICACION DESC "
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
@@ -295,10 +295,16 @@ public class ArticuloDAO implements GestionDAO {
         int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT COUNT('codigo') FROM articulo WHERE  "+((condicionPaginado.getUser() != null) ? "usuario_codigo=" + condicionPaginado.getUser().getCodigo()+" and " : " and ")+"  comunidad_codigo=? "
-                    +condicionPaginado.getCondicion();
+            String sql = "SELECT COUNT(art.codigo) FROM articulo AS art "
+                    + "     JOIN articulo_estado artEstado ON art.estados_codigo=artEstado.codigo"
+                    + "     JOIN usuario usr ON art.usuario_codigo=usr.codigo"
+                    + "     JOIN categoria cat ON art.categoria_codigo=cat.codigo "
+                    + " WHERE " + ((condicionPaginado.getUser() != null) ? " "
+                    + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " " + ((condicionPaginado.getComunidad()!= null) ? " "
+                    + " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo() : "")
+                    + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(2, condicionPaginado.getComunidad().getCodigo());
+            System.out.println("sql de conteo: "+sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -383,10 +389,10 @@ public class ArticuloDAO implements GestionDAO {
                     + "    usuario usr ON  art.usuario_codigo=usr.codigo JOIN "
                     + "    categoria cat ON art.categoria_codigo=cat.codigo JOIN "
                     + "    articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
-                    + "    WHERE art.tipo_articulo_codigo=? " + ( (articulo.getUsuario() != null) ? "AND art.usuario_codigo="+articulo.getUsuario().getCodigo() : "" )
+                    + "    WHERE art.tipo_articulo_codigo=? " + ((articulo.getUsuario() != null) ? "AND art.usuario_codigo=" + articulo.getUsuario().getCodigo() : "")
                     + "    " + ((articulo.getCategoria() != null) ? " AND art.categoria_codigo=" + articulo.getCategoria().getCodigo() + " AND" : "AND ")
                     + "    (art.titulo LIKE ?"
-                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_fin_publicacion LIKE ? OR cat.nombre LIKE ?) and art.COMUNIDAD_CODIGO = ? "+ ((articulo.getRango() != null) ? "LIMIT " + articulo.getRango() + " " : "")+ "";
+                    + "    OR usr.nombres LIKE ? OR usr.apellidos LIKE ? OR artEstado.nombre LIKE ? OR art.fecha_fin_publicacion LIKE ? OR cat.nombre LIKE ?) and art.COMUNIDAD_CODIGO = ? " + ((articulo.getRango() != null) ? "LIMIT " + articulo.getRango() + " " : "") + "";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, articulo.getTipoArticulo().getCodigo());
             pS.setString(2, "%" + articulo.getBusqueda() + "%");
@@ -450,13 +456,10 @@ public class ArticuloDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         Connection con = null;
-        Articulo art = (Articulo) object;
-        EstructuraFachada estrucFachada = new EstructuraFachada();
-        int anonimo = Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("comunidadAnonima"))).getValor());
+        CondicionPaginado condicionPaginado = (CondicionPaginado) object;
         List<Articulo> articulos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-
             String sql = "SELECT art.codigo,art.titulo,art.descripcion,art.fecha_publicacion,"
                     + "         art.fecha_fin_publicacion,cat.codigo,cat.nombre,artEstado.codigo,"
                     + "         artEstado.nombre,art.precio,usr.codigo,usr.nombres,usr.apellidos  "
@@ -465,16 +468,11 @@ public class ArticuloDAO implements GestionDAO {
                     + "         JOIN articulo_estado artEstado ON art.estados_codigo=artEstado.codigo "
                     + "         JOIN usuario usr ON art.usuario_codigo=usr.codigo"
                     + "         JOIN comunidad c ON art.comunidad_codigo=c.codigo"
-                    + "   WHERE " + ((art.getEstado() != null) ? "art.estados_codigo=" + art.getEstado().getCodigo() + " and " : "") + " "
-                    + "         art.tipo_articulo_codigo=? " + ((art.getComunidad() != null && art.getComunidad().getCodigo() != anonimo) ? "and art.comunidad_codigo=" + art.getComunidad().getCodigo() : "")
-                    + ((art.getVisibilidad() != null) ? " and art.visibilidad=" + art.getVisibilidad().getVisibilidad() + " " : "") + ""
-                    + " " + ((art.getBusqueda() != null && !art.getBusqueda().isEmpty()) ? " and "
-                    + art.getBusqueda() : "") + ((art.getUsuario() != null) ? " and art.usuario_codigo=" + art.getUsuario().getCodigo() : "")
-                    + " " + ((art.getComunidad().getVisibilidad() != null) ? "AND c.visibilidad=" + art.getComunidad().getVisibilidad().getVisibilidad(): "")
-                    + ((art.getInicio() == true) ? " and art.fecha_fin_publicacion >= CURDATE() " : "") + " ORDER BY art.fecha_publicacion DESC"
-                    + " Limit " + art.getRango();
+                    + "  WHERE " + ((condicionPaginado.getUser() != null) ? " "
+                    + "art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " art.comunidad_codigo=? " + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, art.getTipoArticulo().getCodigo());
+            pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
+            System.out.println("Sql de traer list: "+sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo articulo = new Articulo();
@@ -528,7 +526,7 @@ public class ArticuloDAO implements GestionDAO {
         return articulos;
     }
 
-    private  int getMaxCodigo() {
+    private int getMaxCodigo() {
         Connection con = null;
         int cont = 1;
         try {

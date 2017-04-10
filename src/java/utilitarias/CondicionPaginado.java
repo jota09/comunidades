@@ -52,4 +52,9 @@ public class CondicionPaginado {
         this.condicion = condicion;
     }
 
+    @Override
+    public String toString() {
+        return "CondicionPaginado{" + "user=" + user + ", comunidad=" + comunidad + ", condicion=" + condicion + '}';
+    }
+
 }

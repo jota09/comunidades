@@ -7,6 +7,7 @@ package controladores;
 
 import fachada.ArticuloFachada;
 import fachada.CategoriaFachada;
+import fachada.CondicionPaginacionFachada;
 import fachada.EstructuraFachada;
 import fachada.GestionFachada;
 import fachada.MultimediaFachada;
@@ -32,6 +33,7 @@ import persistencia.entidades.TipoArticulo;
 import persistencia.entidades.Usuario;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Multimedia;
 import persistencia.entidades.Prioridad;
@@ -39,6 +41,7 @@ import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Visibilidad;
 
 /**
@@ -162,43 +165,32 @@ public class NoticiaControlador extends HttpServlet {
     private void tablaRegistros(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
-            GestionFachada estFach = new EstructuraFachada();
-            TipoArticulo tipArt = new TipoArticulo();
-            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
-            Articulo articulo = new Articulo();
-            articulo.setTipoArticulo(tipArt);
-            articulo.setRango(request.getParameter("rango"));
-            Usuario user = (Usuario) request.getSession().getAttribute("user");
-            articulo.setUsuario(user);
-            articulo.setComunidad(user.getPerfilCodigo().getComunidad());
-            if (request.getParameter("cat") != null) {
-                if (!request.getParameter("cat").equals("")) {
-                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
-                }
-            }
-            if (request.getParameter("buscar") != null) {
-                articulo.setBusqueda(request.getParameter("buscar"));
-            }
-            List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
+            String rango = request.getParameter("rango");
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
+            condicion.setUser(((Usuario) request.getSession().getAttribute("user")));
+            condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            List<Articulo> listArticulo = artFachada.getListByPagination(condicion);
             JSONArray jsonArray = new JSONArray();
             for (Articulo art : listArticulo) {
                 JSONObject jsonObj = new JSONObject();
-                if (user.getCodigo() == art.getUsuario().getCodigo()) {
-                    jsonObj.put("codigo", art.getCodigo());
-                    jsonObj.put("titulo", art.getTitulo());
-                    jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
-                    jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
-                    jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                    jsonObj.put("nombreEstado", art.getEstado().getNombre());
-                    jsonObj.put("codigoEstado", art.getEstado().getCodigo());
-                    jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
-                    if (art.getFechaPublicacion() == null || art.getFechaPublicacion().toString().equals("")) {
-                        jsonObj.put("fechaPublicacion", 0);
-                    } else {
-                        jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
-                    }
-                    jsonArray.add(jsonObj);
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo", art.getTitulo());
+                jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado", art.getEstado().getNombre());
+                jsonObj.put("codigoEstado", art.getEstado().getCodigo());
+                jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                if (art.getFechaPublicacion() == null || art.getFechaPublicacion().toString().equals("")) {
+                    jsonObj.put("fechaPublicacion", 0);
+                } else {
+                    jsonObj.put("fechaPublicacion", art.getFechaPublicacion().toString());
                 }
+                jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
         }
@@ -589,36 +581,27 @@ public class NoticiaControlador extends HttpServlet {
     private void tablaRegistrosAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             ArticuloFachada artFachada = new ArticuloFachada();
-            GestionFachada estFach = new EstructuraFachada();
-            TipoArticulo tipArt = new TipoArticulo();
-            tipArt.setCodigo(Integer.parseInt(request.getParameter("tipo")));
-            Articulo articulo = new Articulo();
-            articulo.setTipoArticulo(tipArt);
-            articulo.setRango(request.getParameter("rango"));
-            articulo.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
-            articulo.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estFach.getObject(new Estructura("articuloEstadoInicial"))).getValor())));
-            if (request.getParameter("cat") != null) {
-                if (!request.getParameter("cat").equals("")) {
-                    articulo.setCategoria(new Categoria(Integer.parseInt(request.getParameter("cat"))));
-                }
-            }
-            if (request.getParameter("buscar") != null) {
-                articulo.setBusqueda(request.getParameter("buscar"));
-            }
-            List<Articulo> listArticulo = artFachada.getListByPagination(articulo);
+            String rango = request.getParameter("rango");
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
+            condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            List<Articulo> listArticulo = artFachada.getListByPagination(condicion);
             JSONArray jsonArray = new JSONArray();
             for (Articulo art : listArticulo) {
-                if (art.getFechaPublicacion() == null) {
-                    JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("codigo", art.getCodigo());
-                    jsonObj.put("titulo", art.getTitulo());
-                    jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
-                    jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
-                    jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
-                    jsonObj.put("nombreEstado", art.getEstado().getNombre());
-                    jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
-                    jsonArray.add(jsonObj);
-                }
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("codigo", art.getCodigo());
+                jsonObj.put("titulo", art.getTitulo());
+                jsonObj.put("nombreUsuario", art.getUsuario().getNombres());
+                jsonObj.put("apellidoUsuario", art.getUsuario().getApellidos());
+                jsonObj.put("nombreCategoria", art.getCategoria().getNombre());
+                jsonObj.put("nombreEstado", art.getEstado().getNombre());
+                jsonObj.put("fechafinPublicacion", art.getFechaFinPublicacion().toString());
+                jsonArray.add(jsonObj);
             }
             out.print(jsonArray);
         }
