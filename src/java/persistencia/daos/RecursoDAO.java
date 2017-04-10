@@ -17,6 +17,7 @@ import persistencia.entidades.Recurso;
 import persistencia.entidades.Vista;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -244,35 +245,37 @@ public class RecursoDAO implements GestionDAO {
     }
 
     @Override
-    public int getCount(Object obj) {
+    public int getCount(Object object) {
+        CondicionPaginado condicion = (CondicionPaginado) object;
         Connection con = null;
-        int tamano = 0;
+        int cont = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select count(codigo) from recurso";
+            String sql = "select count(codigo) from recurso " + condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
+            System.out.println("Consulta Recursos:" + pS);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
-                tamano = rS.getInt(1);
+                cont = rS.getInt(1);
             }
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Error error = new Error();
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
             error.setClase(getClass().getName());
             error.setMetodo("getCount");
             error.setTipoError(new TipoError(1));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
         } catch (SQLException ex) {
-            Error error = new Error();
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
             error.setClase(getClass().getName());
             error.setMetodo("getCount");
             error.setTipoError(new TipoError(2));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
         } catch (IOException ex) {
-            Error error = new Error();
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
             error.setClase(getClass().getName());
             error.setMetodo("getCount");
             error.setTipoError(new TipoError(3));
@@ -281,7 +284,7 @@ public class RecursoDAO implements GestionDAO {
         } finally {
             ConexionBD.cerrarConexion(con);
         }
-        return tamano;
+        return cont;
     }
 
     @Override
@@ -329,11 +332,11 @@ public class RecursoDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         Connection con = null;
-        String rango = String.valueOf(object).replace("'", "");
+        CondicionPaginado condicion = (CondicionPaginado) object;
         List<Recurso> recursos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "select * from recurso where activo=1 limit " + rango;
+            String sql = "select * from recurso " + condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
@@ -366,7 +369,7 @@ public class RecursoDAO implements GestionDAO {
             error.setTipoError(new TipoError(3));
             error.setDescripcion(ex.getMessage());
             Utilitaria.escribeError(error);
-        }finally {
+        } finally {
             ConexionBD.cerrarConexion(con);
         }
         return recursos;

@@ -5,6 +5,7 @@
  */
 package controladores;
 
+import fachada.CondicionPaginacionFachada;
 import fachada.GestionFachada;
 import fachada.RecursoFachada;
 import fachada.RecursoVistaFachada;
@@ -19,12 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Recurso;
 import persistencia.entidades.RecursoVista;
 import persistencia.entidades.Vista;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 
 /**
  *
@@ -103,10 +106,17 @@ public class RecursoControlador extends HttpServlet {
 
     public void getRecursoConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String rango = request.getParameter("rango");
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        CondicionPaginado condicion = new CondicionPaginado();
+        condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
         GestionFachada recursoFacade = new RecursoFachada();
         try (PrintWriter out = response.getWriter()) {
             JSONArray arrayRecursos = new JSONArray();
-            List<Recurso> recursos = recursoFacade.getListByPagination(rango);
+            List<Recurso> recursos = recursoFacade.getListByPagination(condicion);
             for (Recurso r : recursos) {
                 JSONObject obj = new JSONObject();
                 obj.put("codigo", r.getCodigo());
@@ -122,10 +132,17 @@ public class RecursoControlador extends HttpServlet {
 
     public void getRecursoVistaConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String rango = request.getParameter("rango");
+        String condicionesPag = request.getParameter("condicionesPag");
+        String busqueda = request.getParameter("busqueda");
+        GestionFachada condicionFachada = new CondicionPaginacionFachada();
+        CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+        condicionFachada.getObject(condicionPaginacion);
+        CondicionPaginado condicion = new CondicionPaginado();
+        condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
         GestionFachada recursoVistaFachada = new RecursoVistaFachada();
         try (PrintWriter out = response.getWriter()) {
             JSONArray arrayRecursos = new JSONArray();
-            List<RecursoVista> recursoVistas = recursoVistaFachada.getListByPagination(rango);
+            List<RecursoVista> recursoVistas = recursoVistaFachada.getListByPagination(condicion);
             for (RecursoVista rv : recursoVistas) {
                 JSONObject obj = new JSONObject();
                 obj.put("codRecurso", rv.getRecursoCodigo().getCodigo());

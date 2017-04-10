@@ -18,6 +18,7 @@ import persistencia.entidades.RecursoVista;
 import persistencia.entidades.Vista;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -28,11 +29,13 @@ public class RecursoVistaDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
+        CondicionPaginado condicion = (CondicionPaginado) object;
         Connection con = null;
         int tamano = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select count(codigo) from recurso_vista";
+            
+            String sql = "select count(rv.codigo) from recurso_vista rv join recurso r on r.codigo=rv.recurso_codigo  join vista v on v.codigo=rv.vista_codigo "+condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
@@ -225,11 +228,11 @@ public class RecursoVistaDAO implements GestionDAO {
     public List getListByPagination(Object object) {
         Connection con = null;
         List<RecursoVista> recursoVistas = new ArrayList();
-        String rango = String.valueOf(object).replace("'", "");
+        CondicionPaginado condicion = (CondicionPaginado) object;
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "select r.*,v.*,rv.codigo from recurso_vista rv join recurso r on r.codigo=rv.recurso_codigo "
-                    + " join vista v on v.codigo=rv.vista_codigo order by v.nombre limit " + rango;
+                    + " join vista v on v.codigo=rv.vista_codigo "+condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
