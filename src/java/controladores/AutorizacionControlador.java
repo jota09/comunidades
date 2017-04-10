@@ -137,9 +137,9 @@ public class AutorizacionControlador extends HttpServlet {
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
             condicion.setUser(((Usuario) request.getSession().getAttribute("user")));
             condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
-            List<Autorizacion> listArticulo = autoFachada.getListByPagination(condicion);
+            List<Autorizacion> listAuto = autoFachada.getListByPagination(condicion);
             JSONArray jsonArray = new JSONArray();
-            for (Autorizacion auto : listArticulo) {
+            for (Autorizacion auto : listAuto) {
                 JSONObject jsonObj = new JSONObject();
                 jsonObj.put("codigo", auto.getCodigo());
                 jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
@@ -227,9 +227,9 @@ public class AutorizacionControlador extends HttpServlet {
             CondicionPaginado condicion = new CondicionPaginado();
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
             condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
-            List<Autorizacion> listArticulo = autoFachada.getListByPagination(condicion);
+            List<Autorizacion> listAuto = autoFachada.getListByPagination(condicion);
             JSONArray jsonArray = new JSONArray();
-            for (Autorizacion auto : listArticulo) {
+            for (Autorizacion auto : listAuto) {
                 JSONObject jsonObj = new JSONObject();
                 jsonObj.put("codigo", auto.getCodigo());
                 jsonObj.put("persona_ingresa", auto.getPersonaIngresa());
@@ -382,9 +382,9 @@ public class AutorizacionControlador extends HttpServlet {
             autorizacion.setUsuarioCodigo((Usuario) request.getSession().getAttribute("user"));
             autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             autorizacion.setBusqueda(request.getParameter("buscar"));
-            List<Autorizacion> listArticulo = autoFachada.getListByCondition(autorizacion);
+            List<Autorizacion> listAuto = autoFachada.getListByCondition(autorizacion);
             JSONArray jsonArray = new JSONArray();
-            for (Autorizacion auto : listArticulo) {
+            for (Autorizacion auto : listAuto) {
                 JSONObject jsonObj = new JSONObject();
                 if (((Usuario) request.getSession().getAttribute("user")).getCodigo() == auto.getUsuarioCodigo().getCodigo()) {
                     jsonObj.put("codigo", auto.getCodigo());
@@ -414,9 +414,9 @@ public class AutorizacionControlador extends HttpServlet {
             autorizacion.setRango(request.getParameter("rango"));
             autorizacion.setComunidadcodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             autorizacion.setBusqueda(request.getParameter("buscar"));
-            List<Autorizacion> listArticulo = autoFachada.getListByCondition(autorizacion);
+            List<Autorizacion> listAuto = autoFachada.getListByCondition(autorizacion);
             JSONArray jsonArray = new JSONArray();
-            for (Autorizacion auto : listArticulo) {
+            for (Autorizacion auto : listAuto) {
                 JSONObject jsonObj = new JSONObject();
                 if (Integer.parseInt(estruc.getValor()) != auto.getEstado().getCodigo() && Integer.parseInt(estruc2.getValor()) != auto.getEstado().getCodigo() && Integer.parseInt(estruc3.getValor()) != auto.getEstado().getCodigo()) {
                     jsonObj.put("codigo", auto.getCodigo());
@@ -441,9 +441,9 @@ public class AutorizacionControlador extends HttpServlet {
             Usuario usuario = new Usuario();
             usuario.setBusqueda(request.getParameter("buscar"));
             usuario.setPerfilCodigo(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo());
-            List<Usuario> listArticulo = userFachada.getListByCondition(usuario);
+            List<Usuario> listAuto = userFachada.getListByCondition(usuario);
             JSONArray jsonArray = new JSONArray();
-            for (Usuario user : listArticulo) {
+            for (Usuario user : listAuto) {
                 JSONObject jsonObj = new JSONObject();
                 jsonObj.put("codigo", user.getCodigo());
                 jsonObj.put("user", user.getUserName());
