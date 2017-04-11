@@ -524,48 +524,38 @@ public class NoticiaControlador extends HttpServlet {
 
     private void recuperarInicioNoticia(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, org.json.simple.parser.ParseException {
         try (PrintWriter out = response.getWriter()) {
-            Usuario user = (Usuario) request.getSession().getAttribute("user");
+            String path;
+            int iteracion = Integer.parseInt(request.getParameter("rango"));
             EstructuraFachada estrucFachada = new EstructuraFachada();
-            Articulo art = new Articulo();
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoNoticia"))).getValor())));
-            art.setComunidad(user.getPerfilCodigo().getComunidad());
-            art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("noticiaMostrarInicio"))).getValor());
-            String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
+            int cantidad = Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("noticiaMostrarInicio"))).getValor());
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + (iteracion * cantidad) + "," + cantidad);
+            condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             ArticuloFachada artFachada = new ArticuloFachada();
-            if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) {
-                if (condicion != null && condicion != "") {
-                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%') and " + condicion);
-                } else {
-                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%')");
-                }
-            } else {
-                art.setBusqueda(condicion);
-            }
-            ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor()));
-            art.setEstado(estado);
             MultimediaFachada multFachada = new MultimediaFachada();
-            art.setInicio(true);
-            List<Articulo> listArticulo = artFachada.getListByPagination(art);
+            List<Articulo> listArticulo = artFachada.getListByPagination(condicion);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
-                if (art2.getFechaPublicacion() != null) {
-                    JSONObject obj = new JSONObject();
-                    obj.put("codigo", art2.getCodigo());
-                    Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
-                    mult.setDestacada(Short.parseShort("1"));
-                    mult = (Multimedia) multFachada.getObject(mult);
-                    if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
-                        String path = LecturaConfig.getValue("rutaVisualizaArticulo") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
-                        obj.put("imgDestacada", path);
-                    } else {
-                        String path = LecturaConfig.getValue("rutaImg") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
-                        obj.put("imgDestacada", path);
-                    }
-                    obj.put("titulo", art2.getTitulo());
-                    obj.put("descripcion", art2.getDescripcion());
-                    obj.put("finPublicacion", art2.getFechaFinPublicacion().toString());
-                    array.add(obj);
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", art2.getCodigo());
+                Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
+                mult.setDestacada(Short.parseShort("1"));
+                mult = (Multimedia) multFachada.getObject(mult);
+                if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
+                    path = LecturaConfig.getValue("rutaVisualizaArticulo") + "\\" + art2.getCodigo() + "\\" + mult.getCodigo() + "." + mult.getExtension();
+                } else {
+                    path = LecturaConfig.getValue("rutaImg") + "\\" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
                 }
+                obj.put("imgDestacada", path);
+                obj.put("titulo", art2.getTitulo());
+                obj.put("descripcion", art2.getDescripcion());
+                obj.put("finPublicacion", art2.getFechaFinPublicacion().toString());
+                array.add(obj);
             }
             out.print(array);
         }

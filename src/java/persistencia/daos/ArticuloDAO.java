@@ -124,7 +124,6 @@ public class ArticuloDAO implements GestionDAO {
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
-            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
@@ -304,7 +303,6 @@ public class ArticuloDAO implements GestionDAO {
                     + " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo() : "")
                     + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-            System.out.println("sql de conteo: "+sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
@@ -472,7 +470,6 @@ public class ArticuloDAO implements GestionDAO {
                     + "art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " art.comunidad_codigo=? " + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
-            System.out.println("Sql de traer list: "+sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo articulo = new Articulo();
