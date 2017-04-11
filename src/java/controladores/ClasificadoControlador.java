@@ -66,7 +66,9 @@ public class ClasificadoControlador extends HttpServlet {
         try {
             response.setContentType("text/html;charset=UTF-8");
             if (request.getParameter("opc") != null) {
+
                 int opcion = Integer.parseInt(request.getParameter("opc"));
+                System.out.println("opcion :" + opcion);
                 switch (opcion) {
                     case 1:
                         recuperarCategorias(request, response);
@@ -349,6 +351,7 @@ public class ClasificadoControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String path;
             int iteracion = Integer.parseInt(request.getParameter("rango"));
+            String opcionesFiltro = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             EstructuraFachada estrucFachada = new EstructuraFachada();
             int cantidad = Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicio"))).getValor());
             String condicionesPag = request.getParameter("condicionesPag");
@@ -358,7 +361,9 @@ public class ClasificadoControlador extends HttpServlet {
             condicionFachada.getObject(condicionPaginacion);
             CondicionPaginado condicion = new CondicionPaginado();
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + (iteracion * cantidad) + "," + cantidad);
+            condicion.setCondicion(condicion.getCondicion().replace("<#>", ((opcionesFiltro.isEmpty()) ? "" : " AND " + opcionesFiltro)));
             condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            System.out.println("Condion+Filtro:" + condicion.getCondicion());
             ArticuloFachada artFachada = new ArticuloFachada();
             MultimediaFachada multFachada = new MultimediaFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(condicion);

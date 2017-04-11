@@ -291,7 +291,6 @@ public class VistaAtributoDAO implements GestionDAO {
                     + " atributo a on va.atributo_codigo=a.codigo " + condicion.getCondicion();
       
             PreparedStatement pS = con.prepareStatement(sql);
-                  System.out.println("Query VistaAtributo:"+pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 VistaAtributo vistaAtributo = new VistaAtributo();
