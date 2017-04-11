@@ -11,10 +11,7 @@ import fachada.GestionFachada;
 import fachada.TipoDocumentoDocFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import persistencia.entidades.ComponenteDoc;
 import persistencia.entidades.DocumentoDoc;
 import persistencia.entidades.EstiloDoc;
@@ -57,10 +56,10 @@ public class DocumentoControlador extends HttpServlet {
                         recuperaTipoDocumento(request, response);
                         break;
                     case 2:
-                        recuperarComponentes(request,response);
+                        recuperarComponentes(request, response);
                         break;
                     case 3:
-                        crearDocumento(request,response);
+                        crearDocumento(request, response);
                         break;
                 }
             }
@@ -75,50 +74,51 @@ public class DocumentoControlador extends HttpServlet {
             Utilitaria.escribeError(error);
         }
     }
-    
-    public void recuperaTipoDocumento(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        try (PrintWriter out = response.getWriter()){
+
+    public void recuperaTipoDocumento(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
             GestionFachada tddFach = new TipoDocumentoDocFachada();
             TipoDocumentoDoc tdd = new TipoDocumentoDoc();
             tdd.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             List<TipoDocumentoDoc> listaTipo = tddFach.getListObject(tdd);
             JSONArray array = new JSONArray();
-            for( TipoDocumentoDoc tdd2 : listaTipo ){
+            for (TipoDocumentoDoc tdd2 : listaTipo) {
                 JSONObject obj = new JSONObject();
-                obj.put("id",tdd2.getId());
-                obj.put("nombre",tdd2.getNombre());
+                obj.put("id", tdd2.getId());
+                obj.put("nombre", tdd2.getNombre());
                 array.add(obj);
             }
             out.print(array);
         }
     }
-    
-    public void recuperarComponentes(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        try(PrintWriter out = response.getWriter()){
+
+    public void recuperarComponentes(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
             GestionFachada compFach = new ComponenteDocFachada();
             ComponenteDoc comp = new ComponenteDoc();
             comp.setTipoD(new TipoDocumentoDoc(Integer.parseInt(request.getParameter("tipo"))));
             List<ComponenteDoc> listComp = compFach.getListObject(comp);
             JSONArray array = new JSONArray();
-            for( ComponenteDoc comp2 : listComp){
+            for (ComponenteDoc comp2 : listComp) {
                 JSONObject obj = new JSONObject();
-                obj.put("id",comp2.getId());
-                obj.put("nombre",comp2.getNombre());
-                obj.put("padre",comp2.getComponente().getId());
-                obj.put("tipo",comp2.getTipo().getId());
+                obj.put("id", comp2.getId());
+                obj.put("nombre", comp2.getNombre());
+                obj.put("padre", comp2.getComponente().getId());
+                obj.put("tipo", comp2.getTipo().getId());
                 array.add(obj);
             }
             out.print(array);
         }
     }
-    
-    public void crearDocumento(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        try(PrintWriter out = response.getWriter()){
+
+    public void crearDocumento(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
             GestionFachada docFachada = new DocumentoDocFachada();
             DocumentoDoc doc = new DocumentoDoc();
             doc.setTipo(new TipoDocumentoDoc(Integer.parseInt(request.getParameter("tipo"))));
             doc.setEstilo(new EstiloDoc(Integer.parseInt(request.getParameter("estilo"))));
             doc.setUser((Usuario) request.getSession().getAttribute("user"));
+            System.out.println(request.getParameter("componentes"));
             docFachada.insertObject(doc);
             out.print(doc.getId());
         }
