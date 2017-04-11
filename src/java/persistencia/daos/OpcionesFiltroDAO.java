@@ -41,7 +41,6 @@ public class OpcionesFiltroDAO implements GestionDAO {
                     + "join condicion_filtro cf on f.condicion_filtro_codigo=cf.codigo"
                     + " where of.codigo=?";
             PreparedStatement pS = con.prepareStatement(sql);
-            System.out.println("SQL_FILTROS:"+sql.replace("?", opcion.getCodigo()+""));
             pS.setInt(1, opcion.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {

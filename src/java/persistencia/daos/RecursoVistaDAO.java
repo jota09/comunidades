@@ -231,7 +231,7 @@ public class RecursoVistaDAO implements GestionDAO {
         CondicionPaginado condicion = (CondicionPaginado) object;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "select r.*,v.*,rv.codigo from recurso_vista rv join recurso r on r.codigo=rv.recurso_codigo "
+            String sql = "select r.codigo,r.nombre,r.ruta,r.activo,v.codigo,v.nombre,v.url,v.activo,rv.codigo  from recurso_vista rv join recurso r on r.codigo=rv.recurso_codigo "
                     + " join vista v on v.codigo=rv.vista_codigo "+condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
