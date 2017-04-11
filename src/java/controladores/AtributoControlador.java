@@ -109,9 +109,16 @@ public class AtributoControlador extends HttpServlet {
     public void getVistaAtributoConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try (PrintWriter out = response.getWriter()) {
             String rango = request.getParameter("rango");
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
             JSONArray arrayAtributos = new JSONArray();
             GestionFachada vistaAtributoFachada = new VistaAtributoFachada();
-            List<VistaAtributo> vistaAtributos = vistaAtributoFachada.getListByPagination(rango);
+            List<VistaAtributo> vistaAtributos = vistaAtributoFachada.getListByPagination(condicion);
             for (VistaAtributo va : vistaAtributos) {
                 JSONObject obj = new JSONObject();
                 obj.put("codVA", va.getCodigo());

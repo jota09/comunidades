@@ -18,6 +18,7 @@ import persistencia.entidades.Vista;
 import persistencia.entidades.VistaAtributo;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
+import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 
 /**
@@ -29,10 +30,13 @@ public class VistaAtributoDAO implements GestionDAO {
     @Override
     public int getCount(Object object) {
         Connection con = null;
+        CondicionPaginado condicion = (CondicionPaginado) object;
         int tamano = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select count(codigo) from vista_atributo";
+            String sql = "Select count(va.codigo)  from vista_atributo va join vista v "
+                    + "on va.vista_codigo=v.codigo join"
+                    + " atributo a on va.atributo_codigo=a.codigo " + condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
@@ -277,16 +281,17 @@ public class VistaAtributoDAO implements GestionDAO {
     @Override
     public List getListByPagination(Object object) {
         Connection con = null;
-        String rango = String.valueOf(object).replace("'", "");
+        CondicionPaginado condicion = (CondicionPaginado) object;
         List<VistaAtributo> vistaAtributos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select v.codigo,v.nombre,a.codigo,a.referencia,"
                     + "va.codigo,va.valor  from vista_atributo va join vista v "
                     + "on va.vista_codigo=v.codigo join"
-                    + " atributo a on va.atributo_codigo=a.codigo where "
-                    + " va.activo=1 limit " + rango;
+                    + " atributo a on va.atributo_codigo=a.codigo " + condicion.getCondicion();
+      
             PreparedStatement pS = con.prepareStatement(sql);
+                  System.out.println("Query VistaAtributo:"+pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 VistaAtributo vistaAtributo = new VistaAtributo();
