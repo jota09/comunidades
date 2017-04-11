@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Atributo;
 import persistencia.entidades.Vista;
@@ -73,7 +75,41 @@ public class VistaAtributoDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        VistaAtributo vistaAtributo = (VistaAtributo) object;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "Select v.codigo,v.nombre,a.codigo,a.referencia,"
+                    + "va.valor  from vista_atributo va join vista v "
+                    + "on va.vista_codigo=v.codigo join"
+                    + " atributo a on va.atributo_codigo=a.codigo where va.codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, vistaAtributo.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                Vista vista = new Vista();
+                Atributo atributo = new Atributo();
+                vista.setCodigo(rS.getInt(1));
+                vista.setNombre(rS.getString(2));
+                atributo.setCodigo(rS.getInt(3));
+                atributo.setReferencia(rS.getString(4));
+                vistaAtributo.setValor(rS.getString(5));
+                vistaAtributo.setVistaCodigo(vista);
+                vistaAtributo.setAtributoCodigo(atributo);
+            }
+            rS.close();
+            pS.close();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VistaAtributoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return vistaAtributo;
     }
 
     @Override
@@ -136,8 +172,42 @@ public class VistaAtributoDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        return 0;
-
+        Connection con = null;
+        VistaAtributo vistaAtributo = (VistaAtributo) object;
+        int tamano = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "update vista_atributo set valor=? where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setString(1, vistaAtributo.getValor());
+            pS.setInt(2, vistaAtributo.getCodigo());
+            tamano = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            Error error = new Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return tamano;
     }
 
     @Override
@@ -289,7 +359,7 @@ public class VistaAtributoDAO implements GestionDAO {
                     + "va.codigo,va.valor  from vista_atributo va join vista v "
                     + "on va.vista_codigo=v.codigo join"
                     + " atributo a on va.atributo_codigo=a.codigo " + condicion.getCondicion();
-      
+
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

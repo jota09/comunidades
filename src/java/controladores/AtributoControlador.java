@@ -94,6 +94,9 @@ public class AtributoControlador extends HttpServlet {
                     getVistaAtributoConPaginacion(request, response);
                     break;
                 }
+                case 12: {
+                    consultarVistaAtributo(request, response);
+                }
             }
         } catch (IOException ex) {
             Error error = new Error();
@@ -220,11 +223,13 @@ public class AtributoControlador extends HttpServlet {
 
     public void asociarAtributoVista(HttpServletRequest request, HttpServletResponse response) throws IOException {
         GestionFachada vistaAtributoFachada = new VistaAtributoFachada();
-        try (PrintWriter out = response.getWriter()) {
-            int codAtributo = Integer.parseInt(request.getParameter("codAtributo"));
-            int codVista = Integer.parseInt(request.getParameter("codVista"));
-            String valor = request.getParameter("valor");
-            VistaAtributo vistaAtributo = new VistaAtributo();
+
+        String codVistaAtributo = request.getParameter("codVistaAtributo");
+        int codAtributo = Integer.parseInt(request.getParameter("codAtributo"));
+        int codVista = Integer.parseInt(request.getParameter("codVista"));
+        String valor = request.getParameter("valor");
+        VistaAtributo vistaAtributo = new VistaAtributo();
+        if (codVistaAtributo.isEmpty()) {
             Vista vista = new Vista();
             vista.setCodigo(codVista);
             Atributo atributo = new Atributo();
@@ -237,6 +242,15 @@ public class AtributoControlador extends HttpServlet {
             } else {
                 request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "No se Asocio el Atributo", "danger"));
             }
+        } else {
+            vistaAtributo.setCodigo(Integer.parseInt(codVistaAtributo));
+            vistaAtributo.setValor(valor);
+            if (vistaAtributoFachada.updateObject(vistaAtributo) > 0) {
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se Actualizo el valor del Atributo", "success"));
+            } else {
+                request.getSession().setAttribute("message", Utilitaria.createAlert("Error", "No se Actualizo el valor del  Atributo", "danger"));
+            }
+
         }
     }
 
@@ -333,4 +347,22 @@ public class AtributoControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void consultarVistaAtributo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String codVistaAtributo = request.getParameter("codVistaAtributo");
+            VistaAtributo vistaAtributo = new VistaAtributo();
+            vistaAtributo.setCodigo(Integer.parseInt(codVistaAtributo));
+            GestionFachada vistaAtributoFachada = new VistaAtributoFachada();
+            vistaAtributoFachada.getObject(vistaAtributo);
+            JSONObject obj = new JSONObject();
+            obj.put("codVA", vistaAtributo.getCodigo());
+            obj.put("valor", vistaAtributo.getValor());
+            obj.put("codVista", vistaAtributo.getVistaCodigo().getCodigo());
+            obj.put("nombre", vistaAtributo.getVistaCodigo().getNombre());
+            obj.put("codAtr", vistaAtributo.getCodigo());
+            obj.put("referencia", vistaAtributo.getAtributoCodigo().getReferencia());
+            out.print(obj);
+        }
+
+    }
 }
