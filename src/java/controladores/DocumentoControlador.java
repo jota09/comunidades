@@ -6,12 +6,15 @@
 package controladores;
 
 import fachada.ComponenteDocFachada;
+import fachada.ContenidoDocFachada;
 import fachada.DocumentoDocFachada;
 import fachada.GestionFachada;
 import fachada.TipoDocumentoDocFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,7 +25,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import persistencia.entidades.ComponenteDoc;
+import persistencia.entidades.ContenidoDoc;
 import persistencia.entidades.DocumentoDoc;
+import persistencia.entidades.EstadoDoc;
 import persistencia.entidades.EstiloDoc;
 import persistencia.entidades.TipoDocumentoDoc;
 import persistencia.entidades.TipoError;
@@ -114,12 +119,33 @@ public class DocumentoControlador extends HttpServlet {
     public void crearDocumento(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try (PrintWriter out = response.getWriter()) {
             GestionFachada docFachada = new DocumentoDocFachada();
+            GestionFachada contFachada = new ContenidoDocFachada();
             DocumentoDoc doc = new DocumentoDoc();
             doc.setTipo(new TipoDocumentoDoc(Integer.parseInt(request.getParameter("tipo"))));
             doc.setEstilo(new EstiloDoc(Integer.parseInt(request.getParameter("estilo"))));
             doc.setUser((Usuario) request.getSession().getAttribute("user"));
-            System.out.println(request.getParameter("componentes"));
+            doc.setEstado(new EstadoDoc(4));
+            doc.getTipo().setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
+            docFachada.updateObject(doc);
             docFachada.insertObject(doc);
+            JSONParser parser = new JSONParser();
+            try {
+                JSONArray array = (JSONArray) parser.parse(request.getParameter("componentes"));
+                for (int i = 0; i < array.size(); i++) {
+                    JSONObject obj = (JSONObject) array.get(i);
+                    if ( obj.get("activo").toString().equals("1")) {
+                        ContenidoDoc cont = new ContenidoDoc();
+                        cont.setValor((String) obj.get("contenido").toString());
+                        cont.setComponente(new ComponenteDoc(Integer.parseInt(obj.get("id").toString())));
+                        cont.setDocumento(doc);
+                        cont.setUser(((Usuario) request.getSession().getAttribute("user")));
+                        contFachada.insertObject(cont);
+                    }
+                }
+            } catch (ParseException ex) {
+                Logger.getLogger(DocumentoControlador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             out.print(doc.getId());
         }
     }
