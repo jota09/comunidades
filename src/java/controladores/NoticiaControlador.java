@@ -527,6 +527,7 @@ public class NoticiaControlador extends HttpServlet {
             String path;
             int iteracion = Integer.parseInt(request.getParameter("rango"));
             EstructuraFachada estrucFachada = new EstructuraFachada();
+            String opcionesFiltro = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             int cantidad = Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("noticiaMostrarInicio"))).getValor());
             String condicionesPag = request.getParameter("condicionesPag");
             String busqueda = request.getParameter("busqueda");
@@ -534,7 +535,9 @@ public class NoticiaControlador extends HttpServlet {
             CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
             condicionFachada.getObject(condicionPaginacion);
             CondicionPaginado condicion = new CondicionPaginado();
-            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + (iteracion * cantidad) + "," + cantidad);
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda)
+                    .replace("<#>", ((opcionesFiltro.isEmpty()) ? "" : " AND " + opcionesFiltro))
+                    + " limit " + (iteracion * cantidad) + "," + cantidad);
             condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
             ArticuloFachada artFachada = new ArticuloFachada();
             MultimediaFachada multFachada = new MultimediaFachada();
