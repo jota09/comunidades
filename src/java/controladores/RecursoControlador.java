@@ -246,6 +246,7 @@ public class RecursoControlador extends HttpServlet {
             List<RecursoVista> recursoVistas = (List<RecursoVista>) recursoVistaFachada.getListObject();
             for (RecursoVista rv : recursoVistas) {
                 JSONObject obj = new JSONObject();
+               
                 obj.put("codRecurso", rv.getRecursoCodigo().getCodigo());
                 obj.put("nombreRecurso", rv.getRecursoCodigo().getNombre());
                 obj.put("codVista", rv.getVistaCodigo().getCodigo());

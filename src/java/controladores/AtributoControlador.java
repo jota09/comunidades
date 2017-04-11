@@ -6,6 +6,7 @@
 package controladores;
 
 import fachada.AtributoFachada;
+import fachada.CondicionPaginacionFachada;
 import fachada.GestionFachada;
 import fachada.VistaAtributoFachada;
 import fachada.VistaFachada;
@@ -20,11 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Atributo;
+import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.TipoError;
 import persistencia.entidades.Vista;
 import persistencia.entidades.VistaAtributo;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
+import utilitarias.CondicionPaginado;
 
 /**
  *
@@ -135,9 +138,16 @@ public class AtributoControlador extends HttpServlet {
     public void getAtributoConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try (PrintWriter out = response.getWriter()) {
             String rango = request.getParameter("rango");
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
             JSONArray arrayAtributos = new JSONArray();
             GestionFachada atributoFachada = new AtributoFachada();
-            List<Atributo> atributos = atributoFachada.getListByPagination(rango);
+            List<Atributo> atributos = atributoFachada.getListByPagination(condicion);
             for (Atributo atributo : atributos) {
                 JSONObject obj = new JSONObject();
                 obj.put("codigo", atributo.getCodigo());

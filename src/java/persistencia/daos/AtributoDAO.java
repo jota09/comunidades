@@ -18,6 +18,7 @@ import persistencia.entidades.TipoError;
 import persistencia.entidades.Vista;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
+import utilitarias.CondicionPaginado;
 
 /**
  *
@@ -167,12 +168,13 @@ public class AtributoDAO implements GestionDAO {
     }
 
     @Override
-    public int getCount(Object obj) {
+    public int getCount(Object object) {
+        CondicionPaginado condicion = (CondicionPaginado) object;
         Connection con = null;
         int tamano = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select count(codigo) from atributo";
+            String sql = "Select count(codigo) from atributo "+condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
@@ -293,12 +295,12 @@ public class AtributoDAO implements GestionDAO {
 
     @Override
     public List getListByPagination(Object object) {
-        String rango = String.valueOf(object).replace("'", "");
+        CondicionPaginado condicion = (CondicionPaginado) object;
         Connection con = null;
         List<Atributo> atributos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "select * from atributo  limit " + rango;
+            String sql = "select * from atributo "+condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
