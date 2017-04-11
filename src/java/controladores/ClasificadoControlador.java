@@ -360,10 +360,11 @@ public class ClasificadoControlador extends HttpServlet {
             CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
             condicionFachada.getObject(condicionPaginacion);
             CondicionPaginado condicion = new CondicionPaginado();
-            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + (iteracion * cantidad) + "," + cantidad);
-            condicion.setCondicion(condicion.getCondicion().replace("<#>", ((opcionesFiltro.isEmpty()) ? "" : " AND " + opcionesFiltro)));
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda)
+                    .replace("<#>", ((opcionesFiltro.isEmpty()) ? "" : " AND " + opcionesFiltro)) 
+                    + " limit " + (iteracion * cantidad) + "," + cantidad);
+            condicion.setCondicion(condicion.getCondicion());
             condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
-            System.out.println("Condion+Filtro:" + condicion.getCondicion());
             ArticuloFachada artFachada = new ArticuloFachada();
             MultimediaFachada multFachada = new MultimediaFachada();
             List<Articulo> listArticulo = artFachada.getListByPagination(condicion);
