@@ -43,7 +43,8 @@ public class DocumentoDocFachada implements GestionFachada{
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO docDAO = new DocumentoDocDAO();
+        return docDAO.updateObject(object);
     }
 
     @Override

@@ -68,7 +68,6 @@ public class ClasificadoControlador extends HttpServlet {
             if (request.getParameter("opc") != null) {
 
                 int opcion = Integer.parseInt(request.getParameter("opc"));
-                System.out.println("opcion :" + opcion);
                 switch (opcion) {
                     case 1:
                         recuperarCategorias(request, response);
@@ -761,48 +760,38 @@ public class ClasificadoControlador extends HttpServlet {
 
     private void recuperarInicioClasificadoPublico(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, org.json.simple.parser.ParseException {
         try (PrintWriter out = response.getWriter()) {
+            String path;
+            int iteracion = Integer.parseInt(request.getParameter("rango"));
+            String opcionesFiltro = Utilitaria.construyeCondicion(request.getParameter("opciones"));
             EstructuraFachada estrucFachada = new EstructuraFachada();
-            Articulo art = new Articulo();
-            art.setTipoArticulo(new TipoArticulo(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("tipoClasificado"))).getValor())));
-            art.setRango(request.getParameter("limIni") + "," + ((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicioPublico"))).getValor());
-            String condicion = Utilitaria.construyeCondicion(request.getParameter("opciones"));
+            int cantidad = Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("clasificadoMostrarInicioPublico"))).getValor());
+            String condicionesPag = request.getParameter("condicionesPag");
+            String busqueda = request.getParameter("busqueda");
+            GestionFachada condicionFachada = new CondicionPaginacionFachada();
+            CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
+            condicionFachada.getObject(condicionPaginacion);
+            CondicionPaginado condicion = new CondicionPaginado();
+            condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + (iteracion * cantidad) + "," + cantidad);
+            condicion.setCondicion(condicion.getCondicion().replace("<#>", ((opcionesFiltro.isEmpty()) ? "" : " AND " + opcionesFiltro)));
             ArticuloFachada artFachada = new ArticuloFachada();
-            if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) {
-                if (condicion != null && condicion != "") {
-                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%' or art.precio LIKE '%" + request.getParameter("busqueda") + "%') and " + condicion);
-                } else {
-                    art.setBusqueda("(art.titulo LIKE '%" + request.getParameter("busqueda") + "%' or art.precio LIKE '%" + request.getParameter("busqueda") + "%')");
-                }
-            } else {
-                art.setBusqueda(condicion);
-            }
-            ArticuloEstado estado = new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor()));
-            art.setEstado(estado);
             MultimediaFachada multFachada = new MultimediaFachada();
-            art.setInicio(true);
-            art.setVisibilidad(new Visibilidad(Short.parseShort("1")));
-            art.setComunidad(new Comunidad(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("comunidadAnonima"))).getValor())));
-            art.getComunidad().setVisibilidad(new Visibilidad(Short.parseShort("1")));
-            List<Articulo> listArticulo = artFachada.getListByPagination(art);
+            List<Articulo> listArticulo = artFachada.getListByPagination(condicion);
             JSONArray array = new JSONArray();
             for (Articulo art2 : listArticulo) {
-                if (art2.getFechaPublicacion() != null) {
-                    JSONObject obj = new JSONObject();
-                    obj.put("codigo", art2.getCodigo());
-                    Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
-                    mult.setDestacada(Short.parseShort("1"));
-                    mult = (Multimedia) multFachada.getObject(mult);
-                    if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
-                        String path = LecturaConfig.getValue("rutaVisualizaArticulo") + art2.getCodigo() + "/" + mult.getCodigo() + "." + mult.getExtension();
-                        obj.put("imgDestacada", path);
-                    } else {
-                        String path = LecturaConfig.getValue("rutaImg") + "/" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
-                        obj.put("imgDestacada", path);
-                    }
-                    obj.put("titulo", art2.getTitulo());
-                    obj.put("precio", Utilitaria.conversionNatural(art2.getPrecio()));
-                    array.add(obj);
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", art2.getCodigo());
+                Multimedia mult = new Multimedia(new Articulo(art2.getCodigo()));
+                mult.setDestacada(Short.parseShort("1"));
+                mult = (Multimedia) multFachada.getObject(mult);
+                if (mult.getExtension() != null && !mult.getExtension().isEmpty()) {
+                    path = LecturaConfig.getValue("rutaVisualizaArticulo") + art2.getCodigo() + "/" + mult.getCodigo() + "." + mult.getExtension();
+                } else {
+                    path = LecturaConfig.getValue("rutaImg") + "/" + ((Estructura) estrucFachada.getObject(new Estructura("sinImagenArticulo"))).getValor();
                 }
+                obj.put("imgDestacada", path);
+                obj.put("titulo", art2.getTitulo());
+                obj.put("precio", Utilitaria.conversionNatural(art2.getPrecio()));
+                array.add(obj);
             }
             out.print(array);
         }

@@ -44,25 +44,20 @@ public class DocumentoDocDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int insertObject(Object object) {
         DocumentoDoc doc = (DocumentoDoc) object;
-        doc.setId(getMaxCodigo());
         Connection con = null;
-        int ingreso = 0;
+        int result = 0;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql ="INSERT INTO documento_doc (id,estado_doc_ID,estilo_doc_ID,tipo_documento_doc_ID,usuario_CODIGO) VALUES (?,?,?,?,?)";
+            String sql ="UPDATE documento_doc Doc INNER JOIN tipo_documento_doc td ON Doc.tipo_documento_doc_ID = td.id "
+                    + "     SET Doc.estado_doc_ID = ?, Doc.tipo_documento_doc_ID = ? "
+                    + "     WHERE Doc.estado_doc_ID <> 3 AND td.comunidad_CODIGO = ?";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, doc.getId());
-            pS.setInt(2, 1);
-            pS.setInt(3, doc.getEstilo().getId());
-            pS.setInt(4, doc.getTipo().getId());
-            pS.setInt(5, doc.getUser().getCodigo());
-            ingreso = pS.executeUpdate();
+            pS.setInt(1, doc.getEstado().getId());
+            pS.setInt(2, doc.getTipo().getId());
+            pS.setInt(3, doc.getTipo().getComunidad().getCodigo());
+            System.out.println("Query de act: "+pS);
+            result = pS.executeUpdate();
 
         } catch (ClassNotFoundException ex) {
             persistencia.entidades.Error error = new persistencia.entidades.Error();
@@ -88,7 +83,51 @@ public class DocumentoDocDAO implements GestionDAO {
         } finally {
             ConexionBD.cerrarConexion(con);
         }
-        return 0;
+        return result;
+    }
+
+    @Override
+    public int insertObject(Object object) {
+        DocumentoDoc doc = (DocumentoDoc) object;
+        doc.setId(getMaxCodigo());
+        Connection con = null;
+        int result = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql ="INSERT INTO documento_doc (id,estado_doc_ID,estilo_doc_ID,tipo_documento_doc_ID,usuario_CODIGO) VALUES (?,?,?,?,?)";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, doc.getId());
+            pS.setInt(2, 1);
+            pS.setInt(3, doc.getEstilo().getId());
+            pS.setInt(4, doc.getTipo().getId());
+            pS.setInt(5, doc.getUser().getCodigo());
+            result = pS.executeUpdate();
+
+        } catch (ClassNotFoundException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("insertObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return result;
     }
 
     @Override

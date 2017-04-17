@@ -467,10 +467,9 @@ public class ArticuloDAO implements GestionDAO {
                     + "         JOIN usuario usr ON art.usuario_codigo=usr.codigo"
                     + "         JOIN comunidad c ON art.comunidad_codigo=c.codigo"
                     + "  WHERE " + ((condicionPaginado.getUser() != null) ? " "
-                    + "art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " art.comunidad_codigo=? " + condicionPaginado.getCondicion();
+                    + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " "
+                    + " " + ((condicionPaginado.getComunidad() != null) ? " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo()+ " and" : "") + " " + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
-            System.out.println("Imprimiendo Condicion Articulo:"+pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo articulo = new Articulo();
