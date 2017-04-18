@@ -504,7 +504,6 @@ public class AutorizacionDAO implements GestionDAO {
                     + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, condicionPaginado.getComunidad().getCodigo());
-            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Autorizacion autorizacion = new Autorizacion();
