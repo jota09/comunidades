@@ -470,6 +470,7 @@ public class ArticuloDAO implements GestionDAO {
                     + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " "
                     + " " + ((condicionPaginado.getComunidad() != null) ? " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo()+ " and" : "") + " " + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
+            System.out.println("Paginacion: "+sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo articulo = new Articulo();

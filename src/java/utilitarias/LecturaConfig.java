@@ -26,7 +26,6 @@ public class LecturaConfig {
         try {
             File archivoConf = new File("/configComunidades/configuracion.properties"); // Para el local
 //            File archivoConf = new File("/comunidades/configComunidades/configuracion.properties"); // Para el servidor
-            //File archivoConf=new File("/configuracion.properties");
             iS = new FileInputStream(archivoConf);
             prop.load(iS);
         } catch (FileNotFoundException ex) {
