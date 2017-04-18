@@ -324,7 +324,7 @@ public class AutorizacionDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT COUNT(auto.codigo) FROM autorizacion auto join usuario usr on auto.usuario_codigo=usr.codigo"
                     + " join estado_autorizacion esauto on auto.estado_autorizacion_codigo=esauto.codigo join "
-                    + " motivo_autorizacion mauto on auto.motivo_autorizacion_codigo=mauto.codigo  WHERE " + ((condicionPaginado.getUser() != null) ? " "
+                    + " motivo_autorizacion mauto on auto.motivo_autorizacion_codigo=mauto.codigo join inmueble i on usr.codigo=i.usuario_codigo  WHERE " + ((condicionPaginado.getUser() != null) ? " "
                             + "auto.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " auto.comunidad_codigo=? "
                     + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
