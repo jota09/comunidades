@@ -12,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.TipoError;
 import persistencia.entidades.ZonaComun;
@@ -27,7 +25,7 @@ public class ZonaComunDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     //Método para consultar una zona común en específico
@@ -37,13 +35,15 @@ public class ZonaComunDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT NOMBRE,COMUNIDAD_CODIGO,ALQUILER,DESCRIPCION "
-                    + "FROM zona_comun WHERE CODIGO = ?";
+            String sql = "SELECT * FROM zona_comun WHERE CODIGO = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, zona.getCodigo());
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 zona.setNombre(rs.getString("NOMBRE"));
+                zona.setComunidad(rs.getInt("COMUNIDAD"));
+                zona.setAlquiler(rs.getDouble("ALQUILER"));
+                zona.setDescripcion(rs.getString("DESCRIPCION"));
             }
             rs.close();
             ps.close();
@@ -77,14 +77,14 @@ public class ZonaComunDAO implements GestionDAO {
     //Método para consulta todas las zonas comunes asociadas a una comunidad
     @Override
     public List getListObject(Object object) {
-        int comunidad = (int) object;
-        ArrayList<ZonaComun> zonas = new ArrayList<>();
         Connection con = null;
+        ZonaComun zonaComun = (ZonaComun) object;
+        ArrayList<ZonaComun> zonas = new ArrayList<>();
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT * FROM zona_comun WHERE COMUNIDAD_CODIGO = ?";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, comunidad);
+            ps.setInt(1, zonaComun.getComunidad());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ZonaComun zona = new ZonaComun();
@@ -126,12 +126,48 @@ public class ZonaComunDAO implements GestionDAO {
 
     @Override
     public List getListObject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection con = null;
+        ZonaComun zona = (ZonaComun) object;
+        int cantidad = 0;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "UPDATE ZONA_COMUN SET NOMBRE = nombre=?,ruta=? where codigo=?";
+            PreparedStatement pS = con.prepareStatement(sql);
+//            pS.setString(1, recurso.getNombre());
+//            pS.setString(2, recurso.getRuta());
+//            pS.setInt(3, recurso.getCodigo());
+            cantidad = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return cantidad;
     }
 
     @Override

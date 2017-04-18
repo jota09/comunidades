@@ -20,6 +20,7 @@ public class Comunidad implements Serializable {
     private Visibilidad visibilidad;
     private String idBarCode;
     private String nit;
+    private int miembros;
 
     public Comunidad() {
     }
@@ -139,7 +140,15 @@ public class Comunidad implements Serializable {
     public void setIdBarCode(String idBarCode) {
         this.idBarCode = idBarCode;
     }
-    
+
+    public int getMiembros() {
+        return miembros;
+    }
+
+    public void setMiembros(int miembros) {
+        this.miembros = miembros;
+    }
+
     @Override
     public String toString() {
         JSONObject obj = new JSONObject();

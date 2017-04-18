@@ -3,32 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fachada;
+package persistencia.daos;
 
 import java.util.List;
-import persistencia.daos.ComunidadDAO;
-import persistencia.daos.GestionDAO;
 
 /**
  *
- * @author manuel.alcala
+ * @author daniel.franco
  */
-public class ComunidadFachada implements GestionFachada {
+public class ReservaDAO implements GestionDAO{
 
     @Override
     public int getCount(Object object) {
-        GestionDAO comunidadDAO = new ComunidadDAO();
-        return comunidadDAO.getCount(object);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Object getObject(Object object) {
-        GestionDAO comunidadDAO = new ComunidadDAO();
-        return comunidadDAO.getObject(object);
-    }
-
-    @Override
-    public int insertObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -39,12 +30,16 @@ public class ComunidadFachada implements GestionFachada {
 
     @Override
     public List getListObject() {
-        GestionDAO comunidadDAO = new ComunidadDAO();
-        return comunidadDAO.getListObject();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int updateObject(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int insertObject(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -60,7 +55,6 @@ public class ComunidadFachada implements GestionFachada {
 
     @Override
     public List getListByPagination(Object object) {
-        ComunidadDAO comunidadDAO = new ComunidadDAO();
-        return comunidadDAO.getListByPagination(object);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -300,7 +300,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "     JOIN categoria cat ON art.categoria_codigo=cat.codigo "
                     + " WHERE " + ((condicionPaginado.getUser() != null) ? " "
                     + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " " + ((condicionPaginado.getComunidad()!= null) ? " "
-                    + " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo() : "")
+                    + " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo()+" and " : "")
                     + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
