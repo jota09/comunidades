@@ -13,9 +13,10 @@ public class ZonaComun {
 
     private int codigo;
     private String nombre;
-    private int comunidad;
+    private Comunidad comunidad;
     private double alquiler;
     private String descripcion;
+    private Tiempo tiempo;
 
     public ZonaComun() {
     }
@@ -24,12 +25,21 @@ public class ZonaComun {
         this.codigo = codigo;
     }
 
-    public ZonaComun(int codigo, String nombre, int comunidad, double alquiler, String descripcion) {
+    public ZonaComun(int codigo, String nombre, Comunidad comunidad, double alquiler, String descripcion, Tiempo tiempo) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.comunidad = comunidad;
         this.alquiler = alquiler;
         this.descripcion = descripcion;
+        this.tiempo = tiempo;
+    }
+
+    public Tiempo getTiempo() {
+        return tiempo;
+    }
+
+    public void setTiempo(Tiempo tiempo) {
+        this.tiempo = tiempo;
     }
 
     public int getCodigo() {
@@ -48,11 +58,11 @@ public class ZonaComun {
         this.nombre = nombre;
     }
 
-    public int getComunidad() {
+    public Comunidad getComunidad() {
         return comunidad;
     }
 
-    public void setComunidad(int comunidad) {
+    public void setComunidad(Comunidad comunidad) {
         this.comunidad = comunidad;
     }
 
@@ -70,5 +80,5 @@ public class ZonaComun {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    } 
+    }
 }
