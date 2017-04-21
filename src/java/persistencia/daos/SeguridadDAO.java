@@ -37,15 +37,16 @@ public class SeguridadDAO implements GestionDAO {
     @Override
     public int updateObject(Object object) {
         SeguridadUsuario sgdadUsr = (SeguridadUsuario) object;
-        String sql = "UPDATE seguridad_usuario SET ip_ultima_sesion=?, fecha_ultima_sesion=now() WHERE codigo=? ";
         int resultado = 0;
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
+            String sql = "UPDATE seguridad_usuario SET ip_ultima_sesion=?, fecha_ultima_sesion=now() WHERE codigo=? ";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setString(1, sgdadUsr.getIpUltimaSesion());
             pS.setInt(2, sgdadUsr.getCodigo());
-            pS.executeUpdate();
+            System.out.println("Seguridad_usuario query:" + pS);
+            resultado = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
             Error error = new Error();

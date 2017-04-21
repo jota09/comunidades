@@ -13,6 +13,17 @@ public class Perfil implements Serializable {
     public Perfil() {
     }
 
+    public Perfil(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public Perfil(int codigo, String nombre, Comunidad comunidad, short activo) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.comunidad = comunidad;
+        this.activo = activo;
+    }
+    
     public int getCodigo() {
         return this.codigo;
     }

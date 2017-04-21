@@ -472,7 +472,7 @@ public class GestionFacturaControlador extends HttpServlet {
             valor3900 = agregarCero(valor3900, 10);
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             parametros.put("codigo_barras", "415" + valor415 + "8020" + valor8020 + "3900" + valor3900 + "96" + format.format(fechaVencimiento));
-            servicioMail.sendEmail(plantilla, "Generacion Factura N°" + factura.getNumFactura() + " Comunidad " + proceso.getComunidad().getNombre(), destinatario, rutaImg, Utilitaria.generaPDFB64(proceso.getPlantillaXComunidad().getPlantilla().getCodigo() + ".jasper", parametros), "Factura N°" + factura.getNumFactura());
+            servicioMail.sendEmail(plantilla, "Generacion Factura N°" + factura.getNumFactura() + " Comunidad " + proceso.getComunidad().getNombre(), destinatario, rutaImg, Utilitaria.generaPDFB64(proceso.getPlantillaXComunidad().getPlantilla().getCodigo() + ".jasper", parametros),factura.getNumFactura()+".pdf");
         }
         log.setDescripcion("Finalizo Envio Mail de Muestras");
         logProcesoFachada.insertObject(log);
@@ -591,7 +591,7 @@ public class GestionFacturaControlador extends HttpServlet {
             valor3900 = agregarCero(valor3900, 10);
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             parametros.put("codigo_barras", "415" + valor415 + "8020" + valor8020 + "3900" + valor3900 + "96" + format.format(fechaVencimiento));
-            servicioMail.sendEmail(plantilla, "Generacion Factura N°" + factura.getNumFactura() + " Comunidad " + proceso.getComunidad().getNombre(), factura.getUsuario().getCorreo(), rutaImg, Utilitaria.generaPDFB64(proceso.getPlantillaXComunidad().getPlantilla().getCodigo() + ".jasper", parametros), "Factura N°" + factura.getNumFactura() + ".pdf");
+            servicioMail.sendEmail(plantilla, "Generacion Factura N°" + factura.getNumFactura() + " Comunidad " + proceso.getComunidad().getNombre(), factura.getUsuario().getCorreo(), rutaImg, Utilitaria.generaPDFB64(proceso.getPlantillaXComunidad().getPlantilla().getCodigo() + ".jasper", parametros),factura.getNumFactura() + ".pdf");
         }
         log.setDescripcion("Finalizo envio de mails");
         logProcesoFachada.insertObject(log);

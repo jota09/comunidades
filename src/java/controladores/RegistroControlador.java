@@ -147,13 +147,13 @@ public class RegistroControlador extends HttpServlet {
         Registro registro = new Registro();
         registro.setCodigoGenerado(codigoRegistro);
         registroFachada.getObject(registro);
-//        PrintWriter out = response.getWriter();
-//        if (registro.getComunidad() != null && registro.getFechaVencimiento().after(new Date())) {
-//            construyeFormulario(out, codigoRegistro, registro.getCorreo());
-//        } else {
-//            out.print("<h2 class='text-center'>EL CODIGO NO ES VALIDO</h2>");
-//        }
-         Utilitaria.exportarPDF("report1.jasper",new HashMap<String,Object>(), response, "hola.pdf");
+        PrintWriter out = response.getWriter();
+        if (registro.getComunidad() != null && registro.getFechaVencimiento().after(new Date())) {
+            construyeFormulario(out, codigoRegistro, registro.getCorreo());
+        } else {
+            out.print("<h2 class='text-center'>EL CODIGO NO ES VALIDO</h2>");
+        }
+//         Utilitaria.exportarPDF("report1.jasper",new HashMap<String,Object>(), response, "hola.pdf");
 
     }
 

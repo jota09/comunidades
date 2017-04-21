@@ -111,7 +111,6 @@ public class GeneradorView extends HttpServlet {
 
             }
             if(pagina.contains("<@condicionPaginado@>")){
-                System.out.println("Vista:"+vista.getCodigo());
                 GestionFachada condicionesFachada=new CondicionPaginacionFachada();
                 String condicionesPaginacion="<div id='condicionesPaginacion'>";
                 List<CondicionPaginacion> condiciones=condicionesFachada.getListObject(vista);

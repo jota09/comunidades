@@ -212,7 +212,7 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        envioMail.sendEmail(mensaje, "Error " + fecha, correo,null,null,null);
+        envioMail.sendEmail(mensaje, "Error " + fecha, correo, null, null, null);
     }
 
     public static void enviarMailArticuloDevuelto(Object obj, String obs, String tit) throws IOException {
@@ -230,15 +230,15 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        String mensaje=leerPlantilla("2.html");
-        mensaje=mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
-        mensaje=mensaje.replace("<#cuerpo#>", "\n\n\n" + cuerpo);
-        mensaje=mensaje.replace("<#tituloArti#>", "");
-        mensaje=mensaje.replace("<#observacion#>", "\n" + obs);
-        mensaje=mensaje.replace("<#fecha#>", "");
-        mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
-        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
-        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo(),rutaImg,null,null);
+        String mensaje = leerPlantilla("2.html");
+        mensaje = mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
+        mensaje = mensaje.replace("<#cuerpo#>", "\n\n\n" + cuerpo);
+        mensaje = mensaje.replace("<#tituloArti#>", "");
+        mensaje = mensaje.replace("<#observacion#>", "\n" + obs);
+        mensaje = mensaje.replace("<#fecha#>", "");
+        mensaje = mensaje.replace("<#firma#>", "\n\n\n" + firma);
+        String rutaImg[] = {LecturaConfig.getValue("rutaImgPlantillas") + "logos" + File.separator + art.getComunidad().getCodigo() + ".png"};
+        envioMail.sendEmail(mensaje, "Correciones articulo " + tit, art.getUsuario().getCorreo(), rutaImg, null, null);
     }
 
     public static void enviarMailArticuloEliminado(Object obj, String obs, String tit) throws IOException {
@@ -256,15 +256,15 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        String mensaje=leerPlantilla("2.html");
-        mensaje=mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
-        mensaje=mensaje.replace("<#cuerpo#>", "\n\n\n" + cuerpo);
-        mensaje=mensaje.replace("<#tituloArti#>", "");
-        mensaje=mensaje.replace("<#observacion#>", "\n" + obs);
-        mensaje=mensaje.replace("<#fecha#>", "");
-        mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
-        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
-        envioMail.sendEmail("<p>"+mensaje+"</p>", "Eliminación articulo " + tit, art.getUsuario().getCorreo(),rutaImg,null,null);
+        String mensaje = leerPlantilla("2.html");
+        mensaje = mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
+        mensaje = mensaje.replace("<#cuerpo#>", "\n\n\n" + cuerpo);
+        mensaje = mensaje.replace("<#tituloArti#>", "");
+        mensaje = mensaje.replace("<#observacion#>", "\n" + obs);
+        mensaje = mensaje.replace("<#fecha#>", "");
+        mensaje = mensaje.replace("<#firma#>", "\n\n\n" + firma);
+        String rutaImg[] = {LecturaConfig.getValue("rutaImgPlantillas") + "logos" + File.separator + art.getComunidad().getCodigo() + ".png"};
+        envioMail.sendEmail("<p>" + mensaje + "</p>", "Eliminación articulo " + tit, art.getUsuario().getCorreo(), rutaImg, null, null);
     }
 
     public static void enviarMailArticuloAprobado(Object obj, String tit) throws IOException {
@@ -284,15 +284,15 @@ public class Utilitaria {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correo, usuario, password, starttls, autenticacion, serverSSL);
-        String mensaje=leerPlantilla("2.html");
-        mensaje=mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
-        mensaje=mensaje.replace("<#cuerpo#>", "\n" + cuerpo);
-        mensaje=mensaje.replace("<#tituloArti#>", "\n" + tit);
-        mensaje=mensaje.replace("<#observacion#>", "");
-        mensaje=mensaje.replace("<#fecha#>", "\nPublicado " + fecha);
-        mensaje=mensaje.replace("<#firma#>", "\n\n\n" + firma);
-        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+art.getComunidad().getCodigo()+".png"};
-        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo(),rutaImg,null,null);
+        String mensaje = leerPlantilla("2.html");
+        mensaje = mensaje.replace("<#titulo#>", titulo + " " + art.getUsuario().getNombres() + " " + art.getUsuario().getApellidos());
+        mensaje = mensaje.replace("<#cuerpo#>", "\n" + cuerpo);
+        mensaje = mensaje.replace("<#tituloArti#>", "\n" + tit);
+        mensaje = mensaje.replace("<#observacion#>", "");
+        mensaje = mensaje.replace("<#fecha#>", "\nPublicado " + fecha);
+        mensaje = mensaje.replace("<#firma#>", "\n\n\n" + firma);
+        String rutaImg[] = {LecturaConfig.getValue("rutaImgPlantillas") + "logos" + File.separator + art.getComunidad().getCodigo() + ".png"};
+        envioMail.sendEmail(mensaje, "Aprobación articulo " + tit, art.getUsuario().getCorreo(), rutaImg, null, null);
     }
 
     public static String construyeCondicion(String jsonArrayCondiciones) throws ParseException {
@@ -361,15 +361,16 @@ public class Utilitaria {
         JasperReport plantilla = null;
         JasperPrint reporte = null;
         ByteArrayOutputStream out = null;
-        String pdfBase64=null;
+        String pdfBase64 = null;
         try {
             String ruta = LecturaConfig.getValue("rutaPlantillaPDF") + plantillaPdf;
+            System.out.println("Ruta a buscar:" + ruta);
             plantilla = (JasperReport) JRLoader.loadObjectFromFile(ruta);
             datos = new JREmptyDataSource();
             reporte = JasperFillManager.fillReport(plantilla, parametros, datos);
             out = new ByteArrayOutputStream();
             JasperExportManager.exportReportToPdfStream(reporte, out);
-            pdfBase64=DatatypeConverter.printBase64Binary(out.toByteArray());
+            pdfBase64 = DatatypeConverter.printBase64Binary(out.toByteArray());
         } catch (JRException ex) {
             Logger.getLogger(Utilitaria.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

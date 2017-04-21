@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
-import persistencia.entidades.Comunidad;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
