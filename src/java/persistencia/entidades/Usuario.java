@@ -2,6 +2,7 @@ package persistencia.entidades;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Usuario implements Serializable {
 
@@ -21,7 +22,10 @@ public class Usuario implements Serializable {
     private int edad;
     private SeguridadUsuario listaSeguridad;
     private Inmueble inmueble;
+    private Date fechanacimiento;
+    private String profesion;
     private String busqueda;
+    private short avatar;
 
     public Usuario() {
     }
@@ -30,7 +34,7 @@ public class Usuario implements Serializable {
         this.codigo = codigo;
     }
 
-    public Usuario(int codigo, int codigodocumento, int tipodocumentocodigo, Perfil perfilcodigo, String nombres, String apellidos, String correo, String celular, String telefono, String username, short activo, Timestamp creacion, Timestamp actualizacion, int edad, SeguridadUsuario listaSeguridad, Inmueble inmueble, String busqueda) {
+    public Usuario(int codigo, int codigodocumento, int tipodocumentocodigo, Perfil perfilcodigo, String nombres, String apellidos, String correo, String celular, String telefono, String username, short activo, Timestamp creacion, Timestamp actualizacion, int edad, SeguridadUsuario listaSeguridad, Inmueble inmueble, Date fechanacimiento, String profesion, String busqueda, short avatar) {
         this.codigo = codigo;
         this.codigodocumento = codigodocumento;
         this.tipodocumentocodigo = tipodocumentocodigo;
@@ -47,9 +51,12 @@ public class Usuario implements Serializable {
         this.edad = edad;
         this.listaSeguridad = listaSeguridad;
         this.inmueble = inmueble;
+        this.fechanacimiento = fechanacimiento;
+        this.profesion = profesion;
         this.busqueda = busqueda;
+        this.avatar = avatar;
     }
-    
+
     public int getCodigo() {
         return this.codigo;
     }
@@ -190,5 +197,29 @@ public class Usuario implements Serializable {
     public void setBusqueda(String busqueda) {
         this.busqueda = busqueda;
     }
-    
+
+    public Date getFechanacimiento() {
+        return fechanacimiento;
+    }
+
+    public void setFechanacimiento(Date fechanacimiento) {
+        this.fechanacimiento = fechanacimiento;
+    }
+
+    public String getProfesion() {
+        return profesion;
+    }
+
+    public void setProfesion(String profesion) {
+        this.profesion = profesion;
+    }
+
+    public short getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(short avatar) {
+        this.avatar = avatar;
+    }
+
 }
