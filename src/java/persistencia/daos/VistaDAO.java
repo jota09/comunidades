@@ -78,7 +78,7 @@ public class VistaDAO implements GestionDAO {
         List<Vista> vistas = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "select * from vista where activo=1";
+            String sql = "select * from vista where activo=1 order by nombre";
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

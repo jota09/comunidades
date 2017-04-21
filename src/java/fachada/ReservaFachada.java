@@ -6,16 +6,19 @@
 package fachada;
 
 import java.util.List;
+import persistencia.daos.GestionDAO;
+import persistencia.daos.ReservaDAO;
 
 /**
  *
  * @author daniel.franco
  */
-public class ReservaFachada implements GestionFachada{
+public class ReservaFachada implements GestionFachada {
 
     @Override
     public int getCount(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO reservaDAO = new ReservaDAO();
+        return reservaDAO.getCount(object);
     }
 
     @Override
@@ -55,6 +58,7 @@ public class ReservaFachada implements GestionFachada{
 
     @Override
     public List getListByPagination(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO reservaDAO = new ReservaDAO();
+        return reservaDAO.getListByPagination(object);
     }
 }

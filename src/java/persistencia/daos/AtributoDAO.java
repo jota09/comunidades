@@ -40,7 +40,7 @@ public class AtributoDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "Select  atr.referencia,vat.valor from atributo atr "
                     + "join vista_atributo vat on vat.atributo_codigo=atr.codigo "
-                    + "join vista vi on vat.vista_codigo=vi.codigo where vi.codigo=?";
+                    + "join vista vi on vat.vista_codigo=vi.codigo where vi.codigo=? order by atr.referencia";
             PreparedStatement pS = con.prepareStatement(sql);
             pS.setInt(1, vista.getCodigo());
             ResultSet rS = pS.executeQuery();
@@ -85,7 +85,7 @@ public class AtributoDAO implements GestionDAO {
         List<Atributo> atributos = new ArrayList();
         try {
             con = ConexionBD.obtenerConexion();
-            String sql = "Select * from atributo where activo=1";
+            String sql = "Select * from atributo where activo=1 order by referencia";
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {

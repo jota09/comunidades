@@ -5,6 +5,7 @@
  */
 package persistencia.entidades;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -17,12 +18,12 @@ public class Reserva {
     private Usuario usuarioCodigo;
     private ZonaComun zonaCodigo;
     private Comunidad comunidadCodigo;
-    private Date fechaInicio;
-    private Date fechaFin;
+    private Timestamp fechaInicio;
+    private Timestamp fechaFin;
     private double costo;
     private String descripcion;
-    private Date creacion;
-    private Date actualizacion;
+    private Timestamp creacion;
+    private Timestamp actualizacion;
     private ReservaEstado estadoCodigo;
 
     public Reserva() {
@@ -32,7 +33,7 @@ public class Reserva {
         this.codigo = codigo;
     }
 
-    public Reserva(int codigo, Usuario usuarioCodigo, ZonaComun zonaCodigo, Comunidad comunidadCodigo, Date fechaInicio, Date fechaFin, double costo, String descripcion, Date creacion, Date actualizacion, ReservaEstado estadoCodigo) {
+    public Reserva(int codigo, Usuario usuarioCodigo, ZonaComun zonaCodigo, Comunidad comunidadCodigo, Timestamp fechaInicio, Timestamp fechaFin, double costo, String descripcion, Timestamp creacion, Timestamp actualizacion, ReservaEstado estadoCodigo) {
         this.codigo = codigo;
         this.usuarioCodigo = usuarioCodigo;
         this.zonaCodigo = zonaCodigo;
@@ -78,19 +79,19 @@ public class Reserva {
         this.comunidadCodigo = comunidadCodigo;
     }
 
-    public Date getFechaInicio() {
+    public Timestamp getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
+    public void setFechaInicio(Timestamp fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 
-    public Date getFechaFin() {
+    public Timestamp getFechaFin() {
         return fechaFin;
     }
 
-    public void setFechaFin(Date fechaFin) {
+    public void setFechaFin(Timestamp fechaFin) {
         this.fechaFin = fechaFin;
     }
 
@@ -110,19 +111,19 @@ public class Reserva {
         this.descripcion = descripcion;
     }
 
-    public Date getCreacion() {
+    public Timestamp getCreacion() {
         return creacion;
     }
 
-    public void setCreacion(Date creacion) {
+    public void setCreacion(Timestamp creacion) {
         this.creacion = creacion;
     }
 
-    public Date getActualizacion() {
+    public Timestamp getActualizacion() {
         return actualizacion;
     }
 
-    public void setActualizacion(Date actualizacion) {
+    public void setActualizacion(Timestamp actualizacion) {
         this.actualizacion = actualizacion;
     }
 
