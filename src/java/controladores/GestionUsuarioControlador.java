@@ -14,7 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +33,7 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Registro;
+import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
 import utilitarias.LecturaConfig;
@@ -74,9 +78,25 @@ public class GestionUsuarioControlador extends HttpServlet {
                     recuperarSesion(request, response);
                     break;
                 }
+                case 5: {
+                    guardarUsuario(request, response);
+                    break;
+                }
             }
         } catch (IOException ex) {
-            Logger.getLogger(GestionUsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (ParseException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(4));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
     }
 
@@ -219,13 +239,26 @@ public class GestionUsuarioControlador extends HttpServlet {
             obj.put("username", u.getUserName());
             obj.put("profesion", u.getProfesion());
             obj.put("fecha", u.getFechanacimiento().toString());
-            if (u.getAvatar()!= 0) {
+            if (u.getAvatar() != 0) {
                 obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario"));
             } else {
-                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + File.pathSeparator + "" + estru.getValor());
+                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + estru.getValor());
             }
-            System.out.println("Avatar: "+estru.getValor());
             out.print(obj);
+        }
+    }
+
+    private void guardarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
+        try (PrintWriter out = response.getWriter()) {
+            UsuarioFachada userFach = new UsuarioFachada();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Usuario u = (Usuario) request.getSession().getAttribute("user");
+            u.setCelular(request.getParameter("celular"));
+            u.setTelefono(request.getParameter("telefono"));
+            u.setCorreo(request.getParameter("correo"));
+            u.setProfesion(request.getParameter("profesion"));
+            u.setFechanacimiento(formatter.parse(request.getParameter("fecha")));
+            out.print(userFach.updateObject(u));
         }
     }
 }
