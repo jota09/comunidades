@@ -145,7 +145,39 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Usuario user = (Usuario) object;
+        Connection con = null;
+        int num = 0;
+//        try {
+//            String sql = "UPDATE usuario set codigo_documento = ? "
+//                    + "nombres = ?, apellidos = ?, correo=?, celular = ?, telefono=? "
+//                    + "telefono = ?, ";
+//        } catch (ClassNotFoundException ex) {
+//            persistencia.entidades.Error error = new persistencia.entidades.Error();
+//            error.setClase(getClass().getName());
+//            error.setMetodo("updateObject");
+//            error.setTipoError(new TipoError(1));
+//            error.setDescripcion(ex.getMessage());
+//            Utilitaria.escribeError(error);
+//        } catch (SQLException ex) {
+//            persistencia.entidades.Error error = new persistencia.entidades.Error();
+//            error.setClase(getClass().getName());
+//            error.setMetodo("updateObject");
+//            error.setTipoError(new TipoError(2));
+//            error.setDescripcion(ex.getMessage());
+//            Utilitaria.escribeError(error);
+//        } catch (IOException ex) {
+//            persistencia.entidades.Error error = new persistencia.entidades.Error();
+//            error.setClase(getClass().getName());
+//            error.setMetodo("updateObject");
+//            error.setTipoError(new TipoError(3));
+//            error.setDescripcion(ex.getMessage());
+//            Utilitaria.escribeError(error);
+//        } finally {
+//            ConexionBD.cerrarConexion(con);
+//        }
+        return num;
+        
     }
 
     @Override
