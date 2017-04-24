@@ -74,9 +74,10 @@ public class Inicio extends HttpServlet {
                     usr.setUserName(username);
                     break;
             }
+     
             SeguridadUsuario sgUsr = new SeguridadUsuario();
             sgUsr.setContrasena(cifrado);
-            sgUsr.setIpUltimaSesion(request.getRemoteAddr());
+            sgUsr.setIpUltimaSesion(request.getRemoteUser());
             usr.setListaSeguridad(sgUsr);
             SeguridadUsuarioFachada sgdadFach = new SeguridadUsuarioFachada();
             UsuarioFachada usrFachada = new UsuarioFachada();
