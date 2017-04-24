@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
-import persistencia.entidades.Comunidad;
 import persistencia.entidades.Usuario;
 import persistencia.entidades.Error;
 import persistencia.entidades.TipoError;
@@ -35,7 +34,7 @@ public class UsuarioDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT  usr.nombres,usr.apellidos,usr.correo,usr.celular,"
-                    + "usr.telefono,usr.codigo,usr.user_name,usr.codigo_documento,usr.fecha_nacimiento, usr.profesion, usr.avatar"
+                    + "usr.telefono,usr.codigo,usr.user_name,usr.codigo_documento,usr.fecha_nacimiento, usr.profesion, usr.avatar,sgUsr.codigo"
                     + " FROM usuario usr "
                     + "JOIN seguridad_usuario sgUsr ON sgUsr.usuario_codigo=usr.codigo "
                     + "WHERE ((usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1) or usr.codigo=?";
@@ -58,6 +57,9 @@ public class UsuarioDAO implements GestionDAO {
                 user.setFechanacimiento(rS.getDate(9));
                 user.setProfesion(rS.getString(10));
                 user.setAvatar(rS.getShort(11));
+                if(user.getListaSeguridad()!=null){
+                    user.getListaSeguridad().setCodigo(rS.getInt(12));
+                }
             }
             rS.close();
             pS.close();
