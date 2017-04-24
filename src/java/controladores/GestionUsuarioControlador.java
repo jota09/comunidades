@@ -14,7 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +33,7 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Estructura;
 import persistencia.entidades.Registro;
+import persistencia.entidades.TipoError;
 import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
 import utilitarias.LecturaConfig;
@@ -70,9 +74,29 @@ public class GestionUsuarioControlador extends HttpServlet {
                     validarCorreo(request, response);
                     break;
                 }
+                case 4: {
+                    recuperarSesion(request, response);
+                    break;
+                }
+                case 5: {
+                    guardarUsuario(request, response);
+                    break;
+                }
             }
         } catch (IOException ex) {
-            Logger.getLogger(GestionUsuarioControlador.class.getName()).log(Level.SEVERE, null, ex);
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (ParseException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("processRequest");
+            error.setTipoError(new TipoError(4));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
         }
     }
 
@@ -124,10 +148,10 @@ public class GestionUsuarioControlador extends HttpServlet {
         GestionFachada condicionFachada = new CondicionPaginacionFachada();
         CondicionPaginacion condicionPaginacion = new CondicionPaginacion(Integer.parseInt(condicionesPag));
         condicionFachada.getObject(condicionPaginacion);
-        CondicionPaginado condicion=new CondicionPaginado();
+        CondicionPaginado condicion = new CondicionPaginado();
         Usuario user = (Usuario) request.getSession().getAttribute("user");
         condicion.setComunidad(user.getPerfilCodigo().getComunidad());
-        condicion.setCondicion( condicionPaginacion.getCondicion().replace("<?>", busqueda)+" limit " + rango);
+        condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda) + " limit " + rango);
         List<Usuario> usuarios = usuarioFachada.getListObject(condicion);
         PrintWriter out = response.getWriter();
         for (Usuario u : usuarios) {
@@ -171,11 +195,11 @@ public class GestionUsuarioControlador extends HttpServlet {
         String autenticacion = ((Estructura) estructuraFachada.getObject(new Estructura("autenticacionSMTP"))).getValor();
         String starttls = ((Estructura) estructuraFachada.getObject(new Estructura("tlsSMTP"))).getValor();
         ServicioDeEnvioMail envioMail = new ServicioDeEnvioMail(host, puerto, correoSoporte, usuario, password, starttls, autenticacion, serverSSL);
-        String plantilla=Utilitaria.leerPlantilla("1.html");
-        plantilla=plantilla.replace("<#comunidad#>", comunidad.getNombre());
-        plantilla=plantilla.replace("<#codigoRegistro#>",registro.getCodigoGenerado());
-        String rutaImg[]={LecturaConfig.getValue("rutaImgPlantillas")+"logos"+File.separator+comunidad.getCodigo()+".png"};
-        envioMail.sendEmail(plantilla, "Generación de Codigo de Registro para la comunidad " + comunidad.getNombre(), correo,rutaImg,null,null);
+        String plantilla = Utilitaria.leerPlantilla("1.html");
+        plantilla = plantilla.replace("<#comunidad#>", comunidad.getNombre());
+        plantilla = plantilla.replace("<#codigoRegistro#>", registro.getCodigoGenerado());
+        String rutaImg[] = {LecturaConfig.getValue("rutaImgPlantillas") + "logos" + File.separator + comunidad.getCodigo() + ".png"};
+        envioMail.sendEmail(plantilla, "Generación de Codigo de Registro para la comunidad " + comunidad.getNombre(), correo, rutaImg, null, null);
         tiempoInvalidacion.setTimeInMillis(tiempoEnMilis);
         if (tipo.equals("0")) {
             request.getSession().setAttribute("message", Utilitaria.createAlert("Exito", "Se genero el codigo para el correo " + correo, "success"));
@@ -190,7 +214,7 @@ public class GestionUsuarioControlador extends HttpServlet {
         GestionFachada usuarioFachada = new UsuarioFachada();
         Usuario user = new Usuario();
         user.setCorreo(correo);
-        CondicionPaginado condicion=new CondicionPaginado();
+        CondicionPaginado condicion = new CondicionPaginado();
         condicion.setUser(user);
         PrintWriter out = response.getWriter();
         if (usuarioFachada.getCount(condicion) > 0) {
@@ -200,4 +224,41 @@ public class GestionUsuarioControlador extends HttpServlet {
         }
     }
 
+    private void recuperarSesion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            Usuario u = (Usuario) request.getSession().getAttribute("user");
+            JSONObject obj = new JSONObject();
+            EstructuraFachada estrucFach = new EstructuraFachada();
+            Estructura estru = ((Estructura) estrucFach.getObject(new Estructura("sinAvatarUser")));
+            obj.put("documento", u.getCodigoDocumento());
+            obj.put("nombres", u.getNombres());
+            obj.put("apellidos", u.getApellidos());
+            obj.put("correo", u.getCorreo());
+            obj.put("celular", u.getCelular());
+            obj.put("telefono", u.getTelefono());
+            obj.put("username", u.getUserName());
+            obj.put("profesion", u.getProfesion());
+            obj.put("fecha", u.getFechanacimiento().toString());
+            if (u.getAvatar() != 0) {
+                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario"));
+            } else {
+                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + estru.getValor());
+            }
+            out.print(obj);
+        }
+    }
+
+    private void guardarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
+        try (PrintWriter out = response.getWriter()) {
+            UsuarioFachada userFach = new UsuarioFachada();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Usuario u = (Usuario) request.getSession().getAttribute("user");
+            u.setCelular(request.getParameter("celular"));
+            u.setTelefono(request.getParameter("telefono"));
+            u.setCorreo(request.getParameter("correo"));
+            u.setProfesion(request.getParameter("profesion"));
+            u.setFechanacimiento(formatter.parse(request.getParameter("fecha")));
+            out.print(userFach.updateObject(u));
+        }
+    }
 }

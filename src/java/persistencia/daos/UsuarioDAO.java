@@ -35,7 +35,7 @@ public class UsuarioDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT  usr.nombres,usr.apellidos,usr.correo,usr.celular,"
-                    + "usr.telefono,usr.codigo,usr.user_name,usr.codigo_documento"
+                    + "usr.telefono,usr.codigo,usr.user_name,usr.codigo_documento,usr.fecha_nacimiento, usr.profesion, usr.avatar"
                     + " FROM usuario usr "
                     + "JOIN seguridad_usuario sgUsr ON sgUsr.usuario_codigo=usr.codigo "
                     + "WHERE ((usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1) or usr.codigo=?";
@@ -55,6 +55,9 @@ public class UsuarioDAO implements GestionDAO {
                 user.setCodigo(rS.getInt(6));
                 user.setUserName(rS.getString(7));
                 user.setCodigoDocumento(rS.getInt(8));
+                user.setFechanacimiento(rS.getDate(9));
+                user.setProfesion(rS.getString(10));
+                user.setAvatar(rS.getShort(11));
             }
             rS.close();
             pS.close();
@@ -142,7 +145,39 @@ public class UsuarioDAO implements GestionDAO {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Usuario user = (Usuario) object;
+        Connection con = null;
+        int num = 0;
+//        try {
+//            String sql = "UPDATE usuario set codigo_documento = ? "
+//                    + "nombres = ?, apellidos = ?, correo=?, celular = ?, telefono=? "
+//                    + "telefono = ?, ";
+//        } catch (ClassNotFoundException ex) {
+//            persistencia.entidades.Error error = new persistencia.entidades.Error();
+//            error.setClase(getClass().getName());
+//            error.setMetodo("updateObject");
+//            error.setTipoError(new TipoError(1));
+//            error.setDescripcion(ex.getMessage());
+//            Utilitaria.escribeError(error);
+//        } catch (SQLException ex) {
+//            persistencia.entidades.Error error = new persistencia.entidades.Error();
+//            error.setClase(getClass().getName());
+//            error.setMetodo("updateObject");
+//            error.setTipoError(new TipoError(2));
+//            error.setDescripcion(ex.getMessage());
+//            Utilitaria.escribeError(error);
+//        } catch (IOException ex) {
+//            persistencia.entidades.Error error = new persistencia.entidades.Error();
+//            error.setClase(getClass().getName());
+//            error.setMetodo("updateObject");
+//            error.setTipoError(new TipoError(3));
+//            error.setDescripcion(ex.getMessage());
+//            Utilitaria.escribeError(error);
+//        } finally {
+//            ConexionBD.cerrarConexion(con);
+//        }
+        return num;
+        
     }
 
     @Override
