@@ -57,7 +57,9 @@ public class UsuarioDAO implements GestionDAO {
                 user.setFechanacimiento(rS.getDate(9));
                 user.setProfesion(rS.getString(10));
                 user.setAvatar(rS.getShort(11));
-                user.getListaSeguridad().setCodigo(rS.getInt(12));
+                if(user.getListaSeguridad()!=null){
+                    user.getListaSeguridad().setCodigo(rS.getInt(12));
+                }
             }
             rS.close();
             pS.close();
