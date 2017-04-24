@@ -182,7 +182,6 @@ public class ComunidadDAO implements GestionDAO {
                     + "WHERE com.CIUDAD_CODIGO = C.CODIGO AND C.departamento_CODIGO = D.CODIGO AND D.pais_CODIGO = P.CODIGO AND com.ACTIVO = 1 "           
                     + condicion.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
-            System.out.println(pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Comunidad comunidad = new Comunidad();

@@ -6,7 +6,7 @@ import org.json.simple.JSONObject;
 public class Departamento implements Serializable {
 
     private int codigo;
-    private int paiscodigo;
+    private Pais pais;
     private String nombre;
     private short activo;
 
@@ -26,12 +26,12 @@ public class Departamento implements Serializable {
         this.codigo = codigo;
     }
 
-    public int getPaisCodigo() {
-        return this.paiscodigo;
+    public Pais getPais() {
+        return this.pais;
     }
 
-    public void setPaisCodigo(int paiscodigo) {
-        this.paiscodigo = paiscodigo;
+    public void setPais(Pais pais) {
+        this.pais = pais;
     }
 
     public String getNombre() {

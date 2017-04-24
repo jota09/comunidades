@@ -5,11 +5,15 @@
  */
 package controladores;
 
+import fachada.CiudadFachada;
 import fachada.ComunidadFachada;
 import fachada.CondicionPaginacionFachada;
+import fachada.DepartamentoFachada;
 import fachada.GestionFachada;
+import fachada.PaisFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,8 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import persistencia.entidades.Ciudad;
 import persistencia.entidades.Comunidad;
 import persistencia.entidades.CondicionPaginacion;
+import persistencia.entidades.Departamento;
+import persistencia.entidades.Pais;
 import utilitarias.CondicionPaginado;
 
 /**
@@ -38,13 +45,23 @@ public class ComunidadControlador extends HttpServlet {
                 case 1:
                     this.getRecursoVistaConPaginacion(request, response);
                     break;
+                case 10:
+                    this.getPaises(request, response);
+                    break;
+                case 11:
+                    this.getDepartamentos(request, response);
+                    break;
+                case 12:
+                    this.getCiudades(request, response);
+                    break;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void getRecursoVistaConPaginacion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getRecursoVistaConPaginacion(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         String rango = request.getParameter("rango");
         String condicionesPag = request.getParameter("condicionesPag");
         String busqueda = request.getParameter("busqueda");
@@ -69,6 +86,68 @@ public class ComunidadControlador extends HttpServlet {
                 arrayComunidades.add(obj);
             }
             out.print(arrayComunidades);
+        }
+    }
+
+    public void getPaises(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            PaisFachada paisFachada = new PaisFachada();
+            ArrayList<Pais> paises = (ArrayList<Pais>) paisFachada.getListObject();
+            JSONArray arregloPaises = new JSONArray();
+            for (Pais pais : paises) {
+                JSONObject obj = new JSONObject();
+                obj.put("codigo", pais.getCodigo());
+                obj.put("nombre", pais.getNombre());
+                arregloPaises.add(obj);
+            }
+            out.print(arregloPaises);
+        }
+    }
+
+    public void getDepartamentos(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String pais = request.getParameter("pais");
+            if (pais != null) {
+                Pais paisBusqueda = new Pais();
+                paisBusqueda.setCodigo(Integer.parseInt(pais));
+                DepartamentoFachada departamentoFachada = new DepartamentoFachada();
+                ArrayList<Departamento> departamentos = (ArrayList<Departamento>) departamentoFachada.getListByCondition(paisBusqueda);
+                JSONArray arregloDepartamentos = new JSONArray();
+                for (Departamento departamento : departamentos) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("codigo", departamento.getCodigo());
+                    obj.put("nombre", departamento.getNombre());
+                    arregloDepartamentos.add(obj);
+                }
+                out.print(arregloDepartamentos);
+            } else {
+
+            }
+        }
+    }
+
+    public void getCiudades(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        try (PrintWriter out = response.getWriter()) {
+            String departamento = request.getParameter("departamento");
+            if (departamento != null) {
+                Departamento departamentoBusqueda = new Departamento();
+                departamentoBusqueda.setCodigo(Integer.parseInt(departamento));
+                CiudadFachada ciudadFachada = new CiudadFachada();
+                ArrayList<Ciudad> ciudades = (ArrayList<Ciudad>) ciudadFachada.getListByCondition(departamentoBusqueda);
+                JSONArray arregloCiudades = new JSONArray();
+                for (Ciudad ciudad : ciudades) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("codigo", ciudad.getCodigo());
+                    obj.put("nombre", ciudad.getNombre());
+                    arregloCiudades.add(obj);
+                }
+                out.print(arregloCiudades);
+            } else {
+
+            }
         }
     }
 

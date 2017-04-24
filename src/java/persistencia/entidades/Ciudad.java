@@ -6,8 +6,7 @@ import org.json.simple.JSONObject;
 public class Ciudad implements Serializable {
 
     private int codigo;
-    private int departamentocodigo;
-    private int paiscodigo;
+    private Departamento departamento;
     private String nombre;
     private short activo;
 
@@ -27,20 +26,12 @@ public class Ciudad implements Serializable {
         this.codigo = codigo;
     }
 
-    public int getDepartamentoCodigo() {
-        return this.departamentocodigo;
+    public Departamento getDepartamento() {
+        return this.departamento;
     }
 
-    public void setDepartamentoCodigo(int departamentocodigo) {
-        this.departamentocodigo = departamentocodigo;
-    }
-
-    public int getPaisCodigo() {
-        return this.paiscodigo;
-    }
-
-    public void setPaisCodigo(int paiscodigo) {
-        this.paiscodigo = paiscodigo;
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
     }
 
     public String getNombre() {
