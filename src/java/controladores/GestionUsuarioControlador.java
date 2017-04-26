@@ -11,6 +11,7 @@ import fachada.GestionFachada;
 import fachada.RegistroFachada;
 import fachada.UsuarioFachada;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
@@ -258,6 +260,14 @@ public class GestionUsuarioControlador extends HttpServlet {
             u.setCorreo(request.getParameter("correo"));
             u.setProfesion(request.getParameter("profesion"));
             u.setFechanacimiento(fecha);
+            String imagen64 = request.getParameter("imagen");
+            if (imagen64 != null && !imagen64.isEmpty()) {
+                    File file = new File(LecturaConfig.getValue("rutaUploadUsuario") + File.separator + u.getCodigo() + ".png");
+                    FileOutputStream out2 = new FileOutputStream(file);
+                    out2.write(DatatypeConverter.parseBase64Binary(imagen64.split(",")[1]));
+                    out2.close();
+                    u.setAvatar((short)1);
+                }
             out.print(userFach.updateObject(u));
         }
     }
