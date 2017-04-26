@@ -10,20 +10,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
-import persistencia.entidades.Ciudad;
-import persistencia.entidades.Departamento;
-import persistencia.entidades.Pais;
+import persistencia.entidades.Inmueble;
+import persistencia.entidades.TipoInmueble;
 
 /**
  *
- * @author daniel.franco
+ * @author manuel.alcala
  */
-public class CiudadDAO implements GestionDAO {
+public class InmuebleDAO implements GestionDAO {
 
     @Override
     public int getCount(Object object) {
@@ -32,39 +30,32 @@ public class CiudadDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        Ciudad ciudad = (Ciudad) object;
+        Inmueble inmueble = (Inmueble) object;
         Connection con = null;
         try {
+            String sql = "Select in.codigo,in.ubicacion,tin.nombre from inmueble in join tipo_inmueble tin on in.tipo_inmueble_codigo=tin.codigo where in.comunidad_codigo=? and in.usuario_codigo=?";
             con = ConexionBD.obtenerConexion();
-            String sql = "SELECT c.nombre,d.nombre,p.nombre,p.CODIGO as PAIS, d.CODIGO AS DEPARTAMENTO "
-                    + "FROM pais p, departamento d, ciudad c "
-                    + "WHERE c.CODIGO = ? AND departamento_CODIGO = d.CODIGO AND pais_CODIGO = p.CODIGO";
             PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, ciudad.getCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
-                Pais pais = new Pais();
-                pais.setNombre(rS.getString(3));
-                pais.setCodigo(rS.getInt("PAIS"));
-                Departamento departamento = new Departamento();
-                departamento.setCodigo(rS.getInt("DEPARTAMENTO"));
-                departamento.setPais(pais);
-                departamento.setNombre(rS.getString(2));
-                ciudad.setDepartamento(departamento);
-                ciudad.setNombre(rS.getString(1));
+                TipoInmueble tipo = new TipoInmueble();
+                inmueble.setCodigo(rS.getInt(1));
+                inmueble.setUbicacion(rS.getString(2));
+                tipo.setNombre(rS.getString(3));
+                inmueble.setTipoInmuebleCodigo(tipo);
             }
             rS.close();
             pS.close();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InmuebleDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InmuebleDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InmuebleDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             ConexionBD.cerrarConexion(con);
         }
-        return ciudad;
+        return inmueble;
     }
 
     @Override
@@ -94,33 +85,7 @@ public class CiudadDAO implements GestionDAO {
 
     @Override
     public List getListByCondition(Object object) {
-        Departamento departamento = (Departamento) object;
-        Connection con = null;
-        List<Ciudad> ciudades = new ArrayList<>();
-        try {
-            con = ConexionBD.obtenerConexion();
-            String sql = "SELECT CODIGO,NOMBRE FROM ciudad WHERE departamento_CODIGO = ? AND ACTIVO = 1";
-            PreparedStatement pS = con.prepareStatement(sql);
-            pS.setInt(1, departamento.getCodigo());
-            ResultSet rS = pS.executeQuery();
-            while (rS.next()) {
-                Ciudad ciudad = new Ciudad();
-                ciudad.setCodigo(rS.getInt("CODIGO"));
-                ciudad.setNombre(rS.getString("NOMBRE"));
-                ciudades.add(ciudad);
-            }
-            rS.close();
-            pS.close();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            ConexionBD.cerrarConexion(con);
-        }
-        return ciudades;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
