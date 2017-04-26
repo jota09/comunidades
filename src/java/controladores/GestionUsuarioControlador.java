@@ -241,10 +241,11 @@ public class GestionUsuarioControlador extends HttpServlet {
             obj.put("fecha", u.getFechanacimiento().toString());
             obj.put("fechaUltima", u.getListaSeguridad().getFechaUltimaSesion().toString());
             if (u.getAvatar() != 0) {
-                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario"));
+                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + u.getCodigo()+".png");
             } else {
                 obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + estru.getValor());
             }
+            System.out.println(obj);
             out.print(obj);
         }
     }
@@ -269,6 +270,7 @@ public class GestionUsuarioControlador extends HttpServlet {
                     out2.close();
                     u.setAvatar((short)1);
                 }
+            System.out.println("Set el user: "+u.getAvatar());
             out.print(userFach.updateObject(u));
         }
     }
