@@ -151,13 +151,20 @@ public class ComunidadControlador extends HttpServlet {
 
     public void borrarComunidad(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
+        HttpSession sesion = request.getSession();
+
         String codigo = request.getParameter("comunidad");
         if (!codigo.isEmpty()) {
             GestionFachada gestionFachada = new ComunidadFachada();
             Comunidad comunidad = new Comunidad();
             comunidad.setCodigo(Integer.parseInt(codigo));
             comunidad.setActivo((short) 0);
-            gestionFachada.updateObject(comunidad);
+            int cantidad = gestionFachada.updateObject(comunidad);
+            if (cantidad > 0) {
+                sesion.setAttribute("message", Utilitaria.createAlert("Éxito", "Se ha eliminado la comunidad", "success"));
+            } else {
+                sesion.setAttribute("message", Utilitaria.createAlert("Error", "Ha ocurrido un error al eliminar la comunidad", "danger"));
+            }
         }
     }
 
@@ -174,7 +181,7 @@ public class ComunidadControlador extends HttpServlet {
         String codigoVisibilidad = request.getParameter("visibilidad");
         String codigoBarras = request.getParameter("codigoBarras");
         String imagen64 = request.getParameter("imagen");
-
+        
         int cantidad = 0;
 
         if (nit != null && !nit.isEmpty()
@@ -203,6 +210,7 @@ public class ComunidadControlador extends HttpServlet {
 
             if (codigo != null && !codigo.isEmpty()) {
                 comunidad.setCodigo(Integer.parseInt(codigo));
+                comunidad.setActivo((short) -1);
                 cantidad = comunidadFachada.updateObject(comunidad);
             } else {
                 cantidad = comunidadFachada.insertObject(comunidad);
@@ -215,7 +223,7 @@ public class ComunidadControlador extends HttpServlet {
                     out.write(DatatypeConverter.parseBase64Binary(imagen64.split(",")[1]));
                     out.close();
                 }
-                sesion.setAttribute("message", Utilitaria.createAlert("Éxito", "Se ha creado la comunidad " + comunidad.getNombre(), "success"));
+                sesion.setAttribute("message", Utilitaria.createAlert("Éxito", "Se ha guardado la comunidad " + comunidad.getNombre(), "success"));
             } else {
                 sesion.setAttribute("message", Utilitaria.createAlert("Error", "Ha ocurrido un error al crear la comunidad " + comunidad.getNombre(), "danger"));
             }
