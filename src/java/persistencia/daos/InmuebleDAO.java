@@ -33,9 +33,11 @@ public class InmuebleDAO implements GestionDAO {
         Inmueble inmueble = (Inmueble) object;
         Connection con = null;
         try {
-            String sql = "Select in.codigo,in.ubicacion,tin.nombre from inmueble in join tipo_inmueble tin on in.tipo_inmueble_codigo=tin.codigo where in.comunidad_codigo=? and in.usuario_codigo=?";
+            String sql = "Select inm.codigo,inm.ubicacion,tin.nombre from inmueble inm join tipo_inmueble tin on inm.tipo_inmueble_codigo=tin.codigo where inm.comunidad_codigo=? and inm.usuario_codigo=?";
             con = ConexionBD.obtenerConexion();
             PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, inmueble.getComunidadCodigo());
+            pS.setInt(2, inmueble.getUsuarioCodigo());
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 TipoInmueble tipo = new TipoInmueble();
