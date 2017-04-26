@@ -19,8 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -251,13 +249,15 @@ public class GestionUsuarioControlador extends HttpServlet {
     private void guardarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             UsuarioFachada userFach = new UsuarioFachada();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            Date parsed = format.parse(request.getParameter("fecha"));
+            java.sql.Date fecha = new java.sql.Date(parsed.getTime());
             Usuario u = (Usuario) request.getSession().getAttribute("user");
             u.setCelular(request.getParameter("celular"));
             u.setTelefono(request.getParameter("telefono"));
             u.setCorreo(request.getParameter("correo"));
             u.setProfesion(request.getParameter("profesion"));
-            u.setFechanacimiento(formatter.parse(request.getParameter("fecha")));
+            u.setFechanacimiento(fecha);
             out.print(userFach.updateObject(u));
         }
     }

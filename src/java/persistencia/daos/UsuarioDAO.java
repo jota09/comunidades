@@ -57,7 +57,7 @@ public class UsuarioDAO implements GestionDAO {
                 user.setFechanacimiento(rS.getDate(9));
                 user.setProfesion(rS.getString(10));
                 user.setAvatar(rS.getShort(11));
-                if(user.getListaSeguridad()!=null){
+                if (user.getListaSeguridad() != null) {
                     user.getListaSeguridad().setCodigo(rS.getInt(12));
                 }
             }
@@ -150,36 +150,53 @@ public class UsuarioDAO implements GestionDAO {
         Usuario user = (Usuario) object;
         Connection con = null;
         int num = 0;
-//        try {
-//            String sql = "UPDATE usuario set codigo_documento = ? "
-//                    + "nombres = ?, apellidos = ?, correo=?, celular = ?, telefono=? "
-//                    + "telefono = ?, ";
-//        } catch (ClassNotFoundException ex) {
-//            persistencia.entidades.Error error = new persistencia.entidades.Error();
-//            error.setClase(getClass().getName());
-//            error.setMetodo("updateObject");
-//            error.setTipoError(new TipoError(1));
-//            error.setDescripcion(ex.getMessage());
-//            Utilitaria.escribeError(error);
-//        } catch (SQLException ex) {
-//            persistencia.entidades.Error error = new persistencia.entidades.Error();
-//            error.setClase(getClass().getName());
-//            error.setMetodo("updateObject");
-//            error.setTipoError(new TipoError(2));
-//            error.setDescripcion(ex.getMessage());
-//            Utilitaria.escribeError(error);
-//        } catch (IOException ex) {
-//            persistencia.entidades.Error error = new persistencia.entidades.Error();
-//            error.setClase(getClass().getName());
-//            error.setMetodo("updateObject");
-//            error.setTipoError(new TipoError(3));
-//            error.setDescripcion(ex.getMessage());
-//            Utilitaria.escribeError(error);
-//        } finally {
-//            ConexionBD.cerrarConexion(con);
-//        }
+        PreparedStatement pS = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "UPDATE usuario SET codigo_documento = ?, "
+                    + "nombres = ?, apellidos = ?, correo=?, actualizacion= NOW(), celular = ?, telefono=?, "
+                    + "user_name = ?, fecha_nacimiento = ?, profesion = ? "
+                    + "WHERE codigo = ? ";
+            pS = con.prepareStatement(sql);
+            pS.setInt(1, user.getCodigoDocumento());
+            pS.setString(2, user.getNombres());
+            pS.setString(3, user.getApellidos());
+            pS.setString(4, user.getCorreo());
+            pS.setString(5, user.getCelular());
+            pS.setString(6, user.getTelefono());
+            pS.setString(7, user.getUserName());
+            pS.setDate(8, user.getFechanacimiento());
+            pS.setString(9, user.getProfesion());
+            pS.setInt(10, user.getCodigo());
+            System.out.println("Query de actualizar user: " + pS);
+            num = pS.executeUpdate();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(1));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (SQLException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(2));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } catch (IOException ex) {
+            persistencia.entidades.Error error = new persistencia.entidades.Error();
+            error.setClase(getClass().getName());
+            error.setMetodo("updateObject");
+            error.setTipoError(new TipoError(3));
+            error.setDescripcion(ex.getMessage());
+            Utilitaria.escribeError(error);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
         return num;
-        
+
     }
 
     @Override
