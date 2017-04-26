@@ -29,7 +29,8 @@ public class ComunidadFachada implements GestionFachada {
 
     @Override
     public int insertObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO comunidadDAO = new ComunidadDAO();
+        return comunidadDAO.insertObject(object);
     }
 
     @Override
@@ -45,7 +46,8 @@ public class ComunidadFachada implements GestionFachada {
 
     @Override
     public int updateObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO comunidadDAO = new ComunidadDAO();
+        return comunidadDAO.updateObject(object);
     }
 
     @Override
