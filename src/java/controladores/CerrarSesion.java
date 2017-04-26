@@ -1,5 +1,7 @@
 package controladores;
 
+import fachada.SeguridadUsuarioFachada;
+import fachada.UsuarioFachada;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -10,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import persistencia.entidades.Error;
+import persistencia.entidades.SeguridadUsuario;
 import persistencia.entidades.TipoError;
+import persistencia.entidades.Usuario;
 import utilitarias.Utilitaria;
 
 @WebServlet(name = "CerrarSesion", urlPatterns = {"/CerrarSesion"})
@@ -81,6 +85,11 @@ public class CerrarSesion extends HttpServlet {
     private void cierraSesion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession sesion = request.getSession();//el constructor con false permite que no vuelva a crear el obj session
+        Usuario user = (Usuario) sesion.getAttribute("user");
+        SeguridadUsuario sgUsr = user.getListaSeguridad();
+        sgUsr.setIpUltimaSesion(request.getRemoteUser());
+        SeguridadUsuarioFachada sgdadFach = new SeguridadUsuarioFachada();
+        sgdadFach.updateObject(sgUsr);
         if (sesion.getAttribute("user") != null) {
             sesion.removeAttribute("user");
         }
