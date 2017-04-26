@@ -11,6 +11,8 @@ import fachada.CondicionPaginacionFachada;
 import fachada.DepartamentoFachada;
 import fachada.GestionFachada;
 import fachada.PaisFachada;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Ciudad;
@@ -28,6 +32,9 @@ import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Departamento;
 import persistencia.entidades.Pais;
 import utilitarias.CondicionPaginado;
+import utilitarias.LecturaConfig;
+import utilitarias.Utilitaria;
+import utilitarias.Visibilidad;
 
 /**
  *
@@ -43,7 +50,16 @@ public class ComunidadControlador extends HttpServlet {
         try {
             switch (op) {
                 case 1:
-                    this.getRecursoVistaConPaginacion(request, response);
+                    this.getComunidades(request, response);
+                    break;
+                case 2:
+                    this.getComunidad(request, response);
+                    break;
+                case 3:
+                    this.borrarComunidad(request, response);
+                    break;
+                case 4:
+                    this.guardarComunidad(request, response);
                     break;
                 case 10:
                     this.getPaises(request, response);
@@ -60,7 +76,7 @@ public class ComunidadControlador extends HttpServlet {
         }
     }
 
-    public void getRecursoVistaConPaginacion(HttpServletRequest request, HttpServletResponse response)
+    public void getComunidades(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String rango = request.getParameter("rango");
         String condicionesPag = request.getParameter("condicionesPag");
@@ -86,6 +102,125 @@ public class ComunidadControlador extends HttpServlet {
                 arrayComunidades.add(obj);
             }
             out.print(arrayComunidades);
+        }
+    }
+
+    public void getComunidad(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String codigoComunidad = request.getParameter("comunidad");
+        if (codigoComunidad != null && !codigoComunidad.trim().isEmpty()) {
+            GestionFachada comunidadFachada = new ComunidadFachada();
+
+            Comunidad comunidad = new Comunidad();
+            comunidad.setCodigo(Integer.parseInt(codigoComunidad));
+            comunidadFachada.getObject(comunidad);
+
+            String rutaLogoDisco = LecturaConfig.getValue("pathResources") + File.separator + "logos" + File.separator + comunidad.getCodigo() + ".png";
+            String urlImagen = "";
+
+            File file = new File(rutaLogoDisco);
+            if (!file.exists()) {
+                urlImagen = LecturaConfig.getValue("rutaImg") + "logo/3.png";
+            } else {
+                urlImagen = LecturaConfig.getValue("rutaImg") + "logo/" + codigoComunidad + ".png";
+            }
+
+            GestionFachada ciudadFachada = new CiudadFachada();
+            Ciudad ciudad = new Ciudad();
+            ciudad.setCodigo(comunidad.getCiudadCodigo().getCodigo());
+            ciudadFachada.getObject(ciudad);
+
+            JSONObject obj = new JSONObject();
+            obj.put("codigo", comunidad.getCodigo());
+            obj.put("nit", comunidad.getNit());
+            obj.put("nombre", comunidad.getNombre());
+            obj.put("direccion", comunidad.getDireccion());
+            obj.put("telefono", comunidad.getTelefono());
+            obj.put("pais", ciudad.getDepartamento().getPais().getCodigo());
+            obj.put("departamento", ciudad.getDepartamento().getCodigo());
+            obj.put("ciudad", comunidad.getCiudadCodigo().getCodigo());
+            obj.put("visibilidad", comunidad.getVisibilidad().getVisibilidad());
+            obj.put("codigoBarras", comunidad.getIdBarCode());
+            obj.put("logo", urlImagen);
+
+            try (PrintWriter out = response.getWriter()) {
+                out.print(obj);
+            }
+        }
+    }
+
+    public void borrarComunidad(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String codigo = request.getParameter("comunidad");
+        if (!codigo.isEmpty()) {
+            GestionFachada gestionFachada = new ComunidadFachada();
+            Comunidad comunidad = new Comunidad();
+            comunidad.setCodigo(Integer.parseInt(codigo));
+            comunidad.setActivo((short) 0);
+            gestionFachada.updateObject(comunidad);
+        }
+    }
+
+    public void guardarComunidad(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        HttpSession sesion = request.getSession();
+
+        String codigo = request.getParameter("codigo");
+        String nit = request.getParameter("nit");
+        String nombre = request.getParameter("nombre");
+        String direccion = request.getParameter("direccion");
+        String telefono = request.getParameter("telefono");
+        String codigoCiudad = request.getParameter("ciudad");
+        String codigoVisibilidad = request.getParameter("visibilidad");
+        String codigoBarras = request.getParameter("codigoBarras");
+        String imagen64 = request.getParameter("imagen");
+
+        int cantidad = 0;
+
+        if (nit != null && !nit.isEmpty()
+                && nombre != null && !nombre.isEmpty()
+                && direccion != null && !direccion.isEmpty()
+                && telefono != null && !telefono.isEmpty()
+                && codigoCiudad != null && !codigoCiudad.isEmpty()
+                && codigoVisibilidad != null && !codigoVisibilidad.isEmpty()) {
+
+            GestionFachada comunidadFachada = new ComunidadFachada();
+            Comunidad comunidad = new Comunidad();
+            comunidad.setNit(nit);
+            comunidad.setNombre(nombre);
+            comunidad.setDireccion(direccion);
+            comunidad.setTelefono(telefono);
+            Ciudad ciudad = new Ciudad();
+            ciudad.setCodigo(Integer.parseInt(codigoCiudad));
+            comunidad.setCiudadCodigo(ciudad);
+            Visibilidad visibilidad = new Visibilidad();
+            visibilidad.setVisibilidad(Short.parseShort(codigoVisibilidad));
+            comunidad.setVisibilidad(visibilidad);
+
+            if (codigoBarras != null && !codigoBarras.isEmpty()) {
+                comunidad.setIdBarCode(codigoBarras);
+            }
+
+            if (codigo != null && !codigo.isEmpty()) {
+                comunidad.setCodigo(Integer.parseInt(codigo));
+                cantidad = comunidadFachada.updateObject(comunidad);
+            } else {
+                cantidad = comunidadFachada.insertObject(comunidad);
+            }
+
+            if (cantidad > 0) {
+                if (imagen64 != null && !imagen64.isEmpty()) {
+                    File file = new File(LecturaConfig.getValue("pathResources") + File.separator + "logos" + File.separator + comunidad.getCodigo() + ".png");
+                    FileOutputStream out = new FileOutputStream(file);
+                    out.write(DatatypeConverter.parseBase64Binary(imagen64.split(",")[1]));
+                    out.close();
+                }
+                sesion.setAttribute("message", Utilitaria.createAlert("Éxito", "Se ha creado la comunidad " + comunidad.getNombre(), "success"));
+            } else {
+                sesion.setAttribute("message", Utilitaria.createAlert("Error", "Ha ocurrido un error al crear la comunidad " + comunidad.getNombre(), "danger"));
+            }
+        } else {
+            sesion.setAttribute("message", Utilitaria.createAlert("Error", "Faltan datos para crear la comunidad", "danger"));
         }
     }
 
