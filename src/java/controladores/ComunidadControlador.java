@@ -10,6 +10,7 @@ import fachada.ComunidadFachada;
 import fachada.CondicionPaginacionFachada;
 import fachada.DepartamentoFachada;
 import fachada.GestionFachada;
+import fachada.InmuebleFachada;
 import fachada.PaisFachada;
 import fachada.UsuarioFachada;
 import java.io.File;
@@ -31,6 +32,7 @@ import persistencia.entidades.Ciudad;
 import persistencia.entidades.Comunidad;
 import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Departamento;
+import persistencia.entidades.Inmueble;
 import persistencia.entidades.Pais;
 import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
@@ -322,14 +324,12 @@ public class ComunidadControlador extends HttpServlet {
         Usuario user = (Usuario) sesion.getAttribute("user");
         if (user != null) {
             GestionFachada comunidadFachada = new ComunidadFachada();
-
+            GestionFachada inmuebleFachada = new InmuebleFachada();
             Comunidad comunidad = new Comunidad();
             comunidad.setCodigo(user.getPerfilCodigo().getComunidad().getCodigo());
             comunidadFachada.getObject(comunidad);
-
             String rutaLogoDisco = LecturaConfig.getValue("pathResources") + File.separator + "logos" + File.separator + comunidad.getCodigo() + ".png";
             String urlImagen = "";
-
             File file = new File(rutaLogoDisco);
             if (!file.exists()) {
                 urlImagen = LecturaConfig.getValue("rutaImg") + "logo/3.png";
@@ -340,6 +340,10 @@ public class ComunidadControlador extends HttpServlet {
             Ciudad ciudad = new Ciudad();
             ciudad.setCodigo(comunidad.getCiudadCodigo().getCodigo());
             ciudadFachada.getObject(ciudad);
+            Inmueble inmueble = new Inmueble();
+            inmueble.setComunidadCodigo(comunidad.getCodigo());
+            inmueble.setUsuarioCodigo(user.getCodigo());
+            inmuebleFachada.getObject(inmueble);
             JSONObject obj = new JSONObject();
             obj.put("nit", comunidad.getNit());
             obj.put("nombre", comunidad.getNombre());
@@ -347,10 +351,12 @@ public class ComunidadControlador extends HttpServlet {
             obj.put("telefono", comunidad.getTelefono());
             obj.put("pais", ciudad.getDepartamento().getPais().getNombre());
             obj.put("departamento", ciudad.getDepartamento().getNombre());
-            obj.put("ciudad", comunidad.getCiudadCodigo().getNombre());
-            obj.put("visibilidad", comunidad.getVisibilidad().getVisibilidad());
+            obj.put("ciudad", ciudad.getNombre());
+            if(inmueble.getTipoInmuebleCodigo()!=null){
+                obj.put("tipo_inmueble", inmueble.getTipoInmuebleCodigo().getNombre());
+                obj.put("inmueble", inmueble.getUbicacion());            
+            }
             obj.put("logo", urlImagen);
-
             try (PrintWriter out = response.getWriter()) {
                 out.print(obj);
             }

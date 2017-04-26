@@ -6,6 +6,8 @@
 package fachada;
 
 import java.util.List;
+import persistencia.daos.GestionDAO;
+import persistencia.daos.InmuebleDAO;
 
 /**
  *
@@ -20,7 +22,8 @@ public class InmuebleFachada implements GestionFachada {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GestionDAO inmuebleDAO = new InmuebleDAO();
+        return inmuebleDAO.getObject(object);
     }
 
     @Override
@@ -57,5 +60,5 @@ public class InmuebleFachada implements GestionFachada {
     public List getListByPagination(Object object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }
