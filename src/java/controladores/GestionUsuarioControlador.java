@@ -268,7 +268,7 @@ public class GestionUsuarioControlador extends HttpServlet {
                     FileOutputStream out2 = new FileOutputStream(file);
                     out2.write(DatatypeConverter.parseBase64Binary(imagen64.split(",")[1]));
                     out2.close();
-                    u.setAvatar((short)1);
+                    u.setAvatar((short) 1 );
                 }
             System.out.println("Set el user: "+u.getAvatar());
             out.print(userFach.updateObject(u));
