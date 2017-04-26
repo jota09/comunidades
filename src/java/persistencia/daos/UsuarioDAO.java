@@ -156,7 +156,7 @@ public class UsuarioDAO implements GestionDAO {
             con = ConexionBD.obtenerConexion();
             String sql = "UPDATE usuario SET codigo_documento = ?, "
                     + "nombres = ?, apellidos = ?, correo=?, actualizacion= NOW(), celular = ?, telefono=?, "
-                    + "user_name = ?, fecha_nacimiento = ?, profesion = ? "
+                    + "user_name = ?, fecha_nacimiento = ?, profesion = ?, avatar=? "
                     + "WHERE codigo = ? ";
             pS = con.prepareStatement(sql);
             pS.setInt(1, user.getCodigoDocumento());
@@ -168,7 +168,8 @@ public class UsuarioDAO implements GestionDAO {
             pS.setString(7, user.getUserName());
             pS.setDate(8, user.getFechanacimiento());
             pS.setString(9, user.getProfesion());
-            pS.setInt(10, user.getCodigo());
+            pS.setShort(10, user.getAvatar());
+            pS.setInt(11, user.getCodigo());
             System.out.println("Query de actualizar user: " + pS);
             num = pS.executeUpdate();
             pS.close();
