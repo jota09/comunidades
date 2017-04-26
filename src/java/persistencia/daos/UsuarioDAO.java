@@ -34,7 +34,7 @@ public class UsuarioDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "SELECT  usr.nombres,usr.apellidos,usr.correo,usr.celular,"
-                    + "usr.telefono,usr.codigo,usr.user_name,usr.codigo_documento,usr.fecha_nacimiento, usr.profesion, usr.avatar,sgUsr.codigo"
+                    + "usr.telefono,usr.codigo,usr.user_name,usr.codigo_documento,usr.fecha_nacimiento, usr.profesion, usr.avatar,sgUsr.codigo,sgUsr.fecha_ultima_sesion"
                     + " FROM usuario usr "
                     + "JOIN seguridad_usuario sgUsr ON sgUsr.usuario_codigo=usr.codigo "
                     + "WHERE ((usr.user_name=? or usr.correo=? or usr.codigo_documento=?) and sgUsr.contrasena=? and usr.activo=1 and sgUsr.activo=1) or usr.codigo=?";
@@ -59,6 +59,7 @@ public class UsuarioDAO implements GestionDAO {
                 user.setAvatar(rS.getShort(11));
                 if(user.getListaSeguridad()!=null){
                     user.getListaSeguridad().setCodigo(rS.getInt(12));
+                    user.getListaSeguridad().setFechaUltimaSesion(rS.getTimestamp(13));
                 }
             }
             rS.close();

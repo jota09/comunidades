@@ -79,7 +79,6 @@ public class Inicio extends HttpServlet {
             sgUsr.setContrasena(cifrado);
             sgUsr.setIpUltimaSesion(request.getRemoteUser());
             usr.setListaSeguridad(sgUsr);
-            SeguridadUsuarioFachada sgdadFach = new SeguridadUsuarioFachada();
             UsuarioFachada usrFachada = new UsuarioFachada();
             usr = (Usuario) usrFachada.getObject(usr);
             //out.println("nombre:"+usr.getNombres());
@@ -96,7 +95,7 @@ public class Inicio extends HttpServlet {
                     request.getSession().setAttribute("perfiles", perfiles);
                     request.getSession().setAttribute("view", "validacomunidad.html");
                 }
-                sgdadFach.updateObject(sgUsr);
+//                sgdadFach.updateObject(sgUsr);
                 sesion.setAttribute("user", usr);
                 Estructura estructura = new Estructura();
                 estructura.setReferencia("tiempoSesion");
