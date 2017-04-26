@@ -2,7 +2,7 @@ package persistencia.entidades;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
+import java.sql.Date;
 
 public class Usuario implements Serializable {
 

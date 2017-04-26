@@ -11,6 +11,7 @@ import fachada.GestionFachada;
 import fachada.RegistroFachada;
 import fachada.UsuarioFachada;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
@@ -19,14 +20,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import persistencia.entidades.Comunidad;
@@ -241,10 +241,11 @@ public class GestionUsuarioControlador extends HttpServlet {
             obj.put("fecha", u.getFechanacimiento().toString());
             obj.put("fechaUltima", u.getListaSeguridad().getFechaUltimaSesion().toString());
             if (u.getAvatar() != 0) {
-                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario"));
+                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + u.getCodigo()+".png");
             } else {
                 obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + estru.getValor());
             }
+            System.out.println(obj);
             out.print(obj);
         }
     }
@@ -252,13 +253,24 @@ public class GestionUsuarioControlador extends HttpServlet {
     private void guardarUsuario(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
         try (PrintWriter out = response.getWriter()) {
             UsuarioFachada userFach = new UsuarioFachada();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            Date parsed = format.parse(request.getParameter("fecha"));
+            java.sql.Date fecha = new java.sql.Date(parsed.getTime());
             Usuario u = (Usuario) request.getSession().getAttribute("user");
             u.setCelular(request.getParameter("celular"));
             u.setTelefono(request.getParameter("telefono"));
             u.setCorreo(request.getParameter("correo"));
             u.setProfesion(request.getParameter("profesion"));
-            u.setFechanacimiento(formatter.parse(request.getParameter("fecha")));
+            u.setFechanacimiento(fecha);
+            String imagen64 = request.getParameter("imagen");
+            if (imagen64 != null && !imagen64.isEmpty()) {
+                    File file = new File(LecturaConfig.getValue("rutaUploadUsuario") + File.separator + u.getCodigo() + ".png");
+                    FileOutputStream out2 = new FileOutputStream(file);
+                    out2.write(DatatypeConverter.parseBase64Binary(imagen64.split(",")[1]));
+                    out2.close();
+                    u.setAvatar((short)1);
+                }
+            System.out.println("Set el user: "+u.getAvatar());
             out.print(userFach.updateObject(u));
         }
     }
