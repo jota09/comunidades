@@ -170,7 +170,6 @@ public class UsuarioDAO implements GestionDAO {
             pS.setString(9, user.getProfesion());
             pS.setShort(10, user.getAvatar());
             pS.setInt(11, user.getCodigo());
-            System.out.println("Query de actualizar user: " + pS);
             num = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {
@@ -306,7 +305,6 @@ public class UsuarioDAO implements GestionDAO {
                 pS = con.prepareStatement(sql);
                 pS.setInt(1, condicion.getComunidad().getCodigo());
             }
-            System.out.println("getCount Usuario:" + pS);
             ResultSet rS = pS.executeQuery();
             if (rS.next()) {
                 cont = rS.getInt(1);
