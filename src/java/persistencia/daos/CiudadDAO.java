@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import persistencia.conexion.ConexionBD;
 import persistencia.entidades.Ciudad;
 import persistencia.entidades.Departamento;
+import persistencia.entidades.Pais;
 
 /**
  *
@@ -31,7 +32,36 @@ public class CiudadDAO implements GestionDAO {
 
     @Override
     public Object getObject(Object object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Ciudad ciudad = (Ciudad) object;
+        Connection con = null;
+        try {
+            con = ConexionBD.obtenerConexion();
+            String sql = "SELECT p.CODIGO as PAIS, d.CODIGO AS DEPARTAMENTO "
+                    + "FROM pais p, departamento d, ciudad c "
+                    + "WHERE c.CODIGO = ? AND departamento_CODIGO = d.CODIGO AND pais_CODIGO = p.CODIGO";
+            PreparedStatement pS = con.prepareStatement(sql);
+            pS.setInt(1, ciudad.getCodigo());
+            ResultSet rS = pS.executeQuery();
+            if (rS.next()) {
+                Pais pais = new Pais();
+                pais.setCodigo(rS.getInt("PAIS"));
+                Departamento departamento = new Departamento();
+                departamento.setCodigo(rS.getInt("DEPARTAMENTO"));
+                departamento.setPais(pais);
+                ciudad.setDepartamento(departamento);
+            }
+            rS.close();
+            pS.close();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(PaisDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConexionBD.cerrarConexion(con);
+        }
+        return ciudad;
     }
 
     @Override
