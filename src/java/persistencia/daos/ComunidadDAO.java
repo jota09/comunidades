@@ -154,7 +154,7 @@ public class ComunidadDAO implements GestionDAO {
         int cantidad = 0;
         try{
             con = ConexionBD.obtenerConexion();
-            String sql = "UPDATE comunidad SET";
+            String sql = "UPDATE comunidad SET ACTUALIZACION = NOW()" + ",";
             sql += (comunidad.getNit() != null && !comunidad.getNit().isEmpty() ? " NIT = '" + comunidad.getNit() + "',": "");
             sql += (comunidad.getNombre() != null && !comunidad.getNombre().isEmpty() ? " NOMBRE = '" + comunidad.getNombre() + "',": "");
             sql += (comunidad.getDireccion()!= null && !comunidad.getDireccion().isEmpty() ? " DIRECCION = '" + comunidad.getDireccion() + "',": "");
@@ -166,7 +166,6 @@ public class ComunidadDAO implements GestionDAO {
             sql = sql.substring(0,sql.length()-1);
             sql += " WHERE CODIGO = " + comunidad.getCodigo();
             PreparedStatement pS = con.prepareStatement(sql);
-            System.out.println(pS);
             cantidad = pS.executeUpdate(sql);
             pS.close();
         } catch (ClassNotFoundException ex) {

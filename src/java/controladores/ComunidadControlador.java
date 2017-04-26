@@ -11,6 +11,7 @@ import fachada.CondicionPaginacionFachada;
 import fachada.DepartamentoFachada;
 import fachada.GestionFachada;
 import fachada.PaisFachada;
+import fachada.UsuarioFachada;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -72,9 +73,9 @@ public class ComunidadControlador extends HttpServlet {
                     this.getCiudades(request, response);
                     break;
                 case 13:
-                    this.getComunidadSession(request,response);
+                    this.getComunidadSession(request, response);
                     break;
-                 
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -153,7 +154,7 @@ public class ComunidadControlador extends HttpServlet {
             }
         }
     }
-    
+
     private void borrarComunidad(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession sesion = request.getSession();
@@ -186,7 +187,7 @@ public class ComunidadControlador extends HttpServlet {
         String codigoVisibilidad = request.getParameter("visibilidad");
         String codigoBarras = request.getParameter("codigoBarras");
         String imagen64 = request.getParameter("imagen");
-        
+
         int cantidad = 0;
 
         if (nit != null && !nit.isEmpty()
@@ -236,7 +237,7 @@ public class ComunidadControlador extends HttpServlet {
             sesion.setAttribute("message", Utilitaria.createAlert("Error", "Faltan datos para crear la comunidad", "danger"));
         }
     }
-
+    
     private void getPaises(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try (PrintWriter out = response.getWriter()) {
@@ -317,9 +318,9 @@ public class ComunidadControlador extends HttpServlet {
     }
 
     private void getComunidadSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession sesion=request.getSession();
-        Usuario user=(Usuario) sesion.getAttribute("user");
-        if (user!=null) {
+        HttpSession sesion = request.getSession();
+        Usuario user = (Usuario) sesion.getAttribute("user");
+        if (user != null) {
             GestionFachada comunidadFachada = new ComunidadFachada();
 
             Comunidad comunidad = new Comunidad();
