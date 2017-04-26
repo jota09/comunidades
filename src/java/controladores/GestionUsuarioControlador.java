@@ -239,6 +239,7 @@ public class GestionUsuarioControlador extends HttpServlet {
             obj.put("username", u.getUserName());
             obj.put("profesion", u.getProfesion());
             obj.put("fecha", u.getFechanacimiento().toString());
+            obj.put("fechaUltima", u.getListaSeguridad().getFechaUltimaSesion().toString());
             if (u.getAvatar() != 0) {
                 obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario"));
             } else {
