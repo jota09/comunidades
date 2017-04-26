@@ -31,6 +31,7 @@ import persistencia.entidades.Comunidad;
 import persistencia.entidades.CondicionPaginacion;
 import persistencia.entidades.Departamento;
 import persistencia.entidades.Pais;
+import persistencia.entidades.Usuario;
 import utilitarias.CondicionPaginado;
 import utilitarias.LecturaConfig;
 import utilitarias.Utilitaria;
@@ -70,13 +71,17 @@ public class ComunidadControlador extends HttpServlet {
                 case 12:
                     this.getCiudades(request, response);
                     break;
+                case 13:
+                    this.getComunidadSession(request,response);
+                    break;
+                 
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void getComunidades(HttpServletRequest request, HttpServletResponse response)
+    private void getComunidades(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String rango = request.getParameter("rango");
         String condicionesPag = request.getParameter("condicionesPag");
@@ -105,7 +110,7 @@ public class ComunidadControlador extends HttpServlet {
         }
     }
 
-    public void getComunidad(HttpServletRequest request, HttpServletResponse response)
+    private void getComunidad(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String codigoComunidad = request.getParameter("comunidad");
         if (codigoComunidad != null && !codigoComunidad.trim().isEmpty()) {
@@ -148,8 +153,8 @@ public class ComunidadControlador extends HttpServlet {
             }
         }
     }
-
-    public void borrarComunidad(HttpServletRequest request, HttpServletResponse response)
+    
+    private void borrarComunidad(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String codigo = request.getParameter("comunidad");
         if (!codigo.isEmpty()) {
@@ -161,7 +166,7 @@ public class ComunidadControlador extends HttpServlet {
         }
     }
 
-    public void guardarComunidad(HttpServletRequest request, HttpServletResponse response)
+    private void guardarComunidad(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession sesion = request.getSession();
 
@@ -224,7 +229,7 @@ public class ComunidadControlador extends HttpServlet {
         }
     }
 
-    public void getPaises(HttpServletRequest request, HttpServletResponse response)
+    private void getPaises(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try (PrintWriter out = response.getWriter()) {
             PaisFachada paisFachada = new PaisFachada();
@@ -240,7 +245,7 @@ public class ComunidadControlador extends HttpServlet {
         }
     }
 
-    public void getDepartamentos(HttpServletRequest request, HttpServletResponse response)
+    private void getDepartamentos(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try (PrintWriter out = response.getWriter()) {
             String pais = request.getParameter("pais");
@@ -263,7 +268,7 @@ public class ComunidadControlador extends HttpServlet {
         }
     }
 
-    public void getCiudades(HttpServletRequest request, HttpServletResponse response)
+    private void getCiudades(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try (PrintWriter out = response.getWriter()) {
             String departamento = request.getParameter("departamento");
@@ -301,5 +306,45 @@ public class ComunidadControlador extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
+    }
+
+    private void getComunidadSession(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession sesion=request.getSession();
+        Usuario user=(Usuario) sesion.getAttribute("user");
+        if (user!=null) {
+            GestionFachada comunidadFachada = new ComunidadFachada();
+
+            Comunidad comunidad = new Comunidad();
+            comunidad.setCodigo(user.getPerfilCodigo().getComunidad().getCodigo());
+            comunidadFachada.getObject(comunidad);
+
+            String rutaLogoDisco = LecturaConfig.getValue("pathResources") + File.separator + "logos" + File.separator + comunidad.getCodigo() + ".png";
+            String urlImagen = "";
+
+            File file = new File(rutaLogoDisco);
+            if (!file.exists()) {
+                urlImagen = LecturaConfig.getValue("rutaImg") + "logo/3.png";
+            } else {
+                urlImagen = LecturaConfig.getValue("rutaImg") + "logo/" + comunidad.getCodigo() + ".png";
+            }
+            GestionFachada ciudadFachada = new CiudadFachada();
+            Ciudad ciudad = new Ciudad();
+            ciudad.setCodigo(comunidad.getCiudadCodigo().getCodigo());
+            ciudadFachada.getObject(ciudad);
+            JSONObject obj = new JSONObject();
+            obj.put("nit", comunidad.getNit());
+            obj.put("nombre", comunidad.getNombre());
+            obj.put("direccion", comunidad.getDireccion());
+            obj.put("telefono", comunidad.getTelefono());
+            obj.put("pais", ciudad.getDepartamento().getPais().getNombre());
+            obj.put("departamento", ciudad.getDepartamento().getNombre());
+            obj.put("ciudad", comunidad.getCiudadCodigo().getNombre());
+            obj.put("visibilidad", comunidad.getVisibilidad().getVisibilidad());
+            obj.put("logo", urlImagen);
+
+            try (PrintWriter out = response.getWriter()) {
+                out.print(obj);
+            }
+        }
     }
 }
