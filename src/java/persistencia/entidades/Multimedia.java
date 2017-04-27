@@ -10,6 +10,7 @@ public class Multimedia  implements Serializable{
     private short activo;
     private short destacada;
     private String extension;
+    private TipoMultimedia tipo;
 
     public Multimedia() {
     }
@@ -49,6 +50,14 @@ public class Multimedia  implements Serializable{
 
     public Articulo getArticulocodigo() {
         return articulocodigo;
+    }
+
+    public TipoMultimedia getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoMultimedia tipo) {
+        this.tipo = tipo;
     }
 
     public void setArticulocodigo(Articulo articulocodigo) {

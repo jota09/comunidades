@@ -515,6 +515,7 @@ public class NoticiaControlador extends HttpServlet {
                 JSONObject obj = new JSONObject();
                 obj.put("codigo", art2.getCodigo());
                 obj.put("nombre", art2.getTitulo());
+                obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo")+art2.getImagenes().getCodigo()+"."+art2.getImagenes().getTipo().getExtension());
                 array.add(obj);
 
             }

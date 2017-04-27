@@ -30,6 +30,7 @@ public class Articulo implements Serializable {
     private String busqueda;
     private Visibilidad visibilidad;
     private boolean inicio;
+    private Multimedia imagenDestacada;
 
     public Articulo() {
     }
@@ -38,7 +39,7 @@ public class Articulo implements Serializable {
         this.codigo = codigo;
     }
 
-    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, Visibilidad visibilidad, Boolean inicio) {
+    public Articulo(int codigo, Usuario usuario, int usuariocodigoadm, String titulo, String descripcion, Date fechapublicacion, double precio, Date fechafinpublicacion, Prioridad prioridad, Timestamp creacion, Timestamp actualizacion, String observacionesadmon, ArticuloEstado estado, TipoArticulo tipoarticulo, Categoria categoria, Comunidad comunidad, List<ClasificadoInteres> listaInteres, String rango, String busqueda, Visibilidad visibilidad, Boolean inicio, Multimedia imagenDestacada) {
         this.codigo = codigo;
         this.usuario = usuario;
         this.usuariocodigoadm = usuariocodigoadm;
@@ -60,6 +61,15 @@ public class Articulo implements Serializable {
         this.busqueda = busqueda;
         this.visibilidad = visibilidad;
         this.inicio = inicio;
+        this.imagenDestacada = imagenDestacada;
+    }
+
+    public Multimedia getImagenes() {
+        return imagenDestacada;
+    }
+
+    public void setImagenes(Multimedia imagenDestacada) {
+        this.imagenDestacada = imagenDestacada;
     }
 
     public int getCodigo() {
@@ -224,7 +234,7 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        JSONObject obj=new JSONObject();
+        JSONObject obj = new JSONObject();
         obj.put("codigo", this.codigo);
         obj.put("nombre", this.titulo);
         return obj.toString();

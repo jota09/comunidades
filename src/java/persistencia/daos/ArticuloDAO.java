@@ -26,9 +26,11 @@ import utilitarias.CondicionPaginado;
 import utilitarias.Utilitaria;
 import persistencia.entidades.Error;
 import persistencia.entidades.Estructura;
+import persistencia.entidades.Multimedia;
 import persistencia.entidades.Pais;
 import persistencia.entidades.Prioridad;
 import persistencia.entidades.TipoError;
+import persistencia.entidades.TipoMultimedia;
 import utilitarias.Visibilidad;
 
 /**
@@ -113,9 +115,10 @@ public class ArticuloDAO implements GestionDAO {
         Connection con = null;
         try {
             con = ConexionBD.obtenerConexion();
-            String query = "SELECT art.CODIGO, art.TITULO, art.FECHA_PUBLICACION "
-                    + "FROM articulo AS art INNER JOIN comunidad AS c ON c.CODIGO = art.COMUNIDAD_CODIGO "
-                    + "WHERE art.TIPO_ARTICULO_CODIGO = ? " + ((art.getInicio() == true) ? " AND art.FECHA_FIN_PUBLICACION >= CURDATE() " : "")
+            String query = "SELECT art.CODIGO, art.TITULO, art.FECHA_PUBLICACION,mult.codigo,tmult.extension "
+                    + "FROM articulo AS art INNER JOIN comunidad AS c ON c.CODIGO = art.COMUNIDAD_CODIGO LEFT JOIN multimedia as mult on art.codigo=mult.articulo_codigo and mult.destacada=1 "
+                    + " LEFT JOIN tipo_multimedia tmult on mult.tipo_multimedia_codigo=tmult.codigo "
+                    + "WHERE  art.TIPO_ARTICULO_CODIGO = ? " + ((art.getInicio() == true) ? " AND art.FECHA_FIN_PUBLICACION >= CURDATE() " : "")
                     + " " + ((art.getEstado() != null) ? " AND art.ESTADOS_CODIGO = " + art.getEstado().getCodigo() : "")
                     + " " + ((art.getVisibilidad() != null) ? " AND art.VISIBILIDAD=" + art.getVisibilidad().getVisibilidad() : "")
                     + " " + ((art.getComunidad() != null && art.getComunidad().getCodigo() != anonimo) ? "AND art.COMUNIDAD_CODIGO=" + art.getComunidad().getCodigo() : "")
@@ -124,6 +127,7 @@ public class ArticuloDAO implements GestionDAO {
                     + "LIMIT " + art.getRango() + " ";
             PreparedStatement pS = con.prepareStatement(query);
             pS.setInt(1, art.getTipoArticulo().getCodigo());
+            System.out.println("Probando getlistObject=" + pS);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
                 Articulo art2 = new Articulo();
@@ -131,6 +135,13 @@ public class ArticuloDAO implements GestionDAO {
                 art2.setTitulo(rS.getString("TITULO"));
                 art2.setFechaPublicacion(rS.getDate("FECHA_PUBLICACION"));
                 listArt.add(art2);
+                TipoMultimedia tipoMultimedia=new TipoMultimedia();
+                tipoMultimedia.setExtension(rS.getString("tmult.extension"));
+                Multimedia imagenDestacada=new Multimedia();
+                imagenDestacada.setCodigo(rS.getLong("mult.codigo"));
+                imagenDestacada.setTipo(tipoMultimedia);
+                art2.setImagenes(imagenDestacada);
+                
             }
             rS.close();
             pS.close();
@@ -299,8 +310,8 @@ public class ArticuloDAO implements GestionDAO {
                     + "     JOIN usuario usr ON art.usuario_codigo=usr.codigo"
                     + "     JOIN categoria cat ON art.categoria_codigo=cat.codigo "
                     + " WHERE " + ((condicionPaginado.getUser() != null) ? " "
-                    + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " " + ((condicionPaginado.getComunidad()!= null) ? " "
-                    + " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo()+" and " : "")
+                            + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " " + ((condicionPaginado.getComunidad() != null) ? " "
+                            + " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo() + " and " : "")
                     + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
@@ -467,8 +478,8 @@ public class ArticuloDAO implements GestionDAO {
                     + "         JOIN usuario usr ON art.usuario_codigo=usr.codigo"
                     + "         JOIN comunidad c ON art.comunidad_codigo=c.codigo"
                     + "  WHERE " + ((condicionPaginado.getUser() != null) ? " "
-                    + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " "
-                    + " " + ((condicionPaginado.getComunidad() != null) ? " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo()+ " and" : "") + " " + condicionPaginado.getCondicion();
+                            + " art.usuario_codigo=" + condicionPaginado.getUser().getCodigo() + " and" : "") + " "
+                    + " " + ((condicionPaginado.getComunidad() != null) ? " art.comunidad_codigo=" + condicionPaginado.getComunidad().getCodigo() + " and" : "") + " " + condicionPaginado.getCondicion();
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
