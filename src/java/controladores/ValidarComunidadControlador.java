@@ -72,17 +72,11 @@ public class ValidarComunidadControlador extends HttpServlet {
     }
 
     private void redirigirAComunidad(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int codigoPerfil = Integer.parseInt(request.getParameter("codigoPerfil"));
-        int codigoComunidad = Integer.parseInt(request.getParameter("codigoComun"));
+        int posicion=Integer.parseInt(request.getParameter("posicion"));
+        List<Perfil> perfiles = (List<Perfil>) request.getSession().getAttribute("perfiles");
         HttpSession session = request.getSession();
-        GestionFachada comunidadFachada = new ComunidadFachada();
         Usuario user = (Usuario) session.getAttribute("user");
-        Perfil perfil = new Perfil();
-        Comunidad comunidad = new Comunidad();
-        comunidad.setCodigo(codigoComunidad);
-        comunidadFachada.getObject(comunidad);
-        perfil.setComunidad(comunidad);
-        perfil.setCodigo(codigoPerfil);
+        Perfil perfil = perfiles.get(posicion);
         user.setPerfilCodigo(perfil);
         session.setAttribute("user", user);
         request.getSession().setAttribute("view", "menuprincipal.html");
@@ -92,6 +86,7 @@ public class ValidarComunidadControlador extends HttpServlet {
     private void getPerfiles(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Perfil> perfiles = (List<Perfil>) request.getSession().getAttribute("perfiles");
         JSONArray array = new JSONArray();
+        int posicion=0;
         for (Perfil p : perfiles) {
             Comunidad comunidad = p.getComunidad();
             JSONObject com = new JSONObject();
@@ -99,7 +94,9 @@ public class ValidarComunidadControlador extends HttpServlet {
             com.put("nombre", comunidad.getNombre());
             com.put("rutaImg", LecturaConfig.getValue("rutaImg") + "logo/" + comunidad.getCodigo() + ".png");
             com.put("codigoPerfil", p.getCodigo());
+            com.put("pos",posicion);
             array.add(com);
+            posicion++;
         }
         try (PrintWriter out = response.getWriter()) {
             out.print(array);
