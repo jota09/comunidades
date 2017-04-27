@@ -58,6 +58,7 @@ public class ArticuloDAO implements GestionDAO {
                 usr.setNombres(rS.getString("u.nombres"));
                 usr.setApellidos(rS.getString("u.apellidos"));
                 usr.setCorreo(rS.getString("u.correo"));
+                usr.setAvatar(rS.getShort("u.avatar"));
                 art.setUsuario(usr);
                 art.setCategoria(new Categoria(rS.getInt("art.categoria_codigo")));
                 art.setTipoArticulo(new TipoArticulo(rS.getInt("art.tipo_articulo_codigo")));
