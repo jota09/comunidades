@@ -360,7 +360,7 @@ public class ClasificadoControlador extends HttpServlet {
             condicionFachada.getObject(condicionPaginacion);
             CondicionPaginado condicion = new CondicionPaginado();
             condicion.setCondicion(condicionPaginacion.getCondicion().replace("<?>", busqueda)
-                    .replace("<#>", ((opcionesFiltro.isEmpty()) ? "" : " AND " + opcionesFiltro)) 
+                    .replace("<#>", ((opcionesFiltro.isEmpty()) ? "" : " AND " + opcionesFiltro))
                     + " limit " + (iteracion * cantidad) + "," + cantidad);
             condicion.setCondicion(condicion.getCondicion());
             condicion.setComunidad(((Usuario) request.getSession().getAttribute("user")).getPerfilCodigo().getComunidad());
@@ -837,6 +837,8 @@ public class ClasificadoControlador extends HttpServlet {
             art.setTipoArticulo(tpArt);
             art = (Articulo) artFachada.getObject(art);
             UsuarioFachada userFachada = new UsuarioFachada();
+            EstructuraFachada estrucFach = new EstructuraFachada();
+            Estructura estru = ((Estructura) estrucFach.getObject(new Estructura("sinAvatarUser")));
             art.setUsuario((Usuario) userFachada.getObject(new Usuario(art.getUsuario().getCodigo())));
             MultimediaFachada multFachada = new MultimediaFachada();
             List<Multimedia> listMult = multFachada.getListObject(art);
@@ -871,6 +873,11 @@ public class ClasificadoControlador extends HttpServlet {
             obj.put("visibilidad", art.getVisibilidad().getVisibilidad());
             obj.put("Imagenes", jsArray);
             obj.put("Directorio", LecturaConfig.getValue("rutaVisualizaArticulo") + art.getCodigo() + "/");
+            if (art.getUsuario().getAvatar() != 0) {
+                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + art.getUsuario().getCodigo() + ".png");
+            } else {
+                obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + estru.getValor());
+            }
             out.print(obj);
         }
     }
