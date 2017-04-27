@@ -268,6 +268,8 @@ public class GestionUsuarioControlador extends HttpServlet {
                 out2.write(DatatypeConverter.parseBase64Binary(imagen64.split(",")[1]));
                 out2.close();
                 u.setAvatar((short) 1);
+                file.setReadable(true, false);
+                file.setWritable(true, false);
             }
             out.print(userFach.updateObject(u));
         }

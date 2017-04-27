@@ -122,7 +122,7 @@ public class ComunidadControlador extends HttpServlet {
             comunidad.setCodigo(Integer.parseInt(codigoComunidad));
             comunidadFachada.getObject(comunidad);
 
-            String rutaLogoDisco = LecturaConfig.getValue("pathResources") + File.separator + "logos" + File.separator + comunidad.getCodigo() + ".png";
+            String rutaLogoDisco = LecturaConfig.getValue("pathResources") + File.separator + "img" + File.separator + "logo" + File.separator + comunidad.getCodigo() + ".png";
             String urlImagen = "";
 
             File file = new File(rutaLogoDisco);
@@ -217,9 +217,11 @@ public class ComunidadControlador extends HttpServlet {
 
             if (cantidad > 0) {
                 if (imagen64 != null && !imagen64.isEmpty()) {
-                    File file = new File(LecturaConfig.getValue("pathResources") + File.separator + "logos" + File.separator + comunidad.getCodigo() + ".png");
+                    File file = new File(LecturaConfig.getValue("pathResources") + File.separator + "img" + File.separator + "logo" + File.separator + comunidad.getCodigo() + ".png");
                     FileOutputStream out = new FileOutputStream(file);
                     out.write(DatatypeConverter.parseBase64Binary(imagen64.split(",")[1]));
+                    file.setReadable(true, false);
+                    file.setWritable(true, false);
                     out.close();
                 }
                 sesion.setAttribute("message", Utilitaria.createAlert("Éxito", "Se ha creado la comunidad " + comunidad.getNombre(), "success"));
@@ -319,7 +321,8 @@ public class ComunidadControlador extends HttpServlet {
             Comunidad comunidad = new Comunidad();
             comunidad.setCodigo(user.getPerfilCodigo().getComunidad().getCodigo());
             comunidadFachada.getObject(comunidad);
-            String rutaLogoDisco = LecturaConfig.getValue("pathResources") + File.separator + "logos" + File.separator + comunidad.getCodigo() + ".png";
+            String rutaLogoDisco = LecturaConfig.getValue("pathResources") + File.separator + "img" + File.separator + "logo" + File.separator + comunidad.getCodigo() + ".png";
+            System.out.println("Ruta Disco:" + rutaLogoDisco);
             String urlImagen = "";
             File file = new File(rutaLogoDisco);
             if (!file.exists()) {
@@ -343,9 +346,9 @@ public class ComunidadControlador extends HttpServlet {
             obj.put("pais", ciudad.getDepartamento().getPais().getNombre());
             obj.put("departamento", ciudad.getDepartamento().getNombre());
             obj.put("ciudad", ciudad.getNombre());
-            if(inmueble.getTipoInmuebleCodigo()!=null){
+            if (inmueble.getTipoInmuebleCodigo() != null) {
                 obj.put("tipo_inmueble", inmueble.getTipoInmuebleCodigo().getNombre());
-                obj.put("inmueble", inmueble.getUbicacion());            
+                obj.put("inmueble", inmueble.getUbicacion());
             }
             obj.put("logo", urlImagen);
             try (PrintWriter out = response.getWriter()) {

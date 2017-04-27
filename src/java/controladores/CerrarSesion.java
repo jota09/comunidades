@@ -85,12 +85,13 @@ public class CerrarSesion extends HttpServlet {
     private void cierraSesion(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession sesion = request.getSession();//el constructor con false permite que no vuelva a crear el obj session
+        if (sesion.getAttribute("user") != null) {
         Usuario user = (Usuario) sesion.getAttribute("user");
         SeguridadUsuario sgUsr = user.getListaSeguridad();
         sgUsr.setIpUltimaSesion(request.getRemoteUser());
         SeguridadUsuarioFachada sgdadFach = new SeguridadUsuarioFachada();
         sgdadFach.updateObject(sgUsr);
-        if (sesion.getAttribute("user") != null) {
+        
             sesion.removeAttribute("user");
         }
         sesion.invalidate();
