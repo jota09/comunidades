@@ -277,6 +277,7 @@ public class AutorizacionControlador extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             EstructuraFachada estrucFachada = new EstructuraFachada();
             response.setContentType("text/html;charset=UTF-8");
+            System.out.println("codigo que llega: "+request.getParameter("cod"));
             Autorizacion auto = new Autorizacion(Integer.parseInt(request.getParameter("cod")));
             auto.setEstado(new EstadoAutorizacion(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("autorizacionEstadoEspera"))).getValor())));
             AutorizacionFachada autoFach = new AutorizacionFachada();
