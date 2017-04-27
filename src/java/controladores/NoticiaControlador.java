@@ -515,7 +515,11 @@ public class NoticiaControlador extends HttpServlet {
                 JSONObject obj = new JSONObject();
                 obj.put("codigo", art2.getCodigo());
                 obj.put("nombre", art2.getTitulo());
-                obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo")+art2.getImagenes().getCodigo()+"."+art2.getImagenes().getTipo().getExtension());
+                if(art2.getImagenes().getTipo().getExtension()!=null){
+                    obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo")+art2.getCodigo()+"/"+art2.getImagenes().getCodigo()+"."+art2.getImagenes().getTipo().getExtension());
+                }else{
+                    obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo")+"nodisponible.png");
+                }
                 array.add(obj);
 
             }

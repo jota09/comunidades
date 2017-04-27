@@ -170,7 +170,6 @@ public class PerfilDAO implements GestionDAO {
         try {
             con = ConexionBD.obtenerConexion();
             String sql = "Select p.codigo,p.nombre,c.codigo,c.nombre from perfil p left join comunidad c on p.comunidad_codigo=c.codigo  where p.activo=1 order by p.nombre";
-            System.out.println("Imprimiendo PERFIL:" + sql);
             PreparedStatement pS = con.prepareStatement(sql);
             ResultSet rS = pS.executeQuery();
             while (rS.next()) {
