@@ -170,6 +170,7 @@ public class UsuarioDAO implements GestionDAO {
             pS.setString(9, user.getProfesion());
             pS.setShort(10, user.getAvatar());
             pS.setInt(11, user.getCodigo());
+            System.out.println(pS);
             num = pS.executeUpdate();
             pS.close();
         } catch (ClassNotFoundException ex) {

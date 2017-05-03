@@ -508,6 +508,7 @@ public class NoticiaControlador extends HttpServlet {
             art.setUsuario(user);
             art.setEstado(new ArticuloEstado(Integer.parseInt(((Estructura) estrucFachada.getObject(new Estructura("articuloEstadoAprobado"))).getValor())));
             art.setComunidad(user.getPerfilCodigo().getComunidad());
+            art.setInicio(true);
             ArticuloFachada artFachada = new ArticuloFachada();
             List<Articulo> listArticulo = artFachada.getListObject(art);
             JSONArray array = new JSONArray();
@@ -515,13 +516,12 @@ public class NoticiaControlador extends HttpServlet {
                 JSONObject obj = new JSONObject();
                 obj.put("codigo", art2.getCodigo());
                 obj.put("nombre", art2.getTitulo());
-                if(art2.getImagenes().getTipo().getExtension()!=null){
-                    obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo")+art2.getCodigo()+"/"+art2.getImagenes().getCodigo()+"."+art2.getImagenes().getTipo().getExtension());
-                }else{
-                    obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo")+"nodisponible.png");
+                if (art2.getImagenes().getTipo().getExtension() != null) {
+                    obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo") + art2.getCodigo() + "/" + art2.getImagenes().getCodigo() + "." + art2.getImagenes().getTipo().getExtension());
+                } else {
+                    obj.put("imagenDestacada", LecturaConfig.getValue("rutaVisualizaArticulo") + "nodisponible.png");
                 }
                 array.add(obj);
-
             }
             out.print(array);
         }

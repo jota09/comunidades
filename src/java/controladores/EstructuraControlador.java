@@ -142,6 +142,24 @@ public class EstructuraControlador extends HttpServlet {
 
     }
 
+    private void buscarPorCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        GestionFachada estructuraFachada = new EstructuraFachada();
+        String condicion = request.getParameter("condicion");
+        List<Estructura> estructuras = estructuraFachada.getListByCondition(condicion);
+        JSONArray array = new JSONArray();
+        for (Estructura e : estructuras) {
+            JSONObject object = new JSONObject();
+            object.put("codigo", e.getCodigo());
+            object.put("referencia", e.getReferencia());
+            object.put("valor", e.getValor());
+            object.put("descripcion", e.getDescripcion());
+            array.add(object);
+        }
+        try (PrintWriter out = response.getWriter()) {
+            out.print(array);
+        }
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -181,22 +199,5 @@ public class EstructuraControlador extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void buscarPorCondicion(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GestionFachada estructuraFachada = new EstructuraFachada();
-        String condicion = request.getParameter("condicion");
-        List<Estructura> estructuras = estructuraFachada.getListByCondition(condicion);
-        JSONArray array = new JSONArray();
-        for (Estructura e : estructuras) {
-            JSONObject object = new JSONObject();
-            object.put("codigo", e.getCodigo());
-            object.put("referencia", e.getReferencia());
-            object.put("valor", e.getValor());
-            object.put("descripcion", e.getDescripcion());
-            array.add(object);
-        }
-        try (PrintWriter out = response.getWriter()) {
-            out.print(array);
-        }
-    }
 
 }

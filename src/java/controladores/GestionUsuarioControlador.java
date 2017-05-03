@@ -246,6 +246,7 @@ public class GestionUsuarioControlador extends HttpServlet {
             } else {
                 obj.put("avatar", LecturaConfig.getValue("rutaVisualizaUsuario") + "" + estru.getValor());
             }
+            System.out.println("objeto recuperado user: "+obj);
             out.print(obj);
         }
     }
@@ -262,6 +263,7 @@ public class GestionUsuarioControlador extends HttpServlet {
             u.setCorreo(request.getParameter("correo"));
             u.setProfesion(request.getParameter("profesion"));
             u.setFechanacimiento(fecha);
+            System.out.println("Objeto que se guardará: "+u);
             String imagen64 = request.getParameter("imagen");
             if (imagen64 != null && !imagen64.isEmpty()) {
                 File file = new File(LecturaConfig.getValue("rutaUploadUsuario") + File.separator + u.getCodigo() + ".png");
